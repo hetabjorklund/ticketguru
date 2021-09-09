@@ -20,6 +20,8 @@ myytäväksi, jotta aikaa ei huku yksittäiseen tulosteluun.
 
 * Myyjänä haluan nähdä listauksen tulevista tapahtumista, jotta voin kertoa asiakkaalle millaisia tapahtumia on tulossa.
 
+* Myyjänä haluan nähdä, onko tapahtumaan lippuja vielä myytävissä, jotta en myy "ylipaikkoja"
+
 ## Tapahtumakoordinaattoritarinat
 * Tapahtumakoordinaattorina haluan voida lisätä tapahtuman ja lipputyypit hintoineen, jotta tapahtuman lippuja voi myydä.
 
@@ -27,3 +29,5 @@ myytäväksi, jotta aikaa ei huku yksittäiseen tulosteluun.
 myymättömättömistä lipuista, jotta voin seurata myynnin etenemistä. 
 
 * Tapahtumakoordinaattorina haluan nähdä listauksen kaikista tapahtumista haluamaltani aikaväliltä, jotta tiedän, miten paljon töitä myyjillä on.
+
+* Tapahtumakoordinaattorina haluan kyetä tekemään muutoksia tapahtumiin, jotta ohjelmassa oleva tieto ja tuotteet ovat ajantasaisia
