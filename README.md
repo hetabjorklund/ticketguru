@@ -12,6 +12,26 @@ Projektin päättyessä valmiina tulee olemaan REST-rajapinta, tietokanta ja yks
 
 ## Järjestelmän määrittely
 
+Alla kuvattuna järjestelmän tarpeet tarkemmin käyttäjäroolien sekä käyttäjätarinoiden kautta.
+
+### Käyttäjäroolit
+
+Järjestelmällä on tässä kehitysvaiheessa kaksi roolia: myyjä sekä tapahtumakoordinaattori.
+
+#### Myyjä
+
+Kuvaus tähän
+
+#### Tapahtumakoordinaattori
+
+Kuvaus tähän
+
+#### Tulevat roolit
+
+Kuvaus tähän
+
+### Käyttäjätarinat
+
 Määrittelyssä järjestelmää tarkastellaan käyttäjän näkökulmasta. Järjestelmän
 toiminnot hahmotellaan käyttötapausten tai käyttäjätarinoiden kautta, ja kuvataan järjestelmän
 käyttäjäryhmät.
