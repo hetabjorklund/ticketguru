@@ -50,6 +50,8 @@ Esitetään käyttöliittymän tärkeimmät (vain ne!) näkymät sekä niiden v�
 
 Jos näkymän tarkoitus ei ole itsestään selvä, se pitää kuvata lyhyesti.
 
+![Kayttoliittymakaavio](./images/UI/kayttoliittymakaavio.png)
+
 ## Tietokanta
 
 Järjestelmään säilöttävä ja siinä käsiteltävät tiedot ja niiden väliset suhteet
