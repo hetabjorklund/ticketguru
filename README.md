@@ -1,4 +1,4 @@
-# Projektin nimi
+# TicketGuru
 
 Tiimi: Max Arponen, Heta Björklund, Jerri Mäkilä, Heli Saarinen, Riitta Väisänen.
 
