@@ -1,8 +1,17 @@
 # Käyttäjäroolit
  
- * Tapahtumakoordinaattori: hallinnoi tapahtumia ja lipputyyppejä, lisää tapahtumat järjestelmään.
- * Myyjä: myy lippuja ja tulostaa niitä.
- * Tulevat roolit: asiakas ja tapahtumajärjestäjä.
+
+ ### Tapahtumakoordinaattori
+ * Hallinnoi tapahtumia ja lipputyyppejä 
+ * Lisää uusia tapahtumia ja muuttaa tapahtumien tietoja tarvittaessa
+ 
+
+ ### Myyjä
+ * Myy ja tulostaa lippuja asiakkaille
+ * Tulostaa ennakkomyynnin jälkeen jäljellä olevat liput ovella myytäviksi 
+
+
+ ### Tulevat roolit: asiakas ja tapahtumajärjestäjä.
 
 # Käyttäjätarinat
 
