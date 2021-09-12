@@ -46,6 +46,8 @@ tietoa ja keskittyä siihen.
 
 ## Käyttöliittymä
 
+### Käyttöliittymäkaavio
+
 ![Kayttoliittymakaavio](./images/UI/kayttoliittymakaavio.png)
 
 ## Tietokanta
