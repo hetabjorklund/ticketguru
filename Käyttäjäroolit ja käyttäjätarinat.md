@@ -24,7 +24,7 @@ jotta tiedän, montako lippua voin myydä.
 M3 Myyjänä haluan tietää, mitä lipputuotteita hintoineen tapahtumaan kuuluu, 
 jotta voin veloittaa asiakasta oikein. 
 
-M4 Myyjänä haluan pystyä kuittaamaan lipun nopeasti ovella myydyksi, jotta jono 
+M4 Myyjänä haluan pystyä kuittaamaan lipun nopeasti ovella käytetyksi (lipuntarkastus), jotta jono 
 etenee. 
 
 M5 Myyjänä haluan pystyä tulostamaan ylimääräiset liput kertaheitolla ovella 
@@ -32,7 +32,7 @@ myytäväksi, jotta aikaa ei huku yksittäiseen tulosteluun.
 
 M6 Myyjänä haluan nähdä listauksen tulevista tapahtumista, jotta voin kertoa asiakkaalle millaisia tapahtumia on tulossa.
 
-M7 Myyjänä haluan nähdä, onko tapahtumaan lippuja vielä myytävissä, jotta en myy "ylipaikkoja"
+M7 Myyjänä haluan nähdä, onko tapahtumaan lippuja vielä myytävissä, jotta en myy "ylipaikkoja".
 
 M8 Myyjänä haluan valita järjestelmästä useamman lipun kerralla myytäväksi, jotta jokaista lippua ei tarvitse myydä yksittäin.
 
