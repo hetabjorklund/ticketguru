@@ -40,6 +40,8 @@ M9 Myyjänä haluan saada tulostettua myymäni liput, jotta voin antaa ne asiakk
 
 M10 Myyjänä haluan nähdä järjestelmässämme mahdolliset muutokset tapahtumista, kuten esiintyjän peruuntumisen tai hintojen muutoksen, jotta voin informoida asiakkaitani.
 
+M11 Myyjänä haluan kyetä lisäämään usean tapahtuman lippuja myytäväksi ostoskoriin, jotta voin samalla transaktiolla myydä ne asiakkaalle. 
+
 ## Tapahtumakoordinaattoritarinat (TK)
 
 TK1 Tapahtumakoordinaattorina haluan kirjautua sisään järjestelmään, jotta voin lisätä tapahtumia ja lippuja.
