@@ -2,10 +2,10 @@ package fi.paikalla.ticketguru.Classes;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import javax.persistence.Entity;
-import java.time.*;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import java.time.*;
 
 @Entity
 @Data
@@ -20,7 +20,7 @@ public class Event extends AbstractPersistable<Long> {
 	private LocalDateTime endTime;
 	private LocalDateTime endOfPresale;
 	private EventStatus status;
-	//@OneToMany(mappedBy="event")
+	//@OneToMany(mappedBy="event") // tämä odottaa sitä, että on luotu Ticket-olio
 	// private List<Ticket> tickets = new ArrayList<>();
 
 }
