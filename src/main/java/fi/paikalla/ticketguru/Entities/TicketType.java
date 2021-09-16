@@ -1,4 +1,4 @@
-package fi.paikalla.ticketguru.Classes;
+package fi.paikalla.ticketguru.Entities;
 
 import java.util.List;
 

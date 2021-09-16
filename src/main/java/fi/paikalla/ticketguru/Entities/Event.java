@@ -1,4 +1,4 @@
-package fi.paikalla.ticketguru.Classes;
+package fi.paikalla.ticketguru.Entities;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import javax.persistence.Entity;
@@ -15,7 +15,7 @@ public class Event extends AbstractPersistable<Long> {
 	
 	private String name;
 	private String address;
-	private Integer maxSeats;
+	private Integer capacity;
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
 	private LocalDateTime endOfPresale;

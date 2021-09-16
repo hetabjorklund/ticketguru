@@ -1,5 +1,6 @@
 package fi.paikalla.ticketguru.Repositories;
 import fi.paikalla.ticketguru.Classes.*;
+import fi.paikalla.ticketguru.Entities.EventStatus;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
