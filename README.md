@@ -119,6 +119,15 @@ attribuuttien (kentät/sarakkeet) listausta ja lyhyttä kuvausta esim. tähän t
 > avatar | int FK | Tilin avatar, viittaus [avatar](#Avatar)-tauluun
 > kayttaja | int FK | Viittaus käyttäjään [käyttäjä](#Kayttaja)-taulussa
 
+### _Invoice_
+_Invoice-taulu käsittää yksittäisen myyntitapahtuman. Myyntitapahtumalla (Invoice) voi olla useampi tapahtumarivi (InvoiceItem: tiettyyn tapahtumaan myyty tiettyyn lippuluokkaan kuuluva lippu). Jokaisella myyntitapahtumalla (invoice) on aina vain yksi myyjä (TGUser)._
+
+Kenttä | Tyyppi | Kuvaus
+------ | ------ | ------
+invoiceId | int PK | Laskun id
+timestamp | DateTime | Myyntitapahtuman aikamerkintä
+userId | int FK | Viittaus käyttäjään [TGUser] (#TGUser)-taulussa
+
 ## Tekninen kuvaus
 
 Teknisessä kuvauksessa esitetään järjestelmän toteutuksen suunnittelussa tehdyt tekniset
