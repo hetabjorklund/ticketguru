@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EventStatus extends AbstractPersistable<Long> {
 
-	private String status;
+	private String statusName;
 }
