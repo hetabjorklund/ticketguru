@@ -142,13 +142,14 @@ TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja poi
 > statusName | varchar | Tapahtuman status
 
 >### _Invoice_
->_Invoice-taulu käsittää yksittäisen myyntitapahtuman. Jokaisella myyntitapahtumalla (invoice) on aina vain yksi myyjä (TGUser)._
+>_Invoice-taulu käsittää yksittäisen myyntitapahtuman. Jokaisella myyntitapahtumalla (invoice) on aina vain yksi myyjä (TGUser). Jokaisella myyntitapahtumalla voi olla useampi lippu (ticket)._
 >
 >Kenttä | Tyyppi | Kuvaus
 >------ | ------ | ------
 >id | long PK | Laskun id
 >timestamp | DateTime | Myyntitapahtuman aikamerkintä
->TGUser_id | long FK | Viittaus käyttäjään [TGUser](#TGUser)-taulussa
+>TGUser_id | long FK | Laskun kirjoittanut myyjä, viittaus käyttäjään [TGUser](#TGUser)-taulussa
+>ticket_id | long FK | Laskun sisältämät liput, viittaus lippuun [Tickets](#Ticket)-tauluun
 
 >### _TGUser_
 >_TGUser-taulu kuvaa yksittäistä myyjää. Myyjä liittyy useampaan myyntitapahtumaan (invoice)._
