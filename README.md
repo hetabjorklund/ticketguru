@@ -115,6 +115,24 @@ TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja poi
 > avatar | int FK | Tilin avatar, viittaus [avatar](#Avatar)-tauluun
 > kayttaja | int FK | Viittaus käyttäjään [käyttäjä](#Kayttaja)-taulussa
 
+> ### _Event_
+> _Event-taulu sisältää tapahtuman tiedot._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> id | long PK | Event id
+> eventStatus_id | long | Tapahtuman status, viittaus [EventStatus](#EventStatus)-tauluun
+> ticket_id | long | Tapahtumaan kuuluvat liput, viittaus [Ticket](#Ticket)-tauluun
+> ticketType_id | long | Tapahtumaan saatavilla olevat lipputyypit, viittaus [TicketType](#TicketType)-tauluun
+> ticket_price | double | Tapahtuman lippujen hinnat, viittaus hintaan [Ticket](#Ticket)-taulussa
+> name | varchar | Tapahtuman nimi
+> address | varchar | Tapahtumapaikan osoite
+> maxCapacity | int | Tapahtuman maksimipaikkamäärä
+> startTime | DateTime | Tapahtuman alkuaika (pvm ja kellonaika)
+> endTime | DateTime | Tapahtuman loppuaika (pvm ja kellonaika)
+> endOfPresale | DateTime | Tapahtuman ennakkomyynnin loppu (pvm ja kellonaika)
+> description | varchar | Lyhyt kuvaus tapahtumasta ja sen esiintyjistä
+
 > ### _EventStatus_
 > _EventStatus-taulu sisältää tapahtuman statuksen: onko se toteutuva, peruttu tai siirretty._
 >
@@ -124,13 +142,13 @@ TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja poi
 > statusName | varchar | Tapahtuman status
 
 >### _Invoice_
->_Invoice-taulu käsittää yksittäisen myyntitapahtuman. Myyntitapahtumalla (Invoice) voi >olla useampi tapahtumarivi (InvoiceItem: tiettyyn tapahtumaan myyty tiettyyn >lippuluokkaan kuuluva lippu). Jokaisella myyntitapahtumalla (invoice) on aina vain yksi >myyjä (TGUser)._
+>_Invoice-taulu käsittää yksittäisen myyntitapahtuman. Jokaisella myyntitapahtumalla (invoice) on aina vain yksi myyjä (TGUser)._
 >
 >Kenttä | Tyyppi | Kuvaus
 >------ | ------ | ------
->invoiceId | int PK | Laskun id
+>id | long PK | Laskun id
 >timestamp | DateTime | Myyntitapahtuman aikamerkintä
->userId | int FK | Viittaus käyttäjään [TGUser] (#TGUser)-taulussa
+>TGUser_id | long FK | Viittaus käyttäjään [TGUser](#TGUser)-taulussa
 
 ### Luokkakaavio
 ![Luokkakaavio](./images/ClassDiagram/TGluokkakaavio.png)
