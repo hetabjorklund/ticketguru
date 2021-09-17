@@ -155,7 +155,7 @@ TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja poi
 >
 >Kenttä | Tyyppi | Kuvaus
 >------ | ------ | ------
->TGUser_id | long PK | Laskun id
+>TGUser_id | long PK | Käyttäjän id
 >firstName | varchar | Etunimi
 >lastnName | varchar | Sukunimi
 >userName | varchar | Käyttäjänimi
