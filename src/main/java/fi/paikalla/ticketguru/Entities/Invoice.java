@@ -1,13 +1,16 @@
 package fi.paikalla.ticketguru.Entities;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Invoice {
@@ -16,19 +19,21 @@ public class Invoice {
 	private Long invoiceId;
 	private LocalDateTime timestamp;
 	
-	/* odottaa TGUser-luokkaa
 	@ManyToOne
 	@JoinColumn(name = "userId")
 	private TGUser TGuser;
-	*/
 	
-	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "invoiceId")
+	private List<Ticket> tickets;
 
-	public Invoice(Long invoiceId, LocalDateTime timestamp, TGUser tGuser) {
+	public Invoice() {}
+	
+	public Invoice(Long invoiceId, LocalDateTime timestamp, TGUser TGUser, List<Ticket> tickets) {
 		super();
 		this.invoiceId = invoiceId;
 		this.timestamp = timestamp;
-		TGuser = tGuser;
+		TGUser = TGUser;
+		this.tickets = tickets;
 	}
 
 	public Long getInvoiceId() {
@@ -55,10 +60,20 @@ public class Invoice {
 		TGuser = tGuser;
 	}
 
+	public List<Ticket> getTickets() {
+		return tickets;
+	}
+
+	public void setTickets(List<Ticket> tickets) {
+		this.tickets = tickets;
+	}
+
 	@Override
 	public String toString() {
 		return "Invoice [invoiceId=" + invoiceId + ", timestamp=" + timestamp + "]";
 	}
+	
+	
 	
 	
 }
