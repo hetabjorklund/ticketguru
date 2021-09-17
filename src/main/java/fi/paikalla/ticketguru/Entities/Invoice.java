@@ -16,11 +16,12 @@ public class Invoice {
 	private Long invoiceId;
 	private LocalDateTime timestamp;
 	
-	/* odottaa TGUser-luokkaa
+	//odottaa TGUser-luokkaa
 	@ManyToOne
-	@JoinColumn(name = "userId")
+	//id viittaus vähän hämärä, joten kommentoin hetkeksi. 
+	//@JoinColumn(name = "tgUserId")
 	private TGUser TGuser;
-	*/
+	
 	
 	
 
