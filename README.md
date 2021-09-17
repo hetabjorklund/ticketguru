@@ -101,7 +101,7 @@ TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja poi
 ## Tietokanta
 
 ### Tietokantakaavio
-![Tietokantakaavio](./images/UI/TicketGuru.png)
+![Tietokantakaavio](./images/DB/TGtietokantakaavio.png)
 
 ### Tietohakemisto
 Lisäksi kukin järjestelmän tietoelementti ja sen attribuutit kuvataan
@@ -124,7 +124,10 @@ attribuuttien (kentät/sarakkeet) listausta ja lyhyttä kuvausta esim. tähän t
 > Kenttä | Tyyppi | Kuvaus
 > ------ | ------ | ------
 > id | long PK | EventStatus id
-> statusName | varchar(15) | Tapahtuman status
+> statusName | varchar | Tapahtuman status (esim. toteutuu, peruttu, siirretty)
+
+### Luokkakaavio
+![Luokkakaavio](./images/ClassDiagram/TGluokkakaavio.png)
 
 ## Tekninen kuvaus
 
