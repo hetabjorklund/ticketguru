@@ -8,7 +8,7 @@ Projektin aihe on TicketGuru-nimisen lipunmyyntijärjestelmän backend.
 
 Asiakas on lipputoimisto, joka tarvitsee lipunmyyntijärjestelmän lippujen myymiseen myyntipisteessään. Lipputoimisto määrittelee tapahtumat, joihin lippuja myydään, ja montako lippua tapahtumaan voidaan myydä. Tapahtumakoordinaattori lisää tapahtumat järjestelmään ja myyjä myy lipunmyyntipisteessä lippuja asiakkaalle. Jokaisessa lipussa on yksilöllinen koodi lipuntarkastamista varten. Myöhemmässä vaiheessa järjestelmään lisätään verkkokauppa, josta asiakkaat voivat itse ostaa lippuja.
 
-Projektin päättyessä valmiina tulee olemaan REST-rajapinta, tietokanta ja yksinkertainen käyttöliittymä. Käytettävä tietokantajärjestelmä on PostgreSQL. Projekti voidaan julkaista esimerkiksi Herokussa. Lipunmyyntijärjestelmä toimii web-sovelluksena selaimella.
+Projektin päättyessä valmiina tulee olemaan REST-rajapinta, tietokanta ja yksinkertainen käyttöliittymä. Kehittämisvaiheessa käytettävä tietokantajärjestelmä on H2, mutta lopullisessa projektissa PostgreSQL. Projekti voidaan julkaista esimerkiksi Herokussa. Lipunmyyntijärjestelmä toimii web-sovelluksena selaimella.
 
 ## Järjestelmän määrittely
 
