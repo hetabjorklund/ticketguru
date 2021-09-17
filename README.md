@@ -150,6 +150,18 @@ TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja poi
 >timestamp | DateTime | Myyntitapahtuman aikamerkintä
 >TGUser_id | long FK | Viittaus käyttäjään [TGUser](#TGUser)-taulussa
 
+>### _TGUser_
+>_TGUser-taulu kuvaa yksittäistä myyjää. Myyjä liittyy useampaan myyntitapahtumaan (invoice)._
+>
+>Kenttä | Tyyppi | Kuvaus
+>------ | ------ | ------
+>TGUser_id | long PK | Laskun id
+>firstName | varchar | Etunimi
+>lastnName | varchar | Sukunimi
+>userName | varchar | Käyttäjänimi
+>password | varchar | Suolattu salasana
+>auth | varchar | Käyttöoikeustaso
+
 ### Luokkakaavio
 ![Luokkakaavio](./images/ClassDiagram/TGluokkakaavio.png)
 
