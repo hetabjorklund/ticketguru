@@ -104,11 +104,8 @@ TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja poi
 ![Tietokantakaavio](./images/DB/TGtietokantakaavio.png)
 
 ### Tietohakemisto
-Lisäksi kukin järjestelmän tietoelementti ja sen attribuutit kuvataan
-tietohakemistossa. Tietohakemisto tarkoittaa yksinkertaisesti vain jokaisen elementin (taulun) ja niiden
-attribuuttien (kentät/sarakkeet) listausta ja lyhyttä kuvausta esim. tähän tyyliin:
 
-> ### _Tilit_
+> ### _Tilit (tämä on esimerkki, kun kaikki valmiina, tätä ei enää tarvita)_
 > _Tilit-taulu sisältää käyttäjätilit. Käyttäjällä voi olla monta tiliä. Tili kuuluu aina vain yhdelle käyttäjälle._
 >
 > Kenttä | Tyyppi | Kuvaus
@@ -124,7 +121,16 @@ attribuuttien (kentät/sarakkeet) listausta ja lyhyttä kuvausta esim. tähän t
 > Kenttä | Tyyppi | Kuvaus
 > ------ | ------ | ------
 > id | long PK | EventStatus id
-> statusName | varchar | Tapahtuman status (esim. toteutuu, peruttu, siirretty)
+> statusName | varchar | Tapahtuman status
+
+>### _Invoice_
+>_Invoice-taulu käsittää yksittäisen myyntitapahtuman. Myyntitapahtumalla (Invoice) voi >olla useampi tapahtumarivi (InvoiceItem: tiettyyn tapahtumaan myyty tiettyyn >lippuluokkaan kuuluva lippu). Jokaisella myyntitapahtumalla (invoice) on aina vain yksi >myyjä (TGUser)._
+>
+>Kenttä | Tyyppi | Kuvaus
+>------ | ------ | ------
+>invoiceId | int PK | Laskun id
+>timestamp | DateTime | Myyntitapahtuman aikamerkintä
+>userId | int FK | Viittaus käyttäjään [TGUser] (#TGUser)-taulussa
 
 ### Luokkakaavio
 ![Luokkakaavio](./images/ClassDiagram/TGluokkakaavio.png)
