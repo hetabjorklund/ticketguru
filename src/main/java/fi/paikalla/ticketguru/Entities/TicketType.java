@@ -12,38 +12,38 @@ public class TicketType {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long typeId;
-	private String description;
+	private String type;
 	/*@OneToMany(cascade = CascadeType.ALL, mappedBy="typeId")
-	private List<EventTicket> eventTicket;*/
+	private List<Ticket> ticket;*/
 	
 	public TicketType() {}
 
-	public TicketType(String description) {
+	public TicketType(String type) {
 		super();
-		this.description = description;
+		this.type = type;
 	}
 
 	public Long getTypeId() {
 		return typeId;
 	}
 
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	public void setTypeId(Long typeId) {
 		this.typeId = typeId;
 	}
 
-	public String getDescription() {
-		return description;
+	/*public List<Ticket> getTicket() {
+		return ticket;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	@Override
-	public String toString() {
-		return "TicketType [typeId=" + typeId + ", description=" + description + "]";
-	}
-	
-	
-	
+	public void setTicket(List<Ticket> ticket) {
+		this.ticket = ticket;
+	}*/
 }
