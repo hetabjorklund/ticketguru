@@ -163,6 +163,16 @@ TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja poi
 >password | varchar | Suolattu salasana
 >auth | varchar | Käyttöoikeustaso
 
+>### _TicketType_
+>_TicketType-taulu kuvastaa lipun tyyppiä. Lipputyypit määritetään kullekkin tapahtumalle erikseen, ja kullekkin lipputyypille määritetään oma hinta._
+>
+>Kenttä | Tyyppi | Kuvaus
+>------ | ------ | ------
+>tickettype_id | long PK | Lipputyypin id
+>event_id | long | tapahtuman tunnus, viittaus tapahtumaan [Event](#Event)-taulussa
+>type | varchar | tarkempi kuvaus lipun tyypistä
+>ticket_price | double | lipun hinta
+
 ### Luokkakaavio
 ![Luokkakaavio](./images/ClassDiagram/TGluokkakaavio.png)
 

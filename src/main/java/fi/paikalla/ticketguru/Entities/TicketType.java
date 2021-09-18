@@ -1,30 +1,38 @@
 package fi.paikalla.ticketguru.Entities;
 
-import java.util.List;
-
-import javax.persistence.CascadeType;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
+@Entity
 public class TicketType {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long typeId;
+	private Long id;
+	@ManyToOne
+	@JoinColumn(name = "id")
+	private Event event;
 	private String type;
 	/*@OneToMany(cascade = CascadeType.ALL, mappedBy="typeId")
-	private List<Ticket> ticket;*/
+	private List<Ticket> tickets;*/
 	
 	public TicketType() {}
 
-	public TicketType(String type) {
+	public TicketType(Event event, String type) {
 		super();
+		this.event = event;
 		this.type = type;
 	}
 
-	public Long getTypeId() {
-		return typeId;
+	public Event getEvent() {
+		return event;
+	}
+
+	public void setEvent(Event event) {
+		this.event = event;
 	}
 
 	public String getType() {
@@ -35,15 +43,13 @@ public class TicketType {
 		this.type = type;
 	}
 
-	public void setTypeId(Long typeId) {
-		this.typeId = typeId;
+	/*public List<Ticket> getTickets() {
+		return tickets;
 	}
 
-	/*public List<Ticket> getTicket() {
-		return ticket;
-	}
-
-	public void setTicket(List<Ticket> ticket) {
-		this.ticket = ticket;
+	public void setTickets(List<Ticket> tickets) {
+		this.tickets = tickets;
 	}*/
+
+	
 }
