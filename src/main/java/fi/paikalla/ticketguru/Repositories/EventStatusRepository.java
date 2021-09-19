@@ -1,8 +1,8 @@
 package fi.paikalla.ticketguru.Repositories;
 
 import fi.paikalla.ticketguru.Entities.EventStatus;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 
-public interface EventStatusRepository extends JpaRepository<EventStatus, Long> {
+public interface EventStatusRepository extends CrudRepository<EventStatus, Long> {
 
 }
