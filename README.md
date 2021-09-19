@@ -105,15 +105,17 @@ TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja poi
 
 ### Tietohakemisto
 
-> ### _Tilit (tämä on esimerkki, kun kaikki valmiina, tätä ei enää tarvita)_
-> _Tilit-taulu sisältää käyttäjätilit. Käyttäjällä voi olla monta tiliä. Tili kuuluu aina vain yhdelle käyttäjälle._
+> ### _Ticket_
+> _Ticket-taulu sisältää lipun tiedot._
 >
 > Kenttä | Tyyppi | Kuvaus
 > ------ | ------ | ------
-> id | int PK | Tilin id
-> nimimerkki | varchar(30) |  Tilin nimimerkki
-> avatar | int FK | Tilin avatar, viittaus [avatar](#Avatar)-tauluun
-> kayttaja | int FK | Viittaus käyttäjään [käyttäjä](#Kayttaja)-taulussa
+> id | long PK | Ticket id
+> event_id | long FK |  Tapahtuman tunnus, viittaus [Event](#Event)-tauluun
+> ticketType_id | long FK | Lipputyypin tunnus, viittaus [TicketType](#TicketType)-tauluun
+> price | double | Lipun hinta 
+> used | boolean | Lipun status, onko lippu käytetty vai ei
+
 
 > ### _Event_
 > _Event-taulu sisältää tapahtuman tiedot._
