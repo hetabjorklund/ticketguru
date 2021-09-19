@@ -17,17 +17,15 @@ public class Invoice {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long invoiceId;
-	private LocalDateTime timestamp;
+	private LocalDateTime timeOfSale; // aikaleima myyntitapahtumalle
 	
-	//odottaa TGUser-luokkaa
 	@ManyToOne
-	//id viittaus vähän hämärä, joten kommentoin hetkeksi. 
-	//@JoinColumn(name = "tgUserId")
-	private TGUser TGuser;
+	@JoinColumn(name = "TGUserId")
+	private TGUser TGuser; // laskun myyjä
 
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "invoiceId")
-	private List<Ticket> tickets;
+	private List<Ticket> tickets; // lista samalla laskulla olevista lipuista
 
 	public Invoice() {}
 	

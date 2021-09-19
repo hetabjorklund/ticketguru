@@ -149,7 +149,7 @@ TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja poi
 >Kenttä | Tyyppi | Kuvaus
 >------ | ------ | ------
 >id | long PK | Laskun id
->timestamp | DateTime | Myyntitapahtuman aikamerkintä
+>timeOfSale | DateTime | Myyntitapahtuman aikamerkintä
 >TGUser_id | long FK | Laskun kirjoittanut myyjä, viittaus käyttäjään [TGUser](#TGUser)-taulussa
 >ticket_id | long FK | Laskun sisältämät liput, viittaus lippuun [Tickets](#Ticket)-tauluun
 
