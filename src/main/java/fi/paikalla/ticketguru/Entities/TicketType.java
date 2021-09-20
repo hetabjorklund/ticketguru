@@ -20,7 +20,7 @@ public class TicketType {
 	@JoinColumn(name = "id")
 	private Event event;
 	private String type;
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="typeId")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="id")
 	private List<Ticket> tickets;
 	
 	public TicketType() {}
@@ -55,13 +55,13 @@ public class TicketType {
 		this.type = type;
 	}
 
-	/*public List<Ticket> getTickets() {
+	public List<Ticket> getTickets() {
 		return tickets;
 	}
 
 	public void setTickets(List<Ticket> tickets) {
 		this.tickets = tickets;
-	}*/
+	}
 
 	
 }
