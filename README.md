@@ -101,7 +101,7 @@ TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja poi
 ## Tietokanta
 
 ### Tietokantakaavio
-![Tietokantakaavio](./images/DB/TGtietokantakaavio.png)
+![Tietokantakaavio](./images/DB/db_simplified_db_diagram.png)
 
 ### Tietohakemisto
 
@@ -111,8 +111,8 @@ TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja poi
 > Kenttä | Tyyppi | Kuvaus
 > ------ | ------ | ------
 > id | long PK | Ticket id
-> event_id | long FK |  Tapahtuman tunnus, viittaus [Event](#Event)-tauluun
 > ticketType_id | long FK | Lipputyypin tunnus, viittaus [TicketType](#TicketType)-tauluun
+> invoice | long FK | Laskun tunnus, viittais [InVoice](#InVoice)-tauluun
 > price | double | Lipun hinta 
 > used | boolean | Lipun status, onko lippu käytetty vai ei
 
@@ -124,9 +124,6 @@ TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja poi
 > ------ | ------ | ------
 > id | long PK | Event id
 > eventStatus_id | long | Tapahtuman status, viittaus [EventStatus](#EventStatus)-tauluun
-> ticket_id | long | Tapahtumaan kuuluvat liput, viittaus [Ticket](#Ticket)-tauluun
-> ticketType_id | long | Tapahtumaan saatavilla olevat lipputyypit, viittaus [TicketType](#TicketType)-tauluun
-> ticket_price | double | Tapahtuman lippujen hinnat, viittaus hintaan [Ticket](#Ticket)-taulussa
 > name | varchar | Tapahtuman nimi
 > address | varchar | Tapahtumapaikan osoite
 > maxCapacity | int | Tapahtuman maksimipaikkamäärä
@@ -171,7 +168,7 @@ TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja poi
 >Kenttä | Tyyppi | Kuvaus
 >------ | ------ | ------
 >tickettype_id | long PK | Lipputyypin id
->event_id | long | tapahtuman tunnus, viittaus tapahtumaan [Event](#Event)-taulussa
+>event_id | long FK | tapahtuman tunnus, viittaus tapahtumaan [Event](#Event)-taulussa
 >type | varchar | tarkempi kuvaus lipun tyypistä
 >ticket_price | double | lipun hinta
 
