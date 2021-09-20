@@ -1,6 +1,8 @@
 package fi.paikalla.ticketguru.Entities;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
@@ -28,5 +30,6 @@ public class Event extends AbstractPersistable<Long> {
 	//@OneToMany(mappedBy="event")
 	//private List<Ticket> tickets = new ArrayList<>(); // tätä voi vielä selventää esim. erittelemällä ennakkoon myydyt ja oviliput omille listoilleen	
 	private HashMap<TicketType, Double> ticketPrices; // tähän tilaisuuteen saatavilla olevat lipputyypit ja niiden hinnat
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="event")
 	private List<TicketType> ticketTypes; 
 }
