@@ -1,11 +1,15 @@
 package fi.paikalla.ticketguru.Entities;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class TicketType {
@@ -16,8 +20,8 @@ public class TicketType {
 	@JoinColumn(name = "id")
 	private Event event;
 	private String type;
-	/*@OneToMany(cascade = CascadeType.ALL, mappedBy="typeId")
-	private List<Ticket> tickets;*/
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="typeId")
+	private List<Ticket> tickets;
 	
 	public TicketType() {}
 

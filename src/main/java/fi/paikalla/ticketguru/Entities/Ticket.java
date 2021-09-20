@@ -2,6 +2,7 @@ package fi.paikalla.ticketguru.Entities;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import lombok.Data;
@@ -17,9 +18,12 @@ import java.util.*;
 @NoArgsConstructor
 public class Ticket extends AbstractPersistable<Long> {
 
-	private Double price
-	private boolean	used
+	private Double price; 
+	private boolean	used; 
+	//@ManyToOne
+	//private Event event
 	@ManyToOne
-	private Event event
-	private TicketType ticket
+	private TicketType ticket; 
+	@ManyToOne
+	private Invoice invoice; 
 }

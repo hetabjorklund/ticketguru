@@ -25,8 +25,8 @@ public class Event extends AbstractPersistable<Long> {
 	private LocalDateTime endOfPresale; // ennakkomyynnin loppuminen (pvm ja kellonaika)
 	private EventStatus status; // tapahtuman status
 	private String description; // tapahtuman kuvaus
-	@OneToMany(mappedBy="event")
-	private List<Ticket> tickets = new ArrayList<>(); // tätä voi vielä selventää esim. erittelemällä ennakkoon myydyt ja oviliput omille listoilleen	
+	//@OneToMany(mappedBy="event")
+	//private List<Ticket> tickets = new ArrayList<>(); // tätä voi vielä selventää esim. erittelemällä ennakkoon myydyt ja oviliput omille listoilleen	
 	private HashMap<TicketType, Double> ticketPrices; // tähän tilaisuuteen saatavilla olevat lipputyypit ja niiden hinnat
-
+	private List<TicketType> ticketTypes; 
 }

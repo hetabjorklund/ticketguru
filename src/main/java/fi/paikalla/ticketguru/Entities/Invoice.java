@@ -32,8 +32,8 @@ public class Invoice {
 	public Invoice(Long invoiceId, LocalDateTime timestamp, TGUser TGUser, List<Ticket> tickets) {
 		super();
 		this.invoiceId = invoiceId;
-		this.timestamp = timestamp;
-		TGUser = TGUser;
+		this.timeOfSale = timestamp;
+		this.TGuser = TGUser;
 		this.tickets = tickets;
 	}
 
@@ -46,11 +46,11 @@ public class Invoice {
 	}
 
 	public LocalDateTime getTimestamp() {
-		return timestamp;
+		return timeOfSale;
 	}
 
 	public void setTimestamp(LocalDateTime timestamp) {
-		this.timestamp = timestamp;
+		this.timeOfSale = timestamp;
 	}
 
 	public TGUser getTGuser() {
@@ -71,7 +71,7 @@ public class Invoice {
 
 	@Override
 	public String toString() {
-		return "Invoice [invoiceId=" + invoiceId + ", timestamp=" + timestamp + "]";
+		return "Invoice [invoiceId=" + invoiceId + ", timestamp=" + timeOfSale + "]";
 	}
 	
 	
