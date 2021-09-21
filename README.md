@@ -1,6 +1,6 @@
 # TicketGuru
 
-Tiimi: Max Arponen, Heta Björklund, Jerri Mäkilä, Heli Saarinen, Riitta Väisänen.
+Tiimi: Heta Björklund, Jerri Mäkilä, Heli Saarinen, Riitta Väisänen.
 
 ## Johdanto
 
