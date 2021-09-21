@@ -24,7 +24,7 @@ public class Invoice {
 	private TGUser TGuser; // laskun myyjä
 
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "invoiceId")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "id")
 	private List<Ticket> tickets; // lista samalla laskulla olevista lipuista
 
 	public Invoice() {}

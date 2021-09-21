@@ -23,7 +23,7 @@ public class Ticket extends AbstractPersistable<Long> {
 	//@ManyToOne
 	//private Event event
 	@ManyToOne
-	private TicketType ticket; 
+	private TicketType ticketType; 
 	@ManyToOne
 	private Invoice invoice; 
 }
