@@ -1,6 +1,7 @@
 package fi.paikalla.ticketguru.Entities;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -20,11 +21,11 @@ public class Invoice {
 	private LocalDateTime timeOfSale; // aikaleima myyntitapahtumalle
 	
 	@ManyToOne
-	@JoinColumn(name = "TGUserId")
+	//@JoinColumn(name = "TGUserId")
 	private TGUser TGuser; // laskun myyjä
 
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "id")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "invoice")
 	private List<Ticket> tickets; // lista samalla laskulla olevista lipuista
 
 	public Invoice() {}
@@ -35,6 +36,12 @@ public class Invoice {
 		this.timeOfSale = timestamp;
 		this.TGuser = TGUser;
 		this.tickets = tickets;
+	}
+	
+	public Invoice(TGUser TGUser) {
+		this.TGuser = TGUser; 
+		this.timeOfSale = LocalDateTime.now();
+		this.tickets = new ArrayList<Ticket>(); 
 	}
 
 	public Long getInvoiceId() {

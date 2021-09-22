@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import java.time.*;
-import java.util.HashMap;
 import java.util.*;
 
 @Entity
@@ -25,5 +24,23 @@ public class Ticket extends AbstractPersistable<Long> {
 	@ManyToOne
 	private TicketType ticketType; 
 	@ManyToOne
-	private Invoice invoice; 
+	private Invoice invoice;
+	
+	
+	public Ticket(TicketType ticketType, Double price) {
+		super();
+		this.price = price;
+		this.used = false;
+		this.ticketType = ticketType;
+	} 
+	
+	public Ticket(TicketType ticketType, Double price, Invoice invoice) {
+		super();
+		this.price = price;
+		this.used = false;
+		this.ticketType = ticketType;
+		this.invoice = invoice; 
+	} 
+	
+	
 }

@@ -1,9 +1,11 @@
 package fi.paikalla.ticketguru.Entities;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -21,20 +23,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TicketType extends AbstractPersistable<Long>{
 
-	@ManyToOne (fetch= FetchType.LAZY)
+	@ManyToOne (fetch= FetchType.EAGER)
 	private Event event;
 	private String type;
-	//@OneToMany
-	//private List<Ticket> tickets;
+	@OneToMany (cascade = CascadeType.ALL, mappedBy="ticketType")
+	private List<Ticket> tickets;
 	private double price; 
-	/*
-	public TicketType() {}
-*/
+
 	public TicketType(Event event, String type, Double price) {
 		super();
 		this.event = event;
 		this.type = type;
-		this.price = price; 
+		this.price = price;
+		this.tickets = new ArrayList<Ticket>(); 
 	}
 
 

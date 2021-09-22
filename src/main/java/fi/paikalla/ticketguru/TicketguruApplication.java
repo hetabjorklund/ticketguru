@@ -7,9 +7,15 @@ import org.springframework.context.annotation.Bean;
 
 import fi.paikalla.ticketguru.Entities.Event;
 import fi.paikalla.ticketguru.Entities.EventStatus;
+import fi.paikalla.ticketguru.Entities.Invoice;
+import fi.paikalla.ticketguru.Entities.TGUser;
+import fi.paikalla.ticketguru.Entities.Ticket;
 import fi.paikalla.ticketguru.Entities.TicketType;
 import fi.paikalla.ticketguru.Repositories.EventRepository;
 import fi.paikalla.ticketguru.Repositories.EventStatusRepository;
+import fi.paikalla.ticketguru.Repositories.InvoiceRepository;
+import fi.paikalla.ticketguru.Repositories.TGUserRepository;
+import fi.paikalla.ticketguru.Repositories.TicketRepository;
 import fi.paikalla.ticketguru.Repositories.TicketTypeRepository;
 
 import java.time.LocalDateTime;
@@ -25,7 +31,9 @@ public class TicketguruApplication {
 		SpringApplication.run(TicketguruApplication.class, args);
 	}
 	@Bean
-	public CommandLineRunner demo(EventRepository eventRepo, EventStatusRepository statusRepo, TicketTypeRepository typerepo){
+	public CommandLineRunner demo(EventRepository eventRepo, EventStatusRepository statusRepo, 
+			TicketTypeRepository typerepo, TicketRepository ticketRepo, 
+			InvoiceRepository invRepo, TGUserRepository userepo){
 		
 		return(args)-> {
 			log.info("Creating status");
@@ -54,6 +62,20 @@ public class TicketguruApplication {
 			typerepo.save(tt1);
 			typerepo.save(tt2);
 			typerepo.save(tt3);
+			
+			TGUser user = new TGUser("maikki", "menevä", "MaiMe", "salasana", "USER"); 
+			
+			userepo.save(user); 
+			
+			Invoice invoice1 = new Invoice(user); 
+			
+			invRepo.save(invoice1); 
+			
+			Ticket t1 = new Ticket(tt1, 20.9, invoice1);
+			Ticket t2 = new Ticket(tt2, 30.00, invoice1);
+			
+			ticketRepo.save(t1); 
+			ticketRepo.save(t2); 
 			
 			
 		}; 	

@@ -36,7 +36,7 @@ public class Event extends AbstractPersistable<Long> {
 	private EventStatus status; // tapahtuman status
 	private String description; // tapahtuman kuvaus
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="event")
-	@JsonIgnore //koska muuten hakukatastrofi
+	@JsonIgnore //koska muuten hakukatastrofi jos ei käytä api/events/ endpointtia
 	private List<TicketType> ticketTypes;
 	
 	public Event(String name, String address, Integer maxCapacity, LocalDateTime startTime, LocalDateTime endTime,
@@ -62,7 +62,6 @@ public class Event extends AbstractPersistable<Long> {
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.endOfPresale = endOfPresale;
-		this.status = status;
 		this.description = description;
 		this.ticketTypes = new ArrayList<TicketType>();
 	} 
