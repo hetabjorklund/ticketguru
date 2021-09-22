@@ -32,6 +32,7 @@ public class TGUser extends AbstractPersistable<Long>{
 	private String auth; 
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "TGuser")
+	@JsonIgnore
 	private List<Invoice> invoices; 
 
 	public TGUser(String firstName, String lastName, String userName, String password, String auth) {

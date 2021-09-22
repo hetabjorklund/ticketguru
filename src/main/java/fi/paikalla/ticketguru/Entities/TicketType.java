@@ -11,6 +11,8 @@ import javax.persistence.OneToMany;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,6 +29,7 @@ public class TicketType extends AbstractPersistable<Long>{
 	private Event event;
 	private String type;
 	@OneToMany (cascade = CascadeType.ALL, mappedBy="ticketType")
+	@JsonIgnore
 	private List<Ticket> tickets;
 	private double price; 
 
