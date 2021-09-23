@@ -14,7 +14,7 @@ Condition : There are no events in the database
 
 Code : 200 OK
 
-Content : {[]}
+Content : []
 
 OR
 Condition : There are events in the database.
