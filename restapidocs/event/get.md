@@ -10,14 +10,14 @@ Method : GET
 Auth required : YES
 
 Success Responses
-Condition : User can not see any Accounts.
+Condition : There are no events in the database
 
 Code : 200 OK
 
 Content : {[]}
 
 OR
-Condition : User can see one or more Events.
+Condition : There are events in the database.
 
 Code : 200 OK
 
