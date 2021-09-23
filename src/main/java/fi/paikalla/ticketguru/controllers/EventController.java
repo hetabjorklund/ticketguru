@@ -1,4 +1,4 @@
-package fi.paikalla.ticketguru.Controllers;
+package fi.paikalla.ticketguru.controllers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
