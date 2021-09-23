@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -48,6 +49,11 @@ public class EventController {
 	@GetMapping("/events") //kaikki tapahtumat
 	public List<Event> getEvents() {
 		return (List<Event>) eventrepo.findAll(); 
+	}
+	
+	@GetMapping("/events/{id}")
+	public Optional<Event> getEventById(@PathVariable("id") Long eventId){
+		return eventrepo.findById(eventId);
 	}
 	
 	@GetMapping("/tickets") //kaikki liput, vähän kustomointia vois tehdä, koska tulee aika paljon tietoa. 
