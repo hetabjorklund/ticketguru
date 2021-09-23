@@ -1,5 +1,6 @@
 package fi.paikalla.ticketguru.controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,24 +37,37 @@ public class EventController {
 				 .orElseThrow(() -> new ResourceNotFoundException("Event not found for this id :: " + eventId));
 		 eventrepo.delete(ev);
 		 Map<String, Boolean> response = new HashMap<>();
-		 response.put("deleted", Boolean.TRUE);
+		 response.put("deleted", Boolean.TRUE); //palauttaa nyt {deleted: true/false} vastauksen. Tästä voi olla montaa mieltä. 
 		 return response;
 	}
 	
-	@GetMapping("/events")
+	@GetMapping("/events") //kaikki tapahtumat
 	public List<Event> getEvents() {
 		return (List<Event>) eventrepo.findAll(); 
 	}
 	
-	@GetMapping("/tickets")
+	@GetMapping("/tickets") //kaikki liput, vähän kustomointia vois tehdä, koska tulee aika paljon tietoa. 
 	public List<Ticket> getTickets() {
 		return (List<Ticket>) tickrepo.findAll(); 
 	}
 	
-	@GetMapping("/types/{id}")
+	@GetMapping("/types/{id}") //lipputyypit per eventId
 	public List<TicketType> getByEvent(@PathVariable(value = "id") Long eventId) {
 		return (List<TicketType>) typerepo.findByEventId(eventId); 
 	}
+	
+	@GetMapping("/events/{id}/tickets") //palauttaa eventId perusteella listan lippuja koko viittauksineen. 
+	public List<Ticket> getTicketsByEvent(@PathVariable(value = "id") Long eventId) {
+		List<Ticket> lista = new ArrayList<Ticket>(); 
+		List<TicketType> types = typerepo.findByEventId(eventId); 
+		for (TicketType type : types) {
+			lista.addAll(type.getTickets()); 
+		}
+		
+		return lista; 
+		
+	}
+	
 
 }
 	
