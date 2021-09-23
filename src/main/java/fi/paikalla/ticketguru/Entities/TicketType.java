@@ -1,42 +1,44 @@
 package fi.paikalla.ticketguru.Entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.springframework.data.jpa.domain.AbstractPersistable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
 @Entity
-public class TicketType {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-	@ManyToOne
-	@JoinColumn(name = "id")
+@Data
+@EqualsAndHashCode(callSuper=false)
+@AllArgsConstructor
+@NoArgsConstructor
+public class TicketType extends AbstractPersistable<Long>{
+
+	@ManyToOne (fetch= FetchType.EAGER)
 	private Event event;
 	private String type;
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="id")
+	@OneToMany (cascade = CascadeType.ALL, mappedBy="ticketType")
+	@JsonIgnore
 	private List<Ticket> tickets;
-	
-	public TicketType() {}
+	private double price; 
 
-	public TicketType(Event event, String type) {
+	public TicketType(Event event, String type, Double price) {
 		super();
 		this.event = event;
 		this.type = type;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
+		this.price = price;
+		this.tickets = new ArrayList<Ticket>(); 
 	}
 
 	public Event getEvent() {
