@@ -1,27 +1,27 @@
 # Get-dokumentaatio
 
-## Show All Events
-Show all events that are added into the database
+## Näytä kaikki tapahtumat
+Näytä kaikki tietokantaan lisätyt tapahtumat
 
 URL : /events
 
-Method : GET
+Metodi : GET
 
-Auth required : YES
+Vaaditaanko autorisointi : kyllä
 
-Success Responses
-Condition : There are no events in the database
+Onnistuneen pyynnön vastaukset:
+Ehto : Tietokannassa ei ole tapahtumia
 
-Code : 200 OK
+Koodi : 200 OK
 
-Content : []
+Sisältö : []
 
-OR
-Condition : There are events in the database.
+TAI
+Ehto : Tietokannassa on tapahtumia
 
-Code : 200 OK
+Koodi : 200 OK
 
-Content : In this example, the User can see three Events:
+Sisältö : Tässä esimerkissä käyttäjä näkee kolme tapahtumaa:
 
 ```json
 [
@@ -34,8 +34,9 @@ Content : In this example, the User can see three Events:
         "endTime":"2021-12-03T16:00:00",
         "endOfPresale":"2021-11-27T16:00:00",
         "status":null,
-        "description":"murderdeathkill",
-        "ticketPrices":null,"new":false
+        "description":"rock'nroll",
+        "ticketPrices":null,
+        "new":false
     },
     {
         "id":3,"name":"Ruisrock2",
@@ -45,8 +46,9 @@ Content : In this example, the User can see three Events:
         "endTime":"2021-12-03T16:00:00",
         "endOfPresale":"2021-11-27T16:00:00",
         "status":null,
-        "description":"murderdeathkillevent",
-        "ticketPrices":null,"new":false
+        "description":"rock'nrollevent",
+        "ticketPrices":null,
+        "new":false
     },
     {
         "id":4,"name":"Ruisrock3",
@@ -60,31 +62,37 @@ Content : In this example, the User can see three Events:
                 "id":1,"statusName":"upcoming",
                 "new":false
             },
-        "description":"murderdeathkillevent",
-        "ticketPrices":null,"new":false}]
+        "description":"rock'nrollevent",
+        "ticketPrices":null,
+        "new":false
+    }
+]
 ```
 
-## Show one event
+## Näytä yksi tapahtuma
 
-Show one event by event's id.
+Näytä yksi tapahtuma sen tunnisteen perusteella.
 
-Method : GET
+URL : /events/{id}
 
-Auth required : YES
+Metodi : GET
 
-Success Responses
-Condition : An event with the given id does not exist.
+Vaatiiko autorisoinnin : Kyllä
 
-Code : 200 OK
+Onnistuneen pyynnön vastaus
+Ehto : Annetulla tunnisteella ei ole tapahtumaa.
 
-Content : null
+Koodi : 200 OK
 
-OR
-Condition : An event with the given id does exist.
+Sisältö : null
 
-Code : 200 OK
+TAI
 
-Content :
+Ehto : Annetulla tunnisteella on tapahtuma.
+
+Koodi : 200 OK
+
+Sisältö :
 
 ```json
 {
@@ -100,7 +108,7 @@ Content :
         "statusName": "upcoming",
         "new": false
     },
-    "description": "murderdeathkillevent",
+    "description": "rock'nroll",
     "ticketPrices": null,
     "new": false
 }
