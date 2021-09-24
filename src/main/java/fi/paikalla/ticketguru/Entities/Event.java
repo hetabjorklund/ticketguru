@@ -1,22 +1,16 @@
 package fi.paikalla.ticketguru.Entities;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import java.time.*;
-import java.util.HashMap;
 import java.util.*;
 
 @Entity
@@ -35,11 +29,10 @@ public class Event extends AbstractPersistable<Long> {
 	@ManyToOne
 	private EventStatus status; // tapahtuman status
 	private String description; // tapahtuman kuvaus
-	private HashMap<TicketType, Double> ticketPrices; // tähän tilaisuuteen saatavilla olevat lipputyypit ja niiden hinnat
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="event")
-	@JsonIgnore //koska muuten hakukatastrofi jos ei käytä api/events/ endpointtia
+	@JsonIgnore // koska muuten hakukatastrofi jos ei käytä api/events/-endpointtia
 	private List<TicketType> ticketTypes;
-	//@OneToMany(cascade = CascadeType.ALL, mappedBy="event") //automaatti-api kestää ongelman, mutta normi pyörii ympyrää
+	//@OneToMany(cascade = CascadeType.ALL, mappedBy="event") // automaatti-api kestää ongelman, mutta normi pyörii ympyrää
 	//@JsonIgnore
 	//private List<Ticket> tickets; 
 	

@@ -3,7 +3,6 @@ package fi.paikalla.ticketguru.Entities;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -16,16 +15,14 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class Invoice {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long invoiceId;
-	private LocalDateTime timeOfSale; // aikaleima myyntitapahtumalle
-	
+	private LocalDateTime timeOfSale; // aikaleima myyntitapahtumalle	
 	@ManyToOne
 	//@JoinColumn(name = "TGUserId")
-	private TGUser TGuser; // laskun myyjä
-
-	
+	private TGUser TGuser; // laskun myyjä	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "invoice")
 	@JsonIgnore
 	private List<Ticket> tickets; // lista samalla laskulla olevista lipuista
@@ -82,8 +79,5 @@ public class Invoice {
 	public String toString() {
 		return "Invoice [invoiceId=" + invoiceId + ", timestamp=" + timeOfSale + "]";
 	}
-	
-	
-	
-	
+
 }

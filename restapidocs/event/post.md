@@ -1,71 +1,118 @@
 # Luo tapahtuma
 
-Luo tapahtuman mikäli tapahtumaa ei ole jo olemassa.
+Luo uuden tapahtuman mikäli samannimistä tapahtumaa ei ole jo olemassa.
 
-**URL** : `/api/events/`
+**URL** : `/events`
 
-**Method** : `POST`
+**Pyynnön tyyppi** : `POST`
 
-**Auth required** : YES
+**Autentikaatio vaadittu** : EI
 
-**Permissions required** : None
+**Reunaehdot**
 
-**Data constraints**
+Tapahtumalla on oltava nimi, eli name-attribuutti ei saa puuttua. Kunhan name-attribuutti on, muita ei ole pakko olla. Jos jokin attribuutti puuttuu, se oletetaan nulliksi. Jos pyynnössä lähetetään sellaisia attribuutteja joita oliolla ei ole, ne jätetään huomiotta. 
 
-Provide name of Account to be created.
-
-```json
-{
-    "name": "[unicode 64 chars max]"
-}
-```
-
-**Data example** All fields must be sent.
+**Esimerkkipyyntö** 
 
 ```json
 {
-    "name": "Build something project dot com"
+    "name": "Muumirock",
+    "address": "Muumimaailma",
+    "maxCapacity": 20,
+    "startTime": null,
+    "endTime": null,
+    "endOfPresale": null,
+    "status": null,
+    "description": "Pihoo!",
+    "ticketTypes": null
 }
 ```
 
 ## Onnistumisvastaus
 
-**Condition** : If everything is OK and an Account didn't exist for this User.
+**Ehto** : Tapahtuman luominen onnistui.
 
-**Code** : `201 CREATED`
+**HTTP-vastauskoodi** : `201 CREATED`
 
-**Content example**
+**Esimerkkivastaus** : Palautetaan luodun tapahtuman tiedot.
 
 ```json
 {
-    "id": 123,
-    "name": "Build something project dot com",
-    "url": "http://testserver/api/accounts/123/"
+    "id": 12,
+    "name": "Muumirock",
+    "address": "Muumimaailma",
+    "maxCapacity": 20,
+    "startTime": null,
+    "endTime": null,
+    "endOfPresale": null,
+    "status": null,
+    "description": "Pihoo!",
+    "new": false
 }
 ```
 
 ## Virhevastaus
 
-**Condition** : Jos samanniminen tapahtuma on jo olemassa.
+### 1
 
-**Code** : `303 SEE OTHER`
+**Ehto** : Samanniminen tapahtuma on jo olemassa.
 
-**Headers** : `Location: http://testserver/api/events/123/`
+**HTTP-vastauskoodi** : `409 CONFLICT`
 
-**Content** : `{}`
-
-### Or
-
-**Condition** : Kenttiä puuttuu tai niiden sisältämä tieto on väärän tyyppistä (esim. String kun pitäisi olla Boolean).
-
-**Code** : `400 BAD REQUEST`
-
-**Content example**
+**Esimerkkivastaus** : Palautetaan jo olemassaolevan samannimisen tapahtuman tiedot.
 
 ```json
 {
-    "name": [
-        "This field is required."
-    ]
+    "id": 12,
+    "name": "Muumirock",
+    "address": "Muumimaailma",
+    "maxCapacity": 20,
+    "startTime": null,
+    "endTime": null,
+    "endOfPresale": null,
+    "status": null,
+    "description": "Pihoo!",
+    "new": false
+}
+```
+
+### 2
+
+**Ehto** : Tapahtumalta puuttuu name-attribuutti.
+
+**HTTP-vastauskoodi** : `400 BAD REQUEST`
+
+**Esimerkkivastaus**
+
+```json
+{
+    "id": null,
+    "name": null,
+    "address": "Muumimaailma",
+    "maxCapacity": 20,
+    "startTime": null,
+    "endTime": null,
+    "endOfPresale": null,
+    "status": null,
+    "description": "Pihoo!",
+    "new": true
+}
+```
+
+### 3
+
+**Ehto** : Jokin attribuutti on väärän tyyppinen (esim. Boolean kun pitäisi olla String tai Array).
+
+**HTTP-vastauskoodi** : `400 BAD REQUEST`
+
+**Esimerkkivastaus**
+
+```json
+{
+    "timestamp": "2021-09-24T09:34:56.617+00:00",
+    "status": 400,
+    "error": "Bad Request",    
+    "message": "JSON parse error: Expected array or string.; nested exception is com.fasterxml.jackson.databind.exc.MismatchedInputException: Expected array or string.\n at [Source: (PushbackInputStream); line: 7, column: 21] (through reference chain: fi.paikalla.ticketguru.Entities.Event[\"endOfPresale\"])",
+    "path": "/events"
 }
 ```

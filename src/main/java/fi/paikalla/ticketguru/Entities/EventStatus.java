@@ -10,11 +10,9 @@ import lombok.NoArgsConstructor;
 @Data
 //@NoArgsConstructor
 //@AllArgsConstructor
-public class EventStatus extends AbstractPersistable<Long> {
+public class EventStatus extends AbstractPersistable<Long> {	
 	
-	
-	private String statusName; // tapahtuman tilanne: 'järjestetään', 'peruttu' tai 'siirretty'
-	
+	private String statusName; // tapahtuman tilanne: 'järjestetään', 'peruttu' tai 'siirretty'	
 	
 	public EventStatus() {
 		super(); 
