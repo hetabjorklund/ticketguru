@@ -24,7 +24,7 @@ Tapahtumalla on oltava nimi, eli name-attribuutti ei saa puuttua. Kunhan name-at
     "endOfPresale": null,
     "status": null,
     "description": "Pihoo!",
-    "tickets": null
+    "ticketTypes": null
 }
 ```
 
