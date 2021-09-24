@@ -5,17 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import fi.paikalla.ticketguru.Entities.Event;
 import fi.paikalla.ticketguru.Entities.Ticket;
 import fi.paikalla.ticketguru.Entities.TicketType;
@@ -72,16 +71,22 @@ public class EventController {
 		List<TicketType> types = typerepo.findByEventId(eventId); 
 		for (TicketType type : types) {
 			lista.addAll(type.getTickets()); 
+		}		
+		return lista; 		
+	}	
+
+	@PostMapping("/events") // lisää uuden tapahtuman
+	public ResponseEntity<Event> lisaaTapahtuma(@RequestBody Event event) {
+		
+		if (event.getName() == null) { // tarkistetaan tuleeko pyynnössä mukana tapahtuman nimi
+			return new ResponseEntity<>(event, HttpStatus.BAD_REQUEST); // jos uudella tapahtumalla ei ole nimeä, sitä ei luoda
 		}
-		
-		return lista; 
-		
-	}
-	
-	@PostMapping(path = "/events", consumes = "application/json", produces = "application/json") // lisää uuden Event-olion
-	@ResponseBody // consumes, produces ja @ResponseBody-annotaatio ei kai ole välttämättömiä, koska Spring olettaa ne automaattisesti jos luokka on annotoitu @RestController, mutta kirjoitin ne silti auki
-	public Event addEvent(@RequestBody Event event) {
-		return eventrepo.save(event);	
+		if (eventrepo.findByName(event.getName()) != null) { // tarkista onko samanniminen tapahtuma jo olemassa
+			return new ResponseEntity<>(eventrepo.findByName(event.getName()), HttpStatus.CONFLICT); // jos on, palauta olemassaoleva äläkä luo uutta samannimistä
+		}		
+		else {
+			return new ResponseEntity<>(eventrepo.save(event), HttpStatus.CREATED); // jos samannimistä tapahtumaa ei ole, luo uusi ja palauta se
+		}	 			
 	}
 	
 

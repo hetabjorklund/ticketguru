@@ -4,7 +4,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
 import fi.paikalla.ticketguru.Entities.Event;
 import fi.paikalla.ticketguru.Entities.EventStatus;
 import fi.paikalla.ticketguru.Entities.Invoice;
@@ -17,19 +16,19 @@ import fi.paikalla.ticketguru.Repositories.InvoiceRepository;
 import fi.paikalla.ticketguru.Repositories.TGUserRepository;
 import fi.paikalla.ticketguru.Repositories.TicketRepository;
 import fi.paikalla.ticketguru.Repositories.TicketTypeRepository;
-
 import java.time.LocalDateTime;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SpringBootApplication
 public class TicketguruApplication {
+	
 	private static final Logger log = LoggerFactory.getLogger(TicketguruApplication.class); 
 
 	public static void main(String[] args) {
 		SpringApplication.run(TicketguruApplication.class, args);
 	}
+	
 	@Bean
 	public CommandLineRunner demo(EventRepository eventRepo, EventStatusRepository statusRepo, 
 			TicketTypeRepository typerepo, TicketRepository ticketRepo, 
@@ -75,8 +74,7 @@ public class TicketguruApplication {
 			Ticket t2 = new Ticket(tt2, 30.00, invoice1);
 			
 			ticketRepo.save(t1); 
-			ticketRepo.save(t2); 
-			
+			ticketRepo.save(t2); 			
 			
 		}; 	
 	}
