@@ -4,15 +4,13 @@ Muokkaa olemassa olevaa tapahtumaa (event) annetun id:n perusteella tai id:n puu
 
 **URL** : `/api/events/:pk`
 
-**Method** : `PUT`
+**Pyynnön tyyppi** : `PUT`
 
-**Auth required** : YES
+**Autentikaatio vaadittu** : Ei
 
-**Permissions required** : None
+**Reunaehdot**
 
-**Data constraints**
-
-Toimita kaikki pyydetyt kentät.
+Toimita kaikki pyydetyt kentät. HUOM! Mikäli kaikkia kenttiä ei anneta, puuttuvat kentät saavat arvon null.
 
 ```json
 {
@@ -26,7 +24,7 @@ Toimita kaikki pyydetyt kentät.
 }
 ```
 
-**Data example** 
+**Esimerkkipyyntö** 
 
 ```json
 {
@@ -42,11 +40,11 @@ Toimita kaikki pyydetyt kentät.
 
 ## Onnistumisvastaus
 
-**Condition** : Mikäli kaikki kentät löytyvät pyynnöstä ja muokkaus onnistuu. HUOM! Mikäli kaikkia kenttiä ei anneta, puuttuvat kentät saavat arvon null.
+**Ehto** : Mikäli muokkaus onnistuu. HUOM! Mikäli kaikkia kenttiä ei anneta, puuttuvat kentät saavat arvon null.
 
-**Code** : `200 OK`
+**HTTP-vastauskoodi** : `200 OK`
 
-**Content example**
+**Esimerkkivastaus**
 
 ```json
 {
@@ -59,13 +57,13 @@ Toimita kaikki pyydetyt kentät.
     "description": "Artistikattauksessa mm. X ja Y"
 }
 ```
-### Or
+### tai
 
-**Condition** : Mikäli annettua id:tä ei löydy.
+**Ehto** : Mikäli annettua id:tä ei löydy tietokannasta ennestään.
 
-**Code** : `201 CREATED`
+**Http-vastauskoodi** : `201 CREATED`
 
-**Content example**
+**Esimerkkivastaus**
 
 ```json
 {
@@ -81,11 +79,11 @@ Toimita kaikki pyydetyt kentät.
 
 ## Virhevastaus
 
-**Condition** : Mikäli id:tä ei ole määritelty kutsussa.
+**Ehto** : Mikäli id:tä ei ole määritelty kutsussa.
 
-**Code** : `404 NOT FOUND`
+**HTTP-vastauskoodi** : `404 NOT FOUND`
 
-**Content** :
+**Esimerkkivastaus** :
 
 ```json
 {
