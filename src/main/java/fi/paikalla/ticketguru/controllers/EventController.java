@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import fi.paikalla.ticketguru.Entities.Event;
@@ -89,5 +90,30 @@ public class EventController {
 		}	 			
 	}
 	
-
+	@PutMapping(path = "/events/{id}") // muokkaa haluttua eventtiä id:n perusteella
+	public ResponseEntity<Event> updateEvent(@RequestBody Event newEvent, @PathVariable (value = "id") Long eventId) {
+		if (eventId == null) {
+			return new ResponseEntity<>(newEvent, HttpStatus.NOT_FOUND); //id puuttuu
+		}
+		else {
+			return eventrepo.findById(eventId) // annettu id löytyy, tiedot muokataan
+					.map(event -> {
+						event.setName(newEvent.getName());
+						event.setAddress(newEvent.getAddress());
+						event.setMaxCapacity(newEvent.getMaxCapacity());
+						event.setStartTime(newEvent.getStartTime());
+						event.setEndTime(newEvent.getEndTime());
+						event.setEndOfPresale(newEvent.getEndOfPresale());
+						event.setStatus(newEvent.getStatus());
+						event.setDescription(newEvent.getDescription());
+						eventrepo.save(event);
+						return new ResponseEntity<>(event, HttpStatus.OK);
+					})
+					.orElseGet(() -> { // annettua id:tä ei löydy, luodaan uusi tapahtuma
+						eventrepo.save(newEvent); 
+						return new ResponseEntity<>(newEvent, HttpStatus.CREATED);
+					});
+		}
+		
+	}
 }
