@@ -8,6 +8,8 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -86,21 +88,29 @@ public class EventController {
 	}
 	
 	@PutMapping(path = "/events/{id}") // muokkaa haluttua eventtiä id:n perusteella
-	public Event updateEvent(@RequestBody Event newEvent, @PathVariable (value = "id") Long eventId) {
-		return eventrepo.findById(eventId)
-				.map(event -> {
-					event.setName(newEvent.getName());
-					event.setAddress(newEvent.getAddress());
-					event.setMaxCapacity(newEvent.getMaxCapacity());
-					event.setStartTime(newEvent.getStartTime());
-					event.setEndTime(newEvent.getEndTime());
-					event.setEndOfPresale(newEvent.getEndOfPresale());
-					event.setStatus(newEvent.getStatus());
-					event.setDescription(newEvent.getDescription());
-					return eventrepo.save(event);
-				})
-				.orElseGet(() -> {
-					return eventrepo.save(newEvent);
-				});
+	public ResponseEntity<Event> updateEvent(@RequestBody Event newEvent, @PathVariable (value = "id") Long eventId) {
+		if (eventId == null) {
+			return new ResponseEntity<>(newEvent, HttpStatus.NOT_FOUND); //id puuttuu
+		}
+		else {
+			return eventrepo.findById(eventId) // annettu id löytyy, tiedot muokataan
+					.map(event -> {
+						event.setName(newEvent.getName());
+						event.setAddress(newEvent.getAddress());
+						event.setMaxCapacity(newEvent.getMaxCapacity());
+						event.setStartTime(newEvent.getStartTime());
+						event.setEndTime(newEvent.getEndTime());
+						event.setEndOfPresale(newEvent.getEndOfPresale());
+						event.setStatus(newEvent.getStatus());
+						event.setDescription(newEvent.getDescription());
+						eventrepo.save(event);
+						return new ResponseEntity<>(event, HttpStatus.OK);
+					})
+					.orElseGet(() -> { // annettua id:tä ei löydy, luodaan uusi tapahtuma
+						eventrepo.save(newEvent); 
+						return new ResponseEntity<>(newEvent, HttpStatus.CREATED);
+					});
+		}
+		
 	}
 }
