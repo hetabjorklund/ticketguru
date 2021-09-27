@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import fi.paikalla.ticketguru.Entities.Event;
+import fi.paikalla.ticketguru.Entities.Invoice;
 import fi.paikalla.ticketguru.Entities.Ticket;
 import fi.paikalla.ticketguru.Entities.TicketType;
 import fi.paikalla.ticketguru.Repositories.EventRepository;
+import fi.paikalla.ticketguru.Repositories.InvoiceRepository;
 import fi.paikalla.ticketguru.Repositories.TicketRepository;
 import fi.paikalla.ticketguru.Repositories.TicketTypeRepository;
 
@@ -33,6 +35,9 @@ public class EventController {
 	
 	@Autowired 
 	private TicketTypeRepository typerepo; 
+	
+	@Autowired
+	private InvoiceRepository invrepo; 
 	
 	@DeleteMapping("/events/{id}") //poista event perustuen ID:hen
 	public Map<String, Boolean> deleteEvent (@PathVariable(value = "id") Long eventId ) 
@@ -71,7 +76,7 @@ public class EventController {
 		List<TicketType> types = typerepo.findByEventId(eventId); 
 		for (TicketType type : types) {
 			lista.addAll(type.getTickets()); 
-		}		
+		}
 		return lista; 		
 	}	
 
@@ -88,6 +93,23 @@ public class EventController {
 			return new ResponseEntity<>(eventrepo.save(event), HttpStatus.CREATED); // jos samannimistä tapahtumaa ei ole, luo uusi ja palauta se
 		}	 			
 	}
+	
+	@GetMapping("/invoices")
+	public List<Invoice> haeLaskut() {
+		return (List<Invoice>) invrepo.findAll(); 
+	}
+	
+	@GetMapping("/invoices/{id}") 
+	public Optional<Invoice> getInvoiceByid(@PathVariable(value = "id") Long invId) {
+		return invrepo.findById(invId);	
+	}
+	
+	@GetMapping("/invoices/{id}/tickets") 
+	public List<Ticket> getTickByInvoiceid(@PathVariable(value = "id") Long invId) {
+		return (List<Ticket>) tickrepo.findByInvoiceId(invId); 
+	}
+	
+	
 	
 
 }
