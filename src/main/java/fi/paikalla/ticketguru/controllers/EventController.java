@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import fi.paikalla.ticketguru.Entities.Event;
 import fi.paikalla.ticketguru.Entities.Ticket;
@@ -52,8 +53,10 @@ public class EventController {
 	}
 	
 	@GetMapping("/events/{id}")
-	public Optional<Event> getEventById(@PathVariable("id") Long eventId){
-		return eventrepo.findById(eventId);
+	public @ResponseBody Event getEventById(@PathVariable("id") Long eventId) throws ResourceNotFoundException{
+		Event event = eventrepo.findById(eventId)
+				.orElseThrow(() -> new ResourceNotFoundException("Event with the given id does not exist"));
+		return event;
 	}
 	
 	@GetMapping("/tickets") //kaikki liput, vähän kustomointia vois tehdä, koska tulee aika paljon tietoa. 
