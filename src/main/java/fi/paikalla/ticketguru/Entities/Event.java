@@ -29,6 +29,7 @@ public class Event extends AbstractPersistable<Long> {
 	@ManyToOne
 	private EventStatus status; // tapahtuman status
 	private String description; // tapahtuman kuvaus
+	//private HashMap<TicketType, Double> ticketPrices; // tähän tilaisuuteen saatavilla olevat lipputyypit ja niiden hinnat
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="event")
 	@JsonIgnore // koska muuten hakukatastrofi jos ei käytä api/events/-endpointtia
 	private List<TicketType> ticketTypes;
@@ -47,7 +48,7 @@ public class Event extends AbstractPersistable<Long> {
 		this.endOfPresale = endOfPresale;
 		this.status = status;
 		this.description = description;
-		this.ticketTypes = new ArrayList<TicketType>(); 
+		//this.ticketTypes = new ArrayList<TicketType>(); 
 		//this.tickets = new ArrayList<Ticket>(); 
 	} 
 	
@@ -61,7 +62,7 @@ public class Event extends AbstractPersistable<Long> {
 		this.endTime = endTime;
 		this.endOfPresale = endOfPresale;
 		this.description = description;
-		this.ticketTypes = new ArrayList<TicketType>();
+		//this.ticketTypes = new ArrayList<TicketType>();
 		//this.tickets = new ArrayList<Ticket>();
 	} 
 }
