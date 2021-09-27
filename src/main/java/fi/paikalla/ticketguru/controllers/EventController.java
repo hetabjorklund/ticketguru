@@ -53,7 +53,7 @@ public class EventController {
 	}
 	
 	@GetMapping("/events/{id}")
-	public @ResponseBody Event getEventById(@PathVariable("id") Long eventId) throws ResourceNotFoundException{
+	public @ResponseBody Event getEventById(@PathVariable("id") Long eventId){
 		Event event = eventrepo.findById(eventId)
 				.orElseThrow(() -> new ResourceNotFoundException("Event with the given id does not exist"));
 		return event;
