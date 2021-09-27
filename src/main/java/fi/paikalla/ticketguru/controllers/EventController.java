@@ -53,10 +53,13 @@ public class EventController {
 	}
 	
 	@GetMapping("/events/{id}")
-	public @ResponseBody Event getEventById(@PathVariable("id") Long eventId){
-		Event event = eventrepo.findById(eventId)
-				.orElseThrow(() -> new ResourceNotFoundException("Event with the given id does not exist"));
-		return event;
+	public @ResponseBody ResponseEntity<Optional<Event>> getEventById(@PathVariable("id") Long eventId){
+		Optional<Event> event = eventrepo.findById(eventId);
+		if(event.isEmpty()) {
+			return new ResponseEntity<>(event, HttpStatus.NOT_FOUND);
+		}else {
+			return new ResponseEntity<>(event, HttpStatus.OK);
+		}
 	}
 	
 	@GetMapping("/tickets") //kaikki liput, vähän kustomointia vois tehdä, koska tulee aika paljon tietoa. 
