@@ -1,7 +1,9 @@
 package fi.paikalla.ticketguru.controllers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,14 +48,17 @@ public class TicketController {
 	}
 	
 	@GetMapping("tickets/{id}/used")
-	public @ResponseBody ResponseEntity<Boolean> getTicketUsed(@PathVariable("id") Long ticketId){
+	public @ResponseBody ResponseEntity<Map<String, Boolean>> getTicketUsed(@PathVariable("id") Long ticketId){
 		Optional<Ticket> ticket = ticketRepo.findById(ticketId);
+		Map<String, Boolean> responseMap = new HashMap<>();
 		
 		if(ticket.isEmpty()) {
-			throw new ResourceNotFoundException("Ticket with the given id was not found");
+			responseMap.put("ticketIdFound", false);
+			return new ResponseEntity<>(responseMap, HttpStatus.NOT_FOUND);
 		}
 		
-		return new ResponseEntity<>(ticket.get().getUsed(), HttpStatus.OK);
+		responseMap.put("used", ticket.get().getUsed());
+		return new ResponseEntity<>(responseMap, HttpStatus.OK);
 	}
 	
 	@GetMapping("/tickets/event/{eventid}")
@@ -85,7 +90,8 @@ public class TicketController {
 			return new ResponseEntity<>(ticket, HttpStatus.CREATED);
 		}
 		
-		
 		return new ResponseEntity<>(ticket, HttpStatus.BAD_REQUEST);
 	}
+	
+	
 }
