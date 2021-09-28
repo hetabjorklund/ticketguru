@@ -36,6 +36,17 @@ public class TicketController {
 		}
 	}
 	
+	@GetMapping("tickets/{id}/used")
+	public @ResponseBody ResponseEntity<Boolean> getTicketUsed(@PathVariable("id") Long ticketId){
+		Optional<Ticket> ticket = ticketRepo.findById(ticketId);
+		
+		if(ticket.isEmpty()) {
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+		
+		return new ResponseEntity<>(ticket.get().getUsed(), HttpStatus.OK);
+	}
+	
 	@GetMapping("/tickets/event/{eventid}")
 	public @ResponseBody List<Ticket> getTicketsByEvent(@PathVariable("eventid") Long eventId){
 		List<Ticket> tickets = new ArrayList<>();
