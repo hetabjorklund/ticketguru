@@ -82,7 +82,7 @@ Vaatiiko autorisoinnin : Kyllä
 Onnistuneen pyynnön vastaus
 Ehto : Annetulla tunnisteella ei ole tapahtumaa.
 
-Koodi : 200 OK
+Koodi : 404 NOT FOUND
 
 Sisältö : null
 
