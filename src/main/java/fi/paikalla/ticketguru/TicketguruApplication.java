@@ -70,8 +70,8 @@ public class TicketguruApplication {
 			
 			invRepo.save(invoice1); 
 			
-			Ticket t1 = new Ticket(tt1, 20.9, invoice1);
-			Ticket t2 = new Ticket(tt2, 30.00, invoice1);
+			Ticket t1 = new Ticket(typerepo.findByTypeAndEvent("aikuinen", eventRepo.findByName("Ruisrock")), 20.9, invoice1);
+			Ticket t2 = new Ticket(typerepo.findByTypeAndEvent("eläkeläinen", eventRepo.findByName("Ruisrock")), 30.00, invoice1);
 			
 			ticketRepo.save(t1); 
 			ticketRepo.save(t2); 			

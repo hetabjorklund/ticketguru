@@ -81,16 +81,17 @@ Toimita kaikki pyydetyt kentät. HUOM! Mikäli kaikkia kenttiä ei anneta, puutt
 
 **Ehto** : Mikäli id:tä ei ole määritelty kutsussa.
 
-**HTTP-vastauskoodi** : `404 NOT FOUND`
+**HTTP-vastauskoodi** : `405 METHOD NOT ALLOWED`
 
 **Esimerkkivastaus** :
 
 ```json
 {
-    "timestamp": "2021-09-24T12:20:41.990+00:00",
-    "status": 404,
-    "error": "Not Found",
-    "message": "No message available",
-    "path": "/api/events/"
+    "timestamp": "2021-09-28T08:25:48.200+00:00",
+    "status": 405,
+    "error": "Method Not Allowed",
+    "trace": "org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'PUT' not supported...",
+    "message": "Request method 'PUT' not supported",
+    "path": "/events/"
 }
 ```
