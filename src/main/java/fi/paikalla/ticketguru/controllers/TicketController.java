@@ -94,7 +94,7 @@ public class TicketController {
 			}
 			usedTicket.setUsed(true);
 			ticketRepo.save(usedTicket);
-			return new ResponseEntity<>(ticket, HttpStatus.CREATED);
+			return new ResponseEntity<>(ticket, HttpStatus.OK);
 		}
 		
 		return new ResponseEntity<>(ticket, HttpStatus.NOT_FOUND);
@@ -118,7 +118,7 @@ public class TicketController {
 			newTicket.setInvoice(invoice.get());
 			ticketRepo.save(newTicket);
 			
-			return new ResponseEntity<>(ticketDto, HttpStatus.CREATED);
+			return new ResponseEntity<>(ticketDto, HttpStatus.OK);
 		}
 		
 		return new ResponseEntity<>(ticketDto, HttpStatus.BAD_REQUEST);		
