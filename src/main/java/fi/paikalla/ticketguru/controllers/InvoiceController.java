@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import fi.paikalla.ticketguru.Repositories.InvoiceRepository;
-import fi.paikalla.ticketguru.Entities.Invoice;
+import fi.paikalla.ticketguru.Entities.*;
 
 @RestController
 public class InvoiceController {
@@ -34,7 +34,24 @@ public class InvoiceController {
 		else {
 			return new ResponseEntity<>(invoice, HttpStatus.OK);
 		}
+	}
+	
+	@GetMapping("/invoices/{id}/tickets") // hae kaikki tietyllä laskulla myydyt liput
+	public ResponseEntity<List<Ticket>> getTicketsOfInvoiceById(@PathVariable Long id) throws Exception {
 		
+		try {
+			Optional<Invoice> invoiceOption = this.invoicerepo.findById(id);
+			Invoice invoice = invoiceOption.get();
+			
+			if (invoiceOption.isEmpty()) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+			else {
+				return new ResponseEntity<>(invoice.getTickets(), HttpStatus.OK);		
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);			
+		}
 	}
 	
 	
