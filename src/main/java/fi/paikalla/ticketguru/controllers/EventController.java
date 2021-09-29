@@ -72,10 +72,7 @@ public class EventController {
 		return (List<Ticket>) tickrepo.findAll(); 
 	}
 	
-	@GetMapping("/types/{id}") //lipputyypit per eventId
-	public List<TicketType> getByEvent(@PathVariable(value = "id") Long eventId) {
-		return (List<TicketType>) typerepo.findByEventId(eventId); 
-	}
+	
 	
 	@GetMapping("/events/{id}/tickets") //palauttaa eventId perusteella listan lippuja koko viittauksineen. 
 	public List<Ticket> getTicketsByEvent(@PathVariable(value = "id") Long eventId) {
