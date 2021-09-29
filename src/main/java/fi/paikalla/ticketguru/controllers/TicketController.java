@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -60,18 +61,6 @@ public class TicketController {
 		
 		responseMap.put("used", ticket.get().getUsed());
 		return new ResponseEntity<>(responseMap, HttpStatus.OK);
-	}
-	
-	@GetMapping("/tickets/event/{eventid}")
-	public @ResponseBody List<Ticket> getTicketsByEvent(@PathVariable("eventid") Long eventId){
-		List<Ticket> tickets = new ArrayList<>();
-		List<TicketType> ticketTypes = typeRepo.findByEventId(eventId);
-		
-		for(TicketType type: ticketTypes) {
-			tickets.addAll(type.getTickets());
-		}
-		
-		return tickets;
 	}
 	
 	@PostMapping("/tickets")
@@ -133,6 +122,18 @@ public class TicketController {
 		}
 		
 		return new ResponseEntity<>(ticketDto, HttpStatus.BAD_REQUEST);		
+	}
+	
+	@DeleteMapping("/tickets/{id}")
+	public @ResponseBody ResponseEntity<Optional<Ticket>> deleteTicket(@PathVariable("id") Long ticketId){
+		Optional<Ticket> ticket = ticketRepo.findById(ticketId);
+		
+		if(!ticket.isEmpty()) {
+			ticketRepo.delete(ticket.get());
+			return new ResponseEntity<>(ticket, HttpStatus.NO_CONTENT);
+		}
+		
+		return new ResponseEntity<>(ticket, HttpStatus.NOT_FOUND);
 	}
 	
 }
