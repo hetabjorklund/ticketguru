@@ -1,6 +1,6 @@
 # Luo tapahtuma
 
-Luo uuden tapahtuman mikäli samannimistä tapahtumaa ei ole jo olemassa.
+Luo uuden tapahtuman mikäli tapahtumaa ei ole jo olemassa.
 
 **URL** : `/events`
 
@@ -19,9 +19,9 @@ Tapahtumalla on oltava nimi, eli name-attribuutti ei saa puuttua. Kunhan name-at
     "name": "Muumirock",
     "address": "Muumimaailma",
     "maxCapacity": 20,
-    "startTime": null,
-    "endTime": null,
-    "endOfPresale": null,
+    "startTime": "2021-12-31T21:00:00",
+    "endTime": "2022-01-01T12:00:00",
+    "endOfPresale": "2021-12-30T00:00:00",
     "status": null,
     "description": "Pihoo!",
     "ticketTypes": null
@@ -42,9 +42,9 @@ Tapahtumalla on oltava nimi, eli name-attribuutti ei saa puuttua. Kunhan name-at
     "name": "Muumirock",
     "address": "Muumimaailma",
     "maxCapacity": 20,
-    "startTime": null,
-    "endTime": null,
-    "endOfPresale": null,
+    "startTime": "2021-12-31T21:00:00",
+    "endTime": "2022-01-01T12:00:00",
+    "endOfPresale": "2021-12-30T00:00:00",
     "status": null,
     "description": "Pihoo!",
     "new": false
@@ -55,7 +55,7 @@ Tapahtumalla on oltava nimi, eli name-attribuutti ei saa puuttua. Kunhan name-at
 
 ### 1
 
-**Ehto** : Samanniminen tapahtuma on jo olemassa.
+**Ehto** : Tapahtuma on jo olemassa (eli on jo tapahtuma jolla on sama nimi).
 
 **HTTP-vastauskoodi** : `409 CONFLICT`
 
@@ -67,9 +67,9 @@ Tapahtumalla on oltava nimi, eli name-attribuutti ei saa puuttua. Kunhan name-at
     "name": "Muumirock",
     "address": "Muumimaailma",
     "maxCapacity": 20,
-    "startTime": null,
-    "endTime": null,
-    "endOfPresale": null,
+    "startTime": "2021-12-31T21:00:00",
+    "endTime": "2022-01-01T12:00:00",
+    "endOfPresale": "2021-12-30T00:00:00",
     "status": null,
     "description": "Pihoo!",
     "new": false
@@ -90,9 +90,9 @@ Tapahtumalla on oltava nimi, eli name-attribuutti ei saa puuttua. Kunhan name-at
     "name": null,
     "address": "Muumimaailma",
     "maxCapacity": 20,
-    "startTime": null,
-    "endTime": null,
-    "endOfPresale": null,
+    "startTime": "2021-12-31T21:00:00",
+    "endTime": "2022-01-01T12:00:00",
+    "endOfPresale": "2021-12-30T00:00:00",
     "status": null,
     "description": "Pihoo!",
     "new": true
@@ -111,7 +111,8 @@ Tapahtumalla on oltava nimi, eli name-attribuutti ei saa puuttua. Kunhan name-at
 {
     "timestamp": "2021-09-24T09:34:56.617+00:00",
     "status": 400,
-    "error": "Bad Request",    
+    "error": "Bad Request",
+    "trace": [stacktrace],    
     "message": "JSON parse error: Expected array or string.; nested exception is com.fasterxml.jackson.databind.exc.MismatchedInputException: Expected array or string.\n at [Source: (PushbackInputStream); line: 7, column: 21] (through reference chain: fi.paikalla.ticketguru.Entities.Event[\"endOfPresale\"])",
     "path": "/events"
 }
