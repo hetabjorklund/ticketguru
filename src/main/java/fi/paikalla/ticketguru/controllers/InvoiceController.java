@@ -26,13 +26,13 @@ public class InvoiceController {
 	
 	@GetMapping("invoices/{id}") // hae tietty lasku
 	public ResponseEntity<Optional<Invoice>> getInvoiceById(@PathVariable Long id) {
-		Optional<Invoice> invoice = this.invoicerepo.findById(id);
+		Optional<Invoice> invoice = this.invoicerepo.findById(id); // haetaan annetulla id:llä lasku
 		
-		if (invoice.isEmpty()) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		if (invoice.isEmpty()) { // tarkistetaan onko haetun id:n lasku olemassa vai null
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // jos null, palautetaan 404
 		}
 		else {
-			return new ResponseEntity<>(invoice, HttpStatus.OK);
+			return new ResponseEntity<>(invoice, HttpStatus.OK); // jos haetun id:n lasku on olemassa, palautetaan se ja 200
 		}
 	}
 	
@@ -40,17 +40,17 @@ public class InvoiceController {
 	public ResponseEntity<List<Ticket>> getTicketsOfInvoiceById(@PathVariable Long id) throws Exception {
 		
 		try {
-			Optional<Invoice> invoiceOption = this.invoicerepo.findById(id);
-			Invoice invoice = invoiceOption.get();
+			Optional<Invoice> invoiceOption = this.invoicerepo.findById(id); // haetaan annetulla id:llä lasku
+			Invoice invoice = invoiceOption.get(); // haetaan Optional-oliosta varsinainen Invoice-olio
 			
-			if (invoiceOption.isEmpty()) {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			if (invoiceOption.isEmpty()) { // tarkistetaan onko haetun id:n lasku olemassa vai null
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND); // jos null, palautetaan 404
 			}
 			else {
-				return new ResponseEntity<>(invoice.getTickets(), HttpStatus.OK);		
+				return new ResponseEntity<>(invoice.getTickets(), HttpStatus.OK); // jos haetun id:n lasku on olemassa, palautetaan sen liput listana ja 200	
 			}
 		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);			
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // jos tapahtuu jokin virhe, laskua ei ole löytynyt ja palautetaan 404			
 		}
 	}
 	
