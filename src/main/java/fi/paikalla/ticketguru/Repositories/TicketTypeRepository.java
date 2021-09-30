@@ -12,6 +12,5 @@ public interface TicketTypeRepository extends CrudRepository<TicketType, Long> {
 	
 	List<TicketType> findByEventId(long id); 
 	TicketType findByTypeAndEvent(String type, Event event);
-	Optional<List<TicketType>> findByEventId1(long id); 
 	
 }

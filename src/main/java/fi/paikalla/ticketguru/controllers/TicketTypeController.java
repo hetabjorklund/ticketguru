@@ -29,13 +29,16 @@ public class TicketTypeController {
 	@Autowired
 	private EventRepository eventrepo; 
 	
-	//@GetMapping("/")
 	
 	@GetMapping("/events/{id}/types") //lipputyypit per eventId
-	public ResponseEntity<Optional<List<TicketType>>> getByEvent(@PathVariable(value = "id") Long eventId) {
-		Optional<List<TicketType>> list = typerepo.findByEventId1(eventId); 
-		if (list.isEmpty()) {
+	public ResponseEntity<List<TicketType>> getByEvent(@PathVariable(value = "id") Long eventId) {
+		Optional<Event> ev = eventrepo.findById(eventId); 
+		List<TicketType> list = typerepo.findByEventId(eventId);
+		if (ev.isEmpty()) {
 			return new ResponseEntity<>(list, HttpStatus.NOT_FOUND); 
+		}
+		if (list.isEmpty()) {
+			return new ResponseEntity<>(list, HttpStatus.OK); 
 		} else {
 			return new ResponseEntity<>(list, HttpStatus.OK);
 		}
@@ -45,7 +48,7 @@ public class TicketTypeController {
 	public ResponseEntity<List<TicketType>> getAllTypes() {
 		List<TicketType> list = (List<TicketType>) typerepo.findAll();  
 		if (list.isEmpty()) {
-			return new ResponseEntity<>(list, HttpStatus.NOT_FOUND); 
+			return new ResponseEntity<>(list, HttpStatus.OK); 
 		} else {
 			return new ResponseEntity<>(list, HttpStatus.OK);
 		}
@@ -78,7 +81,7 @@ public class TicketTypeController {
 			setting.setType(type.getType()); 
 			setting.setPrice(type.getPrice()); 
 			typerepo.save(setting); 
-			return new ResponseEntity<>(type, HttpStatus.CREATED);
+			return new ResponseEntity<>(type, HttpStatus.OK);
 		}
 		return new ResponseEntity<>(type, HttpStatus.BAD_REQUEST);	
 	}
