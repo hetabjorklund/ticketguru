@@ -1,8 +1,6 @@
 package fi.paikalla.ticketguru.controllers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -59,7 +57,7 @@ public class TicketController {
 			return new ResponseEntity<>(responseMap, HttpStatus.NOT_FOUND);
 		}
 		
-		responseMap.put("used", ticket.get().getUsed());
+		responseMap.put("used", ticket.get().isUsed());
 		return new ResponseEntity<>(responseMap, HttpStatus.OK);
 	}
 	
@@ -89,7 +87,7 @@ public class TicketController {
 		
 		if(!ticket.isEmpty()) {
 			Ticket usedTicket = ticket.get();
-			if(usedTicket.getUsed()) {
+			if(usedTicket.isUsed()) {
 				return new ResponseEntity<>(ticket, HttpStatus.BAD_REQUEST);
 			}
 			usedTicket.setUsed(true);
@@ -135,5 +133,4 @@ public class TicketController {
 		
 		return new ResponseEntity<>(ticket, HttpStatus.NOT_FOUND);
 	}
-	
 }

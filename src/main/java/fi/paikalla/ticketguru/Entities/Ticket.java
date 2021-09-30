@@ -50,13 +50,5 @@ public class Ticket extends AbstractPersistable<Long> {
 		this.ticketType = ticketType;
 		this.invoice = invoice; 
 	}*/
-	
-	public void setUsed(boolean used) {
-		this.used = used;
-	}
-	
-	public boolean getUsed() {
-		return this.used;
-	}
 		
 }
