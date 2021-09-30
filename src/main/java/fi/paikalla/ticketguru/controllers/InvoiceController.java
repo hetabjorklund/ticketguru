@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import fi.paikalla.ticketguru.Repositories.InvoiceRepository;
@@ -19,6 +22,7 @@ public class InvoiceController {
 	@Autowired
 	private InvoiceRepository invoicerepo;
 	
+	// GET	
 	@GetMapping("/invoices") // hae kaikki laskut
 	public List<Invoice> getAllInvoices() {
 		return (List<Invoice>) this.invoicerepo.findAll();		
@@ -52,16 +56,16 @@ public class InvoiceController {
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // jos tapahtuu jokin virhe, laskua ei ole löytynyt ja palautetaan 404			
 		}
-	}
-	
-	
-	
-	
+	}	
 	
 	// POST
-	
-	
-	
+	@PostMapping("/invoices")
+	public ResponseEntity<Invoice> addInvoice(@RequestBody Invoice invoice) {
+		
+		// pitäisikö tässä tarkistaa, onko lippulistassa samoja lippuja kuin jonkun muun invoicen listassa, koska samaa lippua ei pidä myydä moneen kertaan?		
+		
+		return new ResponseEntity<>(invoicerepo.save(invoice), HttpStatus.CREATED);
+	}		
 	
 	// PUT
 	

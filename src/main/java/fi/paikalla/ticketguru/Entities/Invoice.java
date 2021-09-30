@@ -19,12 +19,12 @@ public class Invoice {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long invoiceId;
-	private LocalDateTime timeOfSale; // aikaleima myyntitapahtumalle	
+	private LocalDateTime timestamp; // aikaleima myyntitapahtumalle	
 	@ManyToOne
 	//@JoinColumn(name = "TGUserId")
-	private TGUser TGuser; // laskun myyjä	
+	private TGUser tguser; // laskun myyjä	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "invoice")
-	@JsonIgnore
+	//@JsonIgnore
 	private List<Ticket> tickets; // lista samalla laskulla olevista lipuista
 
 	public Invoice() {}
@@ -32,19 +32,19 @@ public class Invoice {
 	public Invoice(Long invoiceId, LocalDateTime timestamp, TGUser TGUser, List<Ticket> tickets) {
 		super();
 		this.invoiceId = invoiceId;
-		this.timeOfSale = timestamp;
-		this.TGuser = TGUser;
+		this.timestamp = timestamp;
+		this.tguser = TGUser;
 		this.tickets = tickets;
 	}
 	
 	public Invoice(TGUser TGUser) {
-		this.TGuser = TGUser; 
-		this.timeOfSale = LocalDateTime.now();
+		this.tguser = TGUser; 
+		this.timestamp = LocalDateTime.now();
 		this.tickets = new ArrayList<Ticket>(); 
 	}
 
 	public Long getInvoiceId() {
-		return invoiceId;
+		return this.invoiceId;
 	}
 
 	public void setInvoiceId(Long invoiceId) {
@@ -52,23 +52,23 @@ public class Invoice {
 	}
 
 	public LocalDateTime getTimestamp() {
-		return timeOfSale;
+		return this.timestamp;
 	}
 
 	public void setTimestamp(LocalDateTime timestamp) {
-		this.timeOfSale = timestamp;
+		this.timestamp = timestamp;
 	}
 
 	public TGUser getTGuser() {
-		return TGuser;
+		return this.tguser;
 	}
 
-	public void setTGuser(TGUser tGuser) {
-		TGuser = tGuser;
+	public void setTGuser(TGUser TGUser) {
+		this.tguser = TGUser;
 	}
 
 	public List<Ticket> getTickets() {
-		return tickets;
+		return this.tickets;
 	}
 
 	public void setTickets(List<Ticket> tickets) {
@@ -77,7 +77,7 @@ public class Invoice {
 
 	@Override
 	public String toString() {
-		return "Invoice [invoiceId=" + invoiceId + ", timestamp=" + timeOfSale + "]";
+		return "Invoice [invoiceId=" + this.invoiceId + ", timestamp=" + this.timestamp + "]";
 	}
 
 }

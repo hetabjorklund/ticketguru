@@ -25,11 +25,11 @@ public class TGUser extends AbstractPersistable<Long> {
 	@JsonIgnore
 	private String lastName; 
 	private String userName;
-	@JsonIgnore //ei lähetetä kuitenkaan salasanaa tai auth tasoa clientille. 
+	@JsonIgnore // ei lähetetä kuitenkaan salasanaa tai auth tasoa clientille
 	private String password; 
 	@JsonIgnore
 	private String auth; 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "TGuser")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "tguser")
 	@JsonIgnore
 	private List<Invoice> invoices; 
 
