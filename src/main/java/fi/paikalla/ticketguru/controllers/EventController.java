@@ -85,12 +85,14 @@ public class EventController {
 	}	
 
 	@PostMapping("/events") // lisää uuden tapahtuman
-	public ResponseEntity<Event> lisaaTapahtuma(@RequestBody Event event) {
+	public ResponseEntity<Event> addEvent(@RequestBody Event event) {
 		
 		if (event.getName() == null) { // tarkistetaan tuleeko pyynnössä mukana tapahtuman nimi
 			return new ResponseEntity<>(event, HttpStatus.BAD_REQUEST); // jos uudella tapahtumalla ei ole nimeä, sitä ei luoda
 		}
 		if (eventrepo.findByName(event.getName()) != null) { // tarkista onko samanniminen tapahtuma jo olemassa
+			// jotta tapahtumaa pidetään samana, sekä sen nimi että aloitusaika pitäisi olla sama, ei pelkkä nimi - pitää vielä lisätä!
+			// yritys: && eventrepo.findByName(event.getName()).getStartTime() == event.getStartTime() mutta aiheuttaa 500:n
 			return new ResponseEntity<>(eventrepo.findByName(event.getName()), HttpStatus.CONFLICT); // jos on, palauta olemassaoleva äläkä luo uutta samannimistä
 		}		
 		else {
