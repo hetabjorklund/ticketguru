@@ -6,11 +6,11 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import fi.paikalla.ticketguru.Repositories.InvoiceRepository;
@@ -60,11 +60,9 @@ public class InvoiceController {
 	
 	// POST
 	@PostMapping("/invoices")
-	public ResponseEntity<Invoice> addInvoice(@RequestBody Invoice invoice) {
-		
-		// pitäisikö tässä tarkistaa, onko lippulistassa samoja lippuja kuin jonkun muun invoicen listassa, koska samaa lippua ei pidä myydä moneen kertaan?		
-		
-		return new ResponseEntity<>(invoicerepo.save(invoice), HttpStatus.CREATED);
+	public ResponseEntity<Invoice> addInvoice(@RequestBody Invoice invoice) { // luodaan uusi lasku		
+		// pitäisikö tässä tarkistaa, onko lippulistassa samoja lippuja kuin jonkun muun invoicen listassa, koska samaa lippua ei pidä myydä moneen kertaan?				
+		return new ResponseEntity<>(invoicerepo.save(invoice), HttpStatus.CREATED); // palautetaan luotu lasku ja 201
 	}		
 	
 	// PUT
@@ -73,5 +71,22 @@ public class InvoiceController {
 	
 	
 	// DELETE
+	@DeleteMapping("/invoices/{id}")
+	public ResponseEntity<Invoice> deleteInvoiceById(@PathVariable Long id) throws Exception { // poistetaan haluttu lasku
+		
+		try {
+			if (this.invoicerepo.findById(id) != null) { // jos haetulla id:llä löytyy lasku			
+				Invoice invoice = this.invoicerepo.findById(id).get(); // haetaan lasku talteen palautusta varten
+				this.invoicerepo.deleteById(id); // poistetaan haettu lasku reposta
+				return new ResponseEntity<>(invoice, HttpStatus.OK); // palautetaan poistettu lasku ja 200					
+			}			
+			else { // eli jos haetulla id:llä ei löydy laskua
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND); // palautetaan 404
+			}
+		} catch (Exception e) { 
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // jos tapahtuu jokin virhe, palautetaan 404			
+		}		
+		
+	}
 
 }

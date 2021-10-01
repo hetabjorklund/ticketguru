@@ -24,7 +24,7 @@ public class Invoice {
 	//@JoinColumn(name = "TGUserId")
 	private TGUser tguser; // laskun myyjä	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "invoice")
-	//@JsonIgnore
+	@JsonIgnore
 	private List<Ticket> tickets; // lista samalla laskulla olevista lipuista
 
 	public Invoice() {}
