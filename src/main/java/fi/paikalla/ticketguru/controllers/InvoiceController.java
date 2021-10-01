@@ -54,7 +54,7 @@ public class InvoiceController {
 				return new ResponseEntity<>(invoice.getTickets(), HttpStatus.OK); // jos haetun id:n lasku on olemassa, palautetaan sen liput listana ja 200	
 			}
 		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // jos tapahtuu jokin virhe, laskua ei ole löytynyt ja palautetaan 404			
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // jos tapahtuu jokin virhe, etsittyä laskua ei ole löytynyt ja palautetaan 404			
 		}
 	}	
 	
@@ -71,6 +71,26 @@ public class InvoiceController {
 	
 	
 	// DELETE
+	@DeleteMapping("/invoices")
+	public ResponseEntity<Invoice> deleteAll() { // poistetaan kaikki laskut
+		
+		if (this.invoicerepo.count() == 0) { // tarkistetaan onko invoicerepossa ylipäätään mitään poistettavaa
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT); // jos ei ole, palautetaan 204
+		}
+		
+		else { // jos invoicerepossa on laskuja
+			this.invoicerepo.deleteAll(); // tyhjennetään koko invoicerepo
+			
+			if (this.invoicerepo.count() == 0) { // jos tyhjennys onnistui
+				return new ResponseEntity<>(HttpStatus.OK);	// palautetaan 200		
+			}
+			else {
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // jos tyhjennys ei onnistunut, tapahtui jokin virhe ja palautetaan 500
+			}			
+		}
+				
+	}	
+	
 	@DeleteMapping("/invoices/{id}")
 	public ResponseEntity<Invoice> deleteInvoiceById(@PathVariable Long id) throws Exception { // poistetaan haluttu lasku
 		
@@ -84,7 +104,7 @@ public class InvoiceController {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND); // palautetaan 404
 			}
 		} catch (Exception e) { 
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // jos tapahtuu jokin virhe, palautetaan 404			
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // jos tapahtuu jokin virhe, poistaminen ei ole onnistunut ja palautetaan 500			
 		}		
 		
 	}
