@@ -1,18 +1,18 @@
 package fi.paikalla.ticketguru.controllers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,7 +36,7 @@ public class TicketController {
 	@Autowired
 	private InvoiceRepository invoiceRepo;
 	
-	@GetMapping("tickets/{id}")
+	@GetMapping("/tickets/{id}")
 	public @ResponseBody ResponseEntity<Optional<Ticket>> getTicketById(@PathVariable("id") Long ticketId){
 		Optional<Ticket> ticket = ticketRepo.findById(ticketId);
 		
@@ -47,7 +47,7 @@ public class TicketController {
 		}
 	}
 	
-	@GetMapping("tickets/{id}/used")
+	@GetMapping("/tickets/{id}/used")
 	public @ResponseBody ResponseEntity<Map<String, Boolean>> getTicketUsed(@PathVariable("id") Long ticketId){
 		Optional<Ticket> ticket = ticketRepo.findById(ticketId);
 		Map<String, Boolean> responseMap = new HashMap<>();
@@ -57,23 +57,11 @@ public class TicketController {
 			return new ResponseEntity<>(responseMap, HttpStatus.NOT_FOUND);
 		}
 		
-		responseMap.put("used", ticket.get().getUsed());
+		responseMap.put("used", ticket.get().isUsed());
 		return new ResponseEntity<>(responseMap, HttpStatus.OK);
 	}
 	
-	@GetMapping("/tickets/event/{eventid}")
-	public @ResponseBody List<Ticket> getTicketsByEvent(@PathVariable("eventid") Long eventId){
-		List<Ticket> tickets = new ArrayList<>();
-		List<TicketType> ticketTypes = typeRepo.findByEventId(eventId);
-		
-		for(TicketType type: ticketTypes) {
-			tickets.addAll(type.getTickets());
-		}
-		
-		return tickets;
-	}
-	
-	@PostMapping("tickets/addticket")
+	@PostMapping("/tickets")
 	public @ResponseBody ResponseEntity<TicketDto> createTicket(@RequestBody TicketDto ticket){
 		Optional<TicketType> ticketType = typeRepo.findById(ticket.getTicketType());
 		Optional<Invoice> invoice = invoiceRepo.findById(ticket.getInvoice());
@@ -93,5 +81,56 @@ public class TicketController {
 		return new ResponseEntity<>(ticket, HttpStatus.BAD_REQUEST);
 	}
 	
+	@PatchMapping("/tickets/{id}")
+	public @ResponseBody ResponseEntity<Optional<Ticket>> markTicketAsUsed(@PathVariable("id") Long ticketId){
+		Optional<Ticket> ticket = ticketRepo.findById(ticketId);
+		
+		if(!ticket.isEmpty()) {
+			Ticket usedTicket = ticket.get();
+			if(usedTicket.isUsed()) {
+				return new ResponseEntity<>(ticket, HttpStatus.BAD_REQUEST);
+			}
+			usedTicket.setUsed(true);
+			ticketRepo.save(usedTicket);
+			return new ResponseEntity<>(ticket, HttpStatus.OK);
+		}
+		
+		return new ResponseEntity<>(ticket, HttpStatus.NOT_FOUND);
+	}
 	
+	@PutMapping("/tickets/{id}")
+	public @ResponseBody ResponseEntity<TicketDto> modifyTicket(@RequestBody TicketDto ticketDto, @PathVariable("id") Long ticketId){
+		Optional<TicketType> ticketType = typeRepo.findById(ticketDto.getTicketType());
+		Optional<Invoice> invoice = invoiceRepo.findById(ticketDto.getInvoice());
+		Optional<Ticket> ticket = ticketRepo.findById(ticketId);
+		
+		if(ticket.isEmpty()) {
+			return new ResponseEntity<>(ticketDto, HttpStatus.NOT_FOUND);
+		}
+		
+		if(!ticketType.isEmpty() && !invoice.isEmpty()) {
+			Ticket newTicket = ticket.get();
+			newTicket.setPrice(ticketDto.getPrice());
+			newTicket.setUsed(ticketDto.isUsed());
+			newTicket.setTicketType(ticketType.get());
+			newTicket.setInvoice(invoice.get());
+			ticketRepo.save(newTicket);
+			
+			return new ResponseEntity<>(ticketDto, HttpStatus.OK);
+		}
+		
+		return new ResponseEntity<>(ticketDto, HttpStatus.BAD_REQUEST);		
+	}
+	
+	@DeleteMapping("/tickets/{id}")
+	public @ResponseBody ResponseEntity<Optional<Ticket>> deleteTicket(@PathVariable("id") Long ticketId){
+		Optional<Ticket> ticket = ticketRepo.findById(ticketId);
+		
+		if(!ticket.isEmpty()) {
+			ticketRepo.delete(ticket.get());
+			return new ResponseEntity<>(ticket, HttpStatus.NO_CONTENT);
+		}
+		
+		return new ResponseEntity<>(ticket, HttpStatus.NOT_FOUND);
+	}
 }

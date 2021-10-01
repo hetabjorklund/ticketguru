@@ -18,7 +18,7 @@ public class Invoice {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long invoiceId;
+	private Long id;
 	private LocalDateTime timeOfSale; // aikaleima myyntitapahtumalle	
 	@ManyToOne
 	//@JoinColumn(name = "TGUserId")
@@ -31,7 +31,7 @@ public class Invoice {
 	
 	public Invoice(Long invoiceId, LocalDateTime timestamp, TGUser TGUser, List<Ticket> tickets) {
 		super();
-		this.invoiceId = invoiceId;
+		this.id = invoiceId;
 		this.timeOfSale = timestamp;
 		this.TGuser = TGUser;
 		this.tickets = tickets;
@@ -40,15 +40,15 @@ public class Invoice {
 	public Invoice(TGUser TGUser) {
 		this.TGuser = TGUser; 
 		this.timeOfSale = LocalDateTime.now();
-		this.tickets = new ArrayList<Ticket>(); 
+		//this.tickets = new ArrayList<Ticket>(); 
 	}
 
 	public Long getInvoiceId() {
-		return invoiceId;
+		return this.id;
 	}
 
 	public void setInvoiceId(Long invoiceId) {
-		this.invoiceId = invoiceId;
+		this.id = invoiceId;
 	}
 
 	public LocalDateTime getTimestamp() {
@@ -77,7 +77,7 @@ public class Invoice {
 
 	@Override
 	public String toString() {
-		return "Invoice [invoiceId=" + invoiceId + ", timestamp=" + timeOfSale + "]";
+		return "Invoice [invoiceId=" + id + ", timestamp=" + timeOfSale + "]";
 	}
 
 }
