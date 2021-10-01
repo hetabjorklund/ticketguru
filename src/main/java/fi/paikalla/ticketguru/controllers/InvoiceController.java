@@ -60,8 +60,11 @@ public class InvoiceController {
 	
 	// POST
 	@PostMapping("/invoices")
-	public ResponseEntity<Invoice> addInvoice(@RequestBody Invoice invoice) { // luodaan uusi lasku		
-		// pitäisikö tässä tarkistaa, onko lippulistassa samoja lippuja kuin jonkun muun invoicen listassa, koska samaa lippua ei pidä myydä moneen kertaan?				
+	public ResponseEntity<Invoice> addInvoice(@RequestBody Invoice invoice) { // luodaan uusi lasku
+		
+		if (invoice.getTickets() != null) { // tarkistetaan onko pyynnön mukana tulevassa laskussa lippulista
+			invoice.getTickets().clear(); // jos on, varmuuden vuoksi tyhjennetään pyynnön mukana tulevan laskun lippulista: liput lisätään tiettyyn laskuun vasta kun ne luodaan/myydään			
+		}
 		return new ResponseEntity<>(invoicerepo.save(invoice), HttpStatus.CREATED); // palautetaan luotu lasku ja 201
 	}		
 	
