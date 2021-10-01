@@ -1,4 +1,4 @@
-# Luo tapahtuma
+# Luo lasku
 
 Luo uuden laskun.
 
