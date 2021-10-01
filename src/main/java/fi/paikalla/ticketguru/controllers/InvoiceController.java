@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -69,10 +70,24 @@ public class InvoiceController {
 	}		
 	
 	// PUT
-	
-	
-	
-	
+	@PutMapping("/invoices/{id}") // päivittää haluttua laskua
+	public ResponseEntity<Invoice> updateInvoice(@RequestBody Invoice newInvoice, @PathVariable Long id) {
+		
+		if (this.invoicerepo.findById(id).isEmpty()) { // tarkistetaan löytyykö haetulla id:llä laskua
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // jos ei löydy, palautetaan 404
+		}
+		else {
+			Invoice invoice = this.invoicerepo.findById(id).get(); // jos haetulla id:llä löytyy lasku, päivitetään sen tiedot
+			invoice.setTGuser(newInvoice.getTGuser());
+			invoice.setTickets(newInvoice.getTickets());
+			invoice.setTimestamp(newInvoice.getTimestamp());
+
+			this.invoicerepo.save(invoice); // tallennetaan päivitetty lasku
+			
+			return new ResponseEntity<>(invoice, HttpStatus.OK); // palautetaan uusi, päivitetty lasku ja 200				
+		}
+	}
+		
 	// DELETE
 	@DeleteMapping("/invoices")
 	public ResponseEntity<Invoice> deleteAll() { // poistetaan kaikki laskut
