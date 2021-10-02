@@ -7,6 +7,5 @@ import fi.paikalla.ticketguru.Entities.Ticket;
 
 public interface TicketRepository extends CrudRepository<Ticket, Long> {
 	
-	List<Ticket> findByInvoiceId(long id); 
 
 }

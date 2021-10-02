@@ -1,12 +1,12 @@
-# Luo tapahtuma
+# Poista tapahtuma
 
-Luo uuden tapahtuman mikäli samannimistä tapahtumaa ei ole jo olemassa.
+Poistaa tapahtuman tunnisteen perusteella.
 
 **URL** : `/events/{id}`
 
 **Pyynnön tyyppi** : `DELETE`
 
-**Autentikaatio vaadittu** : Ei
+**Autentikaatio vaadittu** : Kyllä
 
 **Reunaehdot**
 
@@ -20,7 +20,7 @@ Tyhjä DELETE-tyyppin pyyntö kohteeseen "/events/2"
 
 ## Onnistumisvastaus
 
-**Ehto** : Tapahtuman poisto onnistui.
+**Ehto** : Tapahtuman id on olemassa ja poisto onnistui.
 
 **HTTP-vastauskoodi** : `200 OK`
 
@@ -40,16 +40,11 @@ Tyhjä DELETE-tyyppin pyyntö kohteeseen "/events/2"
 
 **HTTP-vastauskoodi** : `404 NOT FOUND`
 
-**Esimerkkivastaus** : Palautetaan virheen aikakoodi, status, virheen kuvaus, stacktrace, viesti ja polku.
+**Esimerkkivastaus** : json {deleted: false}
 
 ```json
 {
-    "timestamp": "2021-09-24T17:20:44.752+00:00",
-    "status": 404,
-    "error": "Not Found",
-    "trace": "..... stacktrace",
-    "message": "Event not found for this id :: 5",
-    "path": "/events/5"
+    deleted: false
 }
 ```
 

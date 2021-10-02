@@ -38,18 +38,19 @@ public class EventController {
 	@Autowired 
 	private TicketTypeRepository typerepo; 
 	
-	@Autowired
-	private InvoiceRepository invrepo; 
-	
 	@DeleteMapping("/events/{id}") //poista event perustuen ID:hen
-	public Map<String, Boolean> deleteEvent (@PathVariable(value = "id") Long eventId ) 
-			throws ResourceNotFoundException {
-		 Event ev = eventrepo.findById(eventId)
-				 .orElseThrow(() -> new ResourceNotFoundException("Event not found for this id :: " + eventId));
-		 eventrepo.delete(ev);
+	public ResponseEntity<Map<String, Boolean>> deleteEvent (@PathVariable(value = "id") Long eventId ) {
+		 Optional<Event> ev = eventrepo.findById(eventId);
 		 Map<String, Boolean> response = new HashMap<>();
-		 response.put("deleted", Boolean.TRUE); //palauttaa nyt {deleted: true/false} vastauksen. Tästä voi olla montaa mieltä. 
-		 return response;
+		 if (ev.isEmpty()) {
+			 response.put("deleted", Boolean.FALSE);
+			 return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
+		 } else {
+			 eventrepo.delete(ev.get());
+			 response.put("deleted", Boolean.TRUE);
+			 return new ResponseEntity<>(response,HttpStatus.OK);
+		 }
+			//palauttaa nyt {deleted: true/false} vastauksen. Tästä voi olla montaa mieltä	
 	}
 	
 	@GetMapping("/events") //kaikki tapahtumat
@@ -99,23 +100,6 @@ public class EventController {
 			return new ResponseEntity<>(eventrepo.save(event), HttpStatus.CREATED); // jos samannimistä tapahtumaa ei ole, luo uusi ja palauta se
 		}	 			
 	}
-	
-
-	@GetMapping("/invoices")
-	public List<Invoice> haeLaskut() {
-		return (List<Invoice>) invrepo.findAll(); 
-	}
-	
-	@GetMapping("/invoices/{id}") 
-	public Optional<Invoice> getInvoiceByid(@PathVariable(value = "id") Long invId) {
-		return invrepo.findById(invId);	
-	}
-	
-	@GetMapping("/invoices/{id}/tickets") 
-	public List<Ticket> getTickByInvoiceid(@PathVariable(value = "id") Long invId) {
-		return (List<Ticket>) tickrepo.findByInvoiceId(invId); 
-	}
-	
 	
 	
 	@PutMapping(path = "/events/{id}") // muokkaa haluttua eventtiä id:n perusteella
