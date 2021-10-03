@@ -17,7 +17,7 @@ public class Ticket extends AbstractPersistable<Long> {
 
 	private Double price; 
 	private boolean	used; 
-	//@ManyToOne //tulee rekursioympyrä
+	//@ManyToOne // tulee rekursioympyrä
 	//@JsonIgnore
 	//private Event event;
 	
