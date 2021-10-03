@@ -2,7 +2,7 @@
 
 Muokkaa olemassa olevaa tapahtumaa (event) annetun id:n perusteella tai id:n puuttuessa luo uuden tapahtuman.
 
-**URL** : `/api/events/:pk`
+**URL** : `/events/:pk`
 
 **Pyynnön tyyppi** : `PUT`
 

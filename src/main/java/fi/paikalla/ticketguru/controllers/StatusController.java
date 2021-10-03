@@ -36,7 +36,7 @@ public class StatusController {
 	public ResponseEntity<List<EventStatus>> getAllStatuses() {
 		List<EventStatus> list = (List<EventStatus>) statusrepo.findAll();
 		return new ResponseEntity<>(list, HttpStatus.OK);
-	};
+	}
 	
 	/*
 	@GetMapping("/status/{id}")
@@ -85,7 +85,7 @@ public class StatusController {
 		} else { // jos status löytyy kannasta, nimetään uusiksi
 			EventStatus newStatus = estatus.get();
 			newStatus.setStatusName(status.getStatusName());
-			return new ResponseEntity<>(newStatus, HttpStatus.CREATED);
+			return new ResponseEntity<>(newStatus, HttpStatus.OK);
 		}
 		
 	}
