@@ -39,6 +39,17 @@ public class StatusController {
 	};
 	
 	/*
+	@GetMapping("/status/{id}")
+	public ResponseEntity<EventStatus> getEventById(@PathVariable (value = "id") Long statusId) {
+		Optional<EventStatus> status = statusrepo.findById(statusId);
+		if (status.isEmpty()) {
+			return new ResponseEntity<> (status, HttpStatus.NOT_FOUND);
+		} else {
+			return new ResponseEntity<> (status, HttpStatus.OK);
+		}
+	}
+	
+	
 	@GetMapping ("/status/{id}/events") // hakee kaikki tapahtumat statuksen perusteella
 	public ResponseEntity<List<Event>> getEventsByStatus(@PathVariable (value = "id") Long statusId) {
 		Optional<EventStatus> status = statusrepo.findById(statusId);

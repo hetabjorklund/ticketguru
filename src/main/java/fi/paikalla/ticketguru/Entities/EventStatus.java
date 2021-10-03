@@ -4,6 +4,8 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -19,11 +21,11 @@ import lombok.NoArgsConstructor;
 public class EventStatus extends AbstractPersistable<Long> {	
 	
 	private String statusName; // tapahtuman tilanne: 'järjestetään', 'peruttu' tai 'siirretty'	
-	/*
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="EventStatus")
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="status")
 	@JsonIgnore
-	private Event event;
-	*/
+	private List<Event> event;
+	
 	public EventStatus() {
 		super(); 
 	}
