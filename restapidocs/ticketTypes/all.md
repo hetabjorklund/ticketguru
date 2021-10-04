@@ -101,7 +101,7 @@ Vaatiiko autorisoinnin : kyllä
 
 Tietorajoitteet: Pyyntö ohjattava validiin tapahtumatunnukseen.
 
-##Onnistuneen pyynnön vastaus
+### Onnistuneen pyynnön vastaus
 
 Ehto : Annetulla tunnisteella on tapahtuma mutta ei lipputyyppejä.
 
@@ -144,7 +144,7 @@ Sisältö :
 ]
 ```
 
-##Virheellisen pyynnön vastaus
+### Virheellisen pyynnön vastaus
 
 Ehto : Annetulla tunnisteella ei ole tapahtumaa.
 
@@ -177,7 +177,7 @@ Esimerkkipyyntö:
 }
 ```
 
-###Onnistuneen pyynnön vastaus
+### Onnistuneen pyynnön vastaus
 
 Ehto : Annetulla tunnisteella on tapahtuma.
 
@@ -192,7 +192,7 @@ Esimerkkivastaus:
 	"price": 23.6
 }
 ```
-###Virheellisen pyynnön vastaus
+### Virheellisen pyynnön vastaus
 
 Ehto : Annetulla tunnisteella ei ole tapahtumaa.
 
@@ -207,9 +207,9 @@ Sisältö :
 	"price": 23.6
 }
 ```
-#TicketTypes-PUT
+# TicketTypes-PUT
 
-##Olemassaolevan lipputyypin päivitys
+## Olemassaolevan lipputyypin päivitys
  
  Päivittää tyypin tunnisteen perusteella
  
@@ -230,7 +230,7 @@ Esimerkkipyyntö:
 	"price": 23.6
 }
 ```
-##Onnistuneen pyynnön vastaus
+### Onnistuneen pyynnön vastaus
  
  Ehto: Tietojen päivitys onnistui
  
@@ -246,7 +246,7 @@ Vastauksen sisältö:
 }
 ```
 
-##Virheellisen pyynnön vastaus
+### Virheellisen pyynnön vastaus
 
 Ehto: Lipputyypin tunnistetta ei löydy
 
@@ -278,8 +278,8 @@ Vastauksen sisältö:
 }
 ```
 
-#TicketTypes-DELETE
-##Lipputyypin poistaminen
+# TicketTypes-DELETE
+## Lipputyypin poistaminen
 
 Poistaa lipputyypin tunnisteen perusteella
 
@@ -291,7 +291,7 @@ Vaatiiko autorisoinnin : Kyllä
 
 Tietorajoitteet: Pyynnössä on oltava validi lipputyypin tunnus.
 
-##Onnistuneen pyynön vastaus
+### Onnistuneen pyynön vastaus
 
 Ehto: Tyyppi-id on olemassa
 
@@ -306,7 +306,7 @@ Vastaus:
 
 ```
 
-##Virheellisen pyynnön vastaus
+### Virheellisen pyynnön vastaus
 
 Ehto: Tunnistetta ei ole olemassa
 
