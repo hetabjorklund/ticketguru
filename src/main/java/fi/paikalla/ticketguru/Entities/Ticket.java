@@ -34,12 +34,20 @@ public class Ticket extends AbstractPersistable<Long> {
 		this.ticketType = ticketType;
 	} 
 	
+	
 	public Ticket(TicketType ticketType, Double price, Invoice invoice) {
 		super();
 		this.price = price;
 		this.used = false;
 		this.ticketType = ticketType;
 		this.invoice = invoice; 
+	}
+
+	public Ticket(TicketType ticketType, Invoice invoice) {
+		super();
+		this.ticketType = ticketType;
+		this.invoice = invoice;
+		this.price = ticketType.getPrice();
 	}
 	
 	/*public Ticket(TicketType ticketType, Double price, Event event, Invoice invoice) {
