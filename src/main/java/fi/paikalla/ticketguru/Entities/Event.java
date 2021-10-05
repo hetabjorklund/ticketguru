@@ -6,6 +6,9 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotEmpty;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.AllArgsConstructor;
@@ -20,11 +23,15 @@ import java.util.*;
 @NoArgsConstructor
 public class Event extends AbstractPersistable<Long> {
 	
+	@NotEmpty
 	private String name; // tapahtuman nimi, esim. 'Ruisrock' tai 'Savonlinnan Oopperajuhlat'
 	private String address; // tapahtuman osoite
 	private Integer maxCapacity; // maksimipaikkamäärä, tickets-listan koko ei voi olla tätä suurempi
+	@FutureOrPresent
 	private LocalDateTime startTime; // tapahtuman alkuaika (pvm ja kellonaika)
+	@FutureOrPresent
 	private LocalDateTime endTime; // tapahtuman loppuaika (pvm ja kellonaika)
+	@FutureOrPresent
 	private LocalDateTime endOfPresale; // ennakkomyynnin loppuminen (pvm ja kellonaika)
 	@ManyToOne
 	private EventStatus status; // tapahtuman status

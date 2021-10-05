@@ -5,10 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +22,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
 import fi.paikalla.ticketguru.Entities.Event;
 import fi.paikalla.ticketguru.Entities.Invoice;
 import fi.paikalla.ticketguru.Entities.Ticket;
@@ -87,22 +94,30 @@ public class EventController {
 
 	// POST
 	@PostMapping("/events") // lisää uuden tapahtuman
-	public ResponseEntity<Event> addEvent(@RequestBody Event event) {
+	public ResponseEntity<Event> addEvent(@Valid @RequestBody Event event, BindingResult bindingresult) throws Exception {
 		
-		// korvaa tämä validoinnilla
-		if (event.getName() == null) { // tarkistetaan tuleeko pyynnössä mukana tapahtuman nimi
-			return new ResponseEntity<>(event, HttpStatus.BAD_REQUEST); // jos uudella tapahtumalla ei ole nimeä, sitä ei luoda
+		if (bindingresult.hasErrors()) { // tarkistetaan tuleeko pyynnössä mukana tapahtuman nimi
+			return new ResponseEntity<>(event, HttpStatus.BAD_REQUEST); // jos uudella tapahtumalla ei ole nimeä, sitä ei luoda vaan palautetaan 400
 		}
 		
-		// tarkista onko tapahtuma jo olemassa; jotta tapahtumaa pidetään samana, sekä sen nimi että aloitusaika pitää olla sama
-		if (eventrepo.findByName(event.getName()) != null && eventrepo.findByName(event.getName()).getStartTime().equals(event.getStartTime())) { 
+		else { // jos tapahtumalla on nimi
+					
+			try {
+				// tarkista onko tapahtuma jo olemassa; jotta tapahtumaa pidetään samana, sekä sen nimi että aloitusaika pitää olla sama
+				if (eventrepo.findByName(event.getName()) != null && eventrepo.findByName(event.getName()).getStartTime().equals(event.getStartTime())) { 
 
-			return new ResponseEntity<>(eventrepo.findByName(event.getName()), HttpStatus.CONFLICT); // jos on, palauta olemassaoleva äläkä luo uutta samannimistä
-		}		
-		else {
-			return new ResponseEntity<>(eventrepo.save(event), HttpStatus.CREATED); // jos samannimistä tapahtumaa ei ole, luo uusi ja palauta se
-		}	 			
+					return new ResponseEntity<>(eventrepo.findByName(event.getName()), HttpStatus.CONFLICT); // jos on, älä luo uutta samannimistä vaan palauta olemassaoleva ja 409
+				}		
+				else {
+					return new ResponseEntity<>(eventrepo.save(event), HttpStatus.CREATED); // jos samannimistä tapahtumaa ei ole, luo uusi ja palauta se
+				}
+			} catch (Exception e) { // KESKEN
+				throw new HttpMessageNotReadableException("trallalaa");
+//				(HttpStatus.METHOD_NOT_ALLOWED); // oikeasti bad request mutta tässä 405 jotta erottuu missä ollaan
+		    }
+		}
 	}
+	
 	
 	// PUT
 	@PutMapping(path = "/events/{id}") // muokkaa haluttua eventtiä id:n perusteella
