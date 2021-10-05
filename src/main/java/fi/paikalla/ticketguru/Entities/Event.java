@@ -37,6 +37,7 @@ public class Event extends AbstractPersistable<Long> {
 	//@JsonIgnore
 	//private List<Ticket> tickets; 
 	
+	// konstruktori jossa kaikki parametrit
 	public Event(String name, String address, Integer maxCapacity, LocalDateTime startTime, LocalDateTime endTime,
 			LocalDateTime endOfPresale, EventStatus status, String description) {
 		super();
@@ -48,10 +49,11 @@ public class Event extends AbstractPersistable<Long> {
 		this.endOfPresale = endOfPresale;
 		this.status = status;
 		this.description = description;
-		//this.ticketTypes = new ArrayList<TicketType>(); 
+		this.ticketTypes = new ArrayList<TicketType>(); 
 		//this.tickets = new ArrayList<Ticket>(); 
 	} 
 	
+	// konstruktori jossa ei status-parametriä
 	public Event(String name, String address, Integer maxCapacity, LocalDateTime startTime, LocalDateTime endTime,
 			LocalDateTime endOfPresale, String description) {
 		super();
@@ -62,7 +64,7 @@ public class Event extends AbstractPersistable<Long> {
 		this.endTime = endTime;
 		this.endOfPresale = endOfPresale;
 		this.description = description;
-		//this.ticketTypes = new ArrayList<TicketType>();
+		this.ticketTypes = new ArrayList<TicketType>();
 		//this.tickets = new ArrayList<Ticket>();
 	} 
 }

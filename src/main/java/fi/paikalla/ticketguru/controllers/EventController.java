@@ -33,11 +33,12 @@ public class EventController {
 	private EventRepository eventrepo; 
 	
 	@Autowired
-	private TicketRepository tickrepo; 
+	private TicketRepository ticketrepo; 
 	
 	@Autowired 
 	private TicketTypeRepository typerepo; 
 	
+	// DELETE
 	@DeleteMapping("/events/{id}") //poista event perustuen ID:hen
 	public ResponseEntity<Map<String, Boolean>> deleteEvent (@PathVariable(value = "id") Long eventId ) {
 		 Optional<Event> ev = eventrepo.findById(eventId);
@@ -53,6 +54,7 @@ public class EventController {
 			//palauttaa nyt {deleted: true/false} vastauksen. Tästä voi olla montaa mieltä	
 	}
 	
+	// GET
 	@GetMapping("/events") //kaikki tapahtumat
 	public List<Event> getEvents() {
 		return (List<Event>) eventrepo.findAll(); 
@@ -70,10 +72,8 @@ public class EventController {
 	
 	@GetMapping("/tickets") //kaikki liput, vähän kustomointia vois tehdä, koska tulee aika paljon tietoa. 
 	public List<Ticket> getTickets() {
-		return (List<Ticket>) tickrepo.findAll(); 
-	}
-	
-	
+		return (List<Ticket>) ticketrepo.findAll(); 
+	}	
 	
 	@GetMapping("/events/{id}/tickets") //palauttaa eventId perusteella listan lippuja koko viittauksineen. 
 	public List<Ticket> getTicketsByEvent(@PathVariable(value = "id") Long eventId) {
@@ -85,15 +85,18 @@ public class EventController {
 		return lista; 		
 	}	
 
+	// POST
 	@PostMapping("/events") // lisää uuden tapahtuman
 	public ResponseEntity<Event> addEvent(@RequestBody Event event) {
 		
+		// korvaa tämä validoinnilla
 		if (event.getName() == null) { // tarkistetaan tuleeko pyynnössä mukana tapahtuman nimi
 			return new ResponseEntity<>(event, HttpStatus.BAD_REQUEST); // jos uudella tapahtumalla ei ole nimeä, sitä ei luoda
 		}
-		if (eventrepo.findByName(event.getName()) != null) { // tarkista onko samanniminen tapahtuma jo olemassa
-			// jotta tapahtumaa pidetään samana, sekä sen nimi että aloitusaika pitäisi olla sama, ei pelkkä nimi - pitää vielä lisätä!
-			// yritys: && eventrepo.findByName(event.getName()).getStartTime() == event.getStartTime() mutta aiheuttaa 500:n
+		
+		// tarkista onko tapahtuma jo olemassa; jotta tapahtumaa pidetään samana, sekä sen nimi että aloitusaika pitää olla sama
+		if (eventrepo.findByName(event.getName()) != null && eventrepo.findByName(event.getName()).getStartTime().equals(event.getStartTime())) { 
+
 			return new ResponseEntity<>(eventrepo.findByName(event.getName()), HttpStatus.CONFLICT); // jos on, palauta olemassaoleva äläkä luo uutta samannimistä
 		}		
 		else {
@@ -101,7 +104,7 @@ public class EventController {
 		}	 			
 	}
 	
-	
+	// PUT
 	@PutMapping(path = "/events/{id}") // muokkaa haluttua eventtiä id:n perusteella
 	public ResponseEntity<Event> updateEvent(@RequestBody Event newEvent, @PathVariable (value = "id") Long eventId) {
 		if (eventId == null) {
