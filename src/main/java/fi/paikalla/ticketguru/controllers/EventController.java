@@ -111,9 +111,9 @@ public class EventController {
 				else {
 					return new ResponseEntity<>(eventrepo.save(event), HttpStatus.CREATED); // jos samannimistä tapahtumaa ei ole, luo uusi ja palauta se
 				}
-			} catch (Exception e) { // KESKEN
-				throw new HttpMessageNotReadableException("trallalaa");
-//				(HttpStatus.METHOD_NOT_ALLOWED); // oikeasti bad request mutta tässä 405 jotta erottuu missä ollaan
+			} catch (Exception e) { // KESKEN: jos on joku muu tyyppivirhe
+				throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "trallalaa");
+				// oikeasti bad request mutta tässä 405 jotta erottuu missä ollaan
 		    }
 		}
 	}

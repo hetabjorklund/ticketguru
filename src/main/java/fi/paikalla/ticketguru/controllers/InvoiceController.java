@@ -3,9 +3,12 @@ package fi.paikalla.ticketguru.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,15 +64,19 @@ public class InvoiceController {
 	
 	// POST
 	@PostMapping("/invoices")
-	public ResponseEntity<Invoice> addInvoice(@RequestBody Invoice invoice) { // luodaan uusi lasku
-		
-		/*if (invoice.getTickets() != null) { // tarkistetaan onko pyynnön mukana tulevassa laskussa lippulista
-			invoice.getTickets().clear(); // jos on, varmuuden vuoksi tyhjennetään pyynnön mukana tulevan laskun lippulista: liput lisätään tiettyyn laskuun vasta kun ne luodaan/myydään			
-		}*/
-		return new ResponseEntity<>(invoicerepo.save(invoice), HttpStatus.CREATED); // palautetaan luotu lasku ja 201
+	public ResponseEntity<Invoice> addInvoice(@Valid @RequestBody Invoice invoice, BindingResult bindingresult) { // luodaan uusi lasku
+
+		// kesken: jos on joku muu tyyppivirhe
+		if (bindingresult.hasErrors()) { // tarkistetaan onko mukana TGUser
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // jos ei, palautetaan 400
+		}
+		else {
+			return new ResponseEntity<>(invoicerepo.save(invoice), HttpStatus.CREATED); // palautetaan luotu lasku ja 201
+		}
 	}		
 	
 	// PUT
+	// kesken: pitääkö tämäkin validoida, että tguser tulee mukana?
 	@PutMapping("/invoices/{id}") // päivittää haluttua laskua
 	public ResponseEntity<Invoice> updateInvoice(@RequestBody Invoice newInvoice, @PathVariable Long id) {
 		
