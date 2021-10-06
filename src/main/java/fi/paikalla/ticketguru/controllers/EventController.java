@@ -22,15 +22,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import fi.paikalla.ticketguru.Entities.*;
 import fi.paikalla.ticketguru.Repositories.*;
+import fi.paikalla.ticketguru.Services.TicketService;
 
 @RestController
 public class EventController {
 	
 	@Autowired
 	private EventRepository eventrepo; 
-	
-	@Autowired 
-	private TicketTypeRepository typerepo; 
+	@Autowired
+	private TicketService ticketservice;
 	
 	// DELETE
 	/*@DeleteMapping("/events/{id}") // poista yksittäinen tapahtuma id:n perusteella
@@ -55,13 +55,7 @@ public class EventController {
 			
 			Event event = this.eventrepo.findById(id).get(); // otetaan tapahtuma talteen käsittelyä varten
 			
-			List<Ticket> ticketlist = new ArrayList<>(); 
-			List<TicketType> tickettypes = typerepo.findByEventId(id); 
-			for (TicketType x : tickettypes) {
-				ticketlist.addAll(x.getTickets()); 
-			}
-			
-			if (ticketlist.size() == 0) { // tarkistetaan onko tapahtumalla lippuja
+			if (ticketservice.getTicketsByEvent(id).size() == 0) { // tarkistetaan onko tapahtumalla lippuja	
 				this.eventrepo.delete(event); // jos ei, poistetaan tapahtuma
 				return new ResponseEntity<String>("Event deleted", HttpStatus.NO_CONTENT); // palautetaan viesti ja 204
 			}
@@ -94,12 +88,7 @@ public class EventController {
 	
 	@GetMapping("/events/{id}/tickets") // palauttaa tapahtuman liput koko viittauksineen eventId:n perusteella 
 	public List<Ticket> getTicketsByEvent(@PathVariable(value = "id") Long eventId) {
-		List<Ticket> lista = new ArrayList<Ticket>(); 
-		List<TicketType> types = typerepo.findByEventId(eventId); 
-		for (TicketType type : types) {
-			lista.addAll(type.getTickets()); 
-		}
-		return lista; 		
+		return ticketservice.getTicketsByEvent(eventId);		
 	}	
 
 	// POST
