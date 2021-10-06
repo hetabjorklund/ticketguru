@@ -46,7 +46,7 @@ public class EventController {
 	private TicketTypeRepository typerepo; 
 	
 	// DELETE
-	@DeleteMapping("/events/{id}") //poista event perustuen ID:hen
+	/*@DeleteMapping("/events/{id}") // poista yksittäinen tapahtuma id:n perusteella
 	public ResponseEntity<Map<String, Boolean>> deleteEvent (@PathVariable(value = "id") Long eventId ) {
 		 Optional<Event> ev = eventrepo.findById(eventId);
 		 Map<String, Boolean> response = new HashMap<>();
@@ -59,8 +59,36 @@ public class EventController {
 			 return new ResponseEntity<>(response,HttpStatus.OK);
 		 }
 			//palauttaa nyt {deleted: true/false} vastauksen. Tästä voi olla montaa mieltä	
-	}
+	}*/
 	
+	@DeleteMapping("/events/{id}") // poista yksittäinen tapahtuma id:n perusteella. Endpointia /events joka poistaisi kaikki tapahtumat, ei tarvita
+	public ResponseEntity<String> deleteEvent(@PathVariable Long id) {
+		
+		if (this.eventrepo.findById(id).isPresent()) { // jos haetulla id:llä löytyy tapahtuma
+			
+			Event event = this.eventrepo.findById(id).get(); // otetaan tapahtuma talteen käsittelyä varten
+			
+			List<Ticket> ticketlist = new ArrayList<>(); 
+			List<TicketType> tickettypes = typerepo.findByEventId(id); 
+			for (TicketType x : tickettypes) {
+				ticketlist.addAll(x.getTickets()); 
+			}
+			
+			if (ticketlist.size() == 0) { // tarkistetaan onko tapahtumalla lippuja
+				this.eventrepo.delete(event); // jos ei, poistetaan tapahtuma
+				return new ResponseEntity<String>("Event deleted", HttpStatus.NO_CONTENT); // palautetaan viesti ja 204
+			}
+			
+			else { // jos tapahtumalla on lippuja
+				return new ResponseEntity<String>("Event has associated tickets, deletion forbidden", HttpStatus.FORBIDDEN); // palautetaan viesti ja 403
+			}
+		}
+		
+		else { // eli jos haetulla id:llä ei löydy laskua
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // palautetaan 404
+		}
+	}	
+		
 	// GET
 	@GetMapping("/events") //kaikki tapahtumat
 	public List<Event> getEvents() {
@@ -76,11 +104,6 @@ public class EventController {
 			return new ResponseEntity<>(event, HttpStatus.OK);
 		}
 	}
-	
-	@GetMapping("/tickets") //kaikki liput, vähän kustomointia vois tehdä, koska tulee aika paljon tietoa. 
-	public List<Ticket> getTickets() {
-		return (List<Ticket>) ticketrepo.findAll(); 
-	}	
 	
 	@GetMapping("/events/{id}/tickets") //palauttaa eventId perusteella listan lippuja koko viittauksineen. 
 	public List<Ticket> getTicketsByEvent(@PathVariable(value = "id") Long eventId) {
@@ -117,7 +140,6 @@ public class EventController {
 		    }
 		}
 	}
-	
 	
 	// PUT
 	@PutMapping(path = "/events/{id}") // muokkaa haluttua eventtiä id:n perusteella

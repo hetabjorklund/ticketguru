@@ -1,6 +1,7 @@
 package fi.paikalla.ticketguru.controllers;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,6 +28,7 @@ import fi.paikalla.ticketguru.dto.TicketDto;
 
 @RestController
 public class TicketController {
+	
 	@Autowired
 	private TicketRepository ticketRepo;
 	
@@ -35,6 +37,11 @@ public class TicketController {
 	
 	@Autowired
 	private InvoiceRepository invoiceRepo;
+	
+	@GetMapping("/tickets") //kaikki liput, vähän kustomointia vois tehdä, koska tulee aika paljon tietoa. 
+	public List<Ticket> getTickets() {
+		return (List<Ticket>) ticketRepo.findAll(); 
+	}	
 	
 	@GetMapping("/tickets/{id}")
 	public @ResponseBody ResponseEntity<Optional<Ticket>> getTicketById(@PathVariable("id") Long ticketId){
