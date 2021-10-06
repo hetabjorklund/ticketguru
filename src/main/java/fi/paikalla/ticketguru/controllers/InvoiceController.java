@@ -66,32 +66,39 @@ public class InvoiceController {
 	@PostMapping("/invoices")
 	public ResponseEntity<Invoice> addInvoice(@Valid @RequestBody Invoice invoice, BindingResult bindingresult) { // luodaan uusi lasku
 
-		// kesken: jos on joku muu tyyppivirhe
 		if (bindingresult.hasErrors()) { // tarkistetaan onko mukana TGUser
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // jos ei, palautetaan 400
 		}
-		else {
-			return new ResponseEntity<>(invoicerepo.save(invoice), HttpStatus.CREATED); // palautetaan luotu lasku ja 201
+		else {			
+			Invoice newInvoice = new Invoice(invoice.getTGuser()); // luodaan tässä uusi, jotta konstruktori tekee a) tyhjän lippulistan ja b) timestampiksi kuluvan hetken - muuten timestamp on joko pyynnössä lähetetty tai null
+			invoicerepo.save(newInvoice);			
+			return new ResponseEntity<>(newInvoice, HttpStatus.CREATED); // palautetaan luotu lasku ja 201
 		}
 	}		
 	
 	// PUT
-	// kesken: pitääkö tämäkin validoida, että tguser tulee mukana?
 	@PutMapping("/invoices/{id}") // päivittää haluttua laskua
-	public ResponseEntity<Invoice> updateInvoice(@RequestBody Invoice newInvoice, @PathVariable Long id) {
+	public ResponseEntity<Invoice> updateInvoice(@Valid @RequestBody Invoice newInvoice, @PathVariable Long id, BindingResult bindingresult) {
 		
-		if (this.invoicerepo.findById(id).isEmpty()) { // tarkistetaan löytyykö haetulla id:llä laskua
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // jos ei löydy, palautetaan 404
+		if (bindingresult.hasErrors()) { // tarkistetaan onko mukana TGUser	
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // jos ei, palautetaan 400
 		}
-		else {
-			Invoice invoice = this.invoicerepo.findById(id).get(); // jos haetulla id:llä löytyy lasku, päivitetään sen tiedot
-			invoice.setTGuser(newInvoice.getTGuser());
-			invoice.setTickets(newInvoice.getTickets());
-			invoice.setTimestamp(newInvoice.getTimestamp());
-
-			this.invoicerepo.save(invoice); // tallennetaan päivitetty lasku
-			
-			return new ResponseEntity<>(invoice, HttpStatus.OK); // palautetaan uusi, päivitetty lasku ja 200				
+		
+		else {		
+		
+			if (this.invoicerepo.findById(id).isEmpty()) { // tarkistetaan löytyykö haetulla id:llä laskua
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND); // jos ei löydy, palautetaan 404
+			}
+			else {
+				Invoice invoice = this.invoicerepo.findById(id).get(); // jos haetulla id:llä löytyy lasku, päivitetään sen tiedot
+				invoice.setTGuser(newInvoice.getTGuser());
+				invoice.setTickets(newInvoice.getTickets());
+				invoice.setTimestamp(newInvoice.getTimestamp());
+	
+				this.invoicerepo.save(invoice); // tallennetaan päivitetty lasku
+				
+				return new ResponseEntity<>(invoice, HttpStatus.OK); // palautetaan uusi, päivitetty lasku ja 200				
+			}
 		}
 	}
 		

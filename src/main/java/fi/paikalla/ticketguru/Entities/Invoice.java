@@ -12,22 +12,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Entity
 public class Invoice {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Id	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long invoiceId;
 	private LocalDateTime timestamp; // aikaleima myyntitapahtumalle	
-	@NotNull
-	@ManyToOne
-	//@JoinColumn(name = "TGUserId")
-	private TGUser tguser; // laskun myyjä	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "invoice")
-	@JsonIgnore
+	@NotNull @ManyToOne //@JoinColumn(name = "TGUserId")
+	private TGUser tguser; // laskun myyjä
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "invoice")	@JsonIgnore
 	private List<Ticket> tickets; // lista samalla laskulla olevista lipuista
 
 	public Invoice() {} // parametriton konstruktori

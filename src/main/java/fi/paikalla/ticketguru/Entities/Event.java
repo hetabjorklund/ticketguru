@@ -37,11 +37,9 @@ public class Event extends AbstractPersistable<Long> {
 	private EventStatus status; // tapahtuman status
 	private String description; // tapahtuman kuvaus
 	//private HashMap<TicketType, Double> ticketPrices; // tähän tilaisuuteen saatavilla olevat lipputyypit ja niiden hinnat
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="event")
-	@JsonIgnore // koska muuten hakukatastrofi jos ei käytä api/events/-endpointtia
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="event") @JsonIgnore // koska muuten hakukatastrofi jos ei käytä api/events/-endpointtia
 	private List<TicketType> ticketTypes;
-	//@OneToMany(cascade = CascadeType.ALL, mappedBy="event") // automaatti-api kestää ongelman, mutta normi pyörii ympyrää
-	//@JsonIgnore
+	//@JsonIgnore //@OneToMany(cascade = CascadeType.ALL, mappedBy="event") // automaatti-api kestää ongelman, mutta normi pyörii ympyrää
 	//private List<Ticket> tickets; 
 	
 	// konstruktori jossa kaikki parametrit
