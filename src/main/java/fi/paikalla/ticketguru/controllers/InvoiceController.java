@@ -11,11 +11,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.github.fge.jsonpatch.JsonPatch;
 
 import fi.paikalla.ticketguru.Repositories.InvoiceRepository;
 import fi.paikalla.ticketguru.Entities.*;
@@ -101,7 +108,72 @@ public class InvoiceController {
 			}
 		}
 	}
+	
+	// PATCH
+	/*@PatchMapping("/invoices/{id}")
+	public ResponseEntity<Invoice> updateInvoice(@Valid @PathVariable Long id, @RequestBody Invoice updatedInvoice, BindingResult bindingresult) {
 		
+		if (bindingresult.hasErrors()) { // jos validointi epäonnistuu eli tguser on null
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // palautetaan 400 
+		}
+		else { // jos validointi onnistuu eli tguser ei ole null			
+		
+			Optional<Invoice> target = invoicerepo.findById(id); // haetaan Optional-olio id:n perusteella invoicereposta
+			
+			if (target.isEmpty()) { // jos id:llä ei löydy laskua
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND); // palautetaan 404
+			}
+			else { // jos id:llä löytyy lasku
+				Invoice invoice = target.get(); // otetaan Invoice-olio talteen käsittelyä varten
+				
+				if (updatedInvoice.getTGuser() != null) { // jos tguser ei ole null
+					invoice.setTGuser(updatedInvoice.getTGuser()); // korvataan vanhan laskun myyjä Patchissa tulevalla
+				}
+				else { // jos tguser on null
+					return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // palautetaan 400 
+				}
+				
+				if (updatedInvoice.getTickets() != null) { // tarkistetaan tuleeko Patchissa lippulista
+					invoice.setTickets(updatedInvoice.getTickets()); // jos tulee, korvataan vanha lippulista uudella
+				}
+				
+				// muita oliomuuttujia ei tarvitse käydä läpi: id:tä eikä alkuperäistä luontiaikaa pidä voida muuttaa
+				
+				invoicerepo.save(invoice);
+				return new ResponseEntity<Invoice>(invoice, HttpStatus.OK);
+			}
+		}
+	}*/
+	
+	@PatchMapping("/invoices/{id}")
+	public ResponseEntity<Invoice> updateInvoice(@PathVariable Long id, @RequestBody JsonPatch patch) {
+		
+	    try {
+	        Invoice invoice = invoicerepo.findById(id).get();
+	        Invoice invoicePatched = applyPatchToInvoice(patch, invoice);
+	        invoicerepo.save(invoicePatched);
+	        return ResponseEntity.ok(invoicePatched);
+	    } catch (Exception e) {
+	    	e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    } 
+	    
+	}
+	
+	private Invoice applyPatchToInvoice(JsonPatch patch, Invoice targetInvoice) throws Exception {
+			
+		try {
+			ObjectMapper objectMapper = 
+				    new ObjectMapper().registerModule(new JavaTimeModule())
+				            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+			JsonNode patched = patch.apply(objectMapper.convertValue(targetInvoice, JsonNode.class));
+		    return objectMapper.treeToValue(patched, Invoice.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+				
 	// DELETE
 	@DeleteMapping("/invoices")
 	public ResponseEntity<String> deleteAll() { // poistetaan kaikki laskut
