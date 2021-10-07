@@ -58,4 +58,10 @@ public class TicketService {
 		
 	}
 
+	
+	// palauttaa lipusta Eventin id:n
+	public Long getEventIdFromTicket(Ticket ticket) {
+		//haetaan tickettypen kautta tapahtuma
+		return ticket.getTicketType().getEvent().getId();
+	}
 }

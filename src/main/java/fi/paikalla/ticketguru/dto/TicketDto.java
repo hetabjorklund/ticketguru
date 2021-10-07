@@ -1,7 +1,6 @@
 package fi.paikalla.ticketguru.dto;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 import org.springframework.validation.annotation.Validated;
 

@@ -49,19 +49,24 @@ public class TicketguruApplication {
 			Event event2 = new Event("Muumirock", "Muumilaakso", 700, 
 					start, end, presaleend, "Pihoo!"); 
 			Event event3 = new Event("Mörkörock", "Yksinäiset vuoret", 1, 
-					start, end, presaleend, statusRepo.findByStatusName("upcoming"), "Mörkö narisee yksin"); 
+					start, end, presaleend, statusRepo.findByStatusName("upcoming"), "Mörkö narisee yksin");
+			Event event4 = new Event("Yhden miehen rokki", "Savonlinnankatu 50", 1, 
+					start, end, presaleend, "Jepjep");
 			
 			eventRepo.save(event1);
 			eventRepo.save(event2);
-			eventRepo.save(event3); 
+			eventRepo.save(event3);
+			eventRepo.save(event4);
 			
 			TicketType tt1 = new TicketType(eventRepo.findByName("Ruisrock"), "aikuinen", 20.90); 
 			TicketType tt2 = new TicketType(eventRepo.findByName("Muumirock"), "eläkeläinen", 30.00); 
 			TicketType tt3 = new TicketType(eventRepo.findByName("Mörkörock"), "aikuinen", 24.75);
+			TicketType tt4 = new TicketType(eventRepo.findByName("Yhden miehen rokki"), "yksinäinen", 30.0);
 			
 			typeRepo.save(tt1);
 			typeRepo.save(tt2);
 			typeRepo.save(tt3);
+			typeRepo.save(tt4);
 			
 			TGUser user = new TGUser("maikki", "menevä", "MaiMe", "salasana", "USER"); 
 			
@@ -71,15 +76,13 @@ public class TicketguruApplication {
 			
 			invoiceRepo.save(invoice1); 
 			
-			try {
-				Ticket t1 = new Ticket(typeRepo.findByTypeAndEvent("aikuinen", eventRepo.findByName("Ruisrock")), 20.9, invoice1);
-				Ticket t2 = new Ticket(typeRepo.findByTypeAndEvent("eläkeläinen", eventRepo.findByName("Muumirock")), 30.00, invoice1);
+			Ticket t1 = new Ticket(typeRepo.findByTypeAndEvent("aikuinen", eventRepo.findByName("Ruisrock")), 20.9, invoice1);
+			Ticket t2 = new Ticket(typeRepo.findByTypeAndEvent("eläkeläinen", eventRepo.findByName("Muumirock")), 30.00, invoice1);
+			Ticket t3 = new Ticket(typeRepo.findByTypeAndEvent("yksinäinen", eventRepo.findByName("Yhden miehen rokki")), 30.00, invoice1);
 				
-				ticketRepo.save(t1); 
-				ticketRepo.save(t2);
-			}catch(Error e) {
-				log.info(e.toString());
-			}			
+			ticketRepo.save(t1); 
+			ticketRepo.save(t2);	
+			ticketRepo.save(t3);
 		}; 	
 	}
 

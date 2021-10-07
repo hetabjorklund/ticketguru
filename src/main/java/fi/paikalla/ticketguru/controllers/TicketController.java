@@ -83,9 +83,23 @@ public class TicketController {
 				invoice.get()
 			);
 			
-			ticketRepo.save(newTicket);
+			//haetaan lipusta eventId ja tarkastetaan, onko kyseiseen tapahtumaan lippuja myytävänä
+			long eventId = ticketservice.getEventIdFromTicket(newTicket);
+			boolean hasAvailableTickets;
 			
-			return new ResponseEntity<>("Ticket succesfully created", HttpStatus.CREATED);
+			try {
+				hasAvailableTickets = ticketservice.hasAvailableTickets(eventId);
+			} catch(Exception e) {
+				hasAvailableTickets = false;
+			}
+			
+			//Mikäli lippuja on jäljellä, luodaan uusi lippu. Mikäli lippuja ei ole jäljellä, palautetaan BAD_REQUEST
+			if(hasAvailableTickets) {
+				ticketRepo.save(newTicket);
+				return new ResponseEntity<>("Ticket succesfully created", HttpStatus.CREATED);
+			} else {
+				return new ResponseEntity<>("The event is sold out", HttpStatus.BAD_REQUEST);
+			}
 		}
 		
 		return new ResponseEntity<>("No ticket type or invoice found with the given id's", HttpStatus.BAD_REQUEST);
@@ -136,11 +150,11 @@ public class TicketController {
 	public @ResponseBody ResponseEntity<Optional<Ticket>> deleteTicket(@PathVariable("id") Long ticketId){
 		Optional<Ticket> ticket = ticketRepo.findById(ticketId);
 		
-		if(!ticket.isEmpty()) {
-			ticketRepo.delete(ticket.get());
-			return new ResponseEntity<>(ticket, HttpStatus.NO_CONTENT);
+		if(ticket.isEmpty()) {
+			return new ResponseEntity<>(ticket, HttpStatus.NOT_FOUND);
 		}
 		
-		return new ResponseEntity<>(ticket, HttpStatus.NOT_FOUND);
+		ticketRepo.delete(ticket.get());
+		return new ResponseEntity<>(ticket, HttpStatus.NO_CONTENT);
 	}
 }
