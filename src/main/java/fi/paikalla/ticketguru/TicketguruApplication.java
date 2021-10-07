@@ -71,12 +71,15 @@ public class TicketguruApplication {
 			
 			invoiceRepo.save(invoice1); 
 			
-			Ticket t1 = new Ticket(typeRepo.findByTypeAndEvent("aikuinen", eventRepo.findByName("Ruisrock")), 20.9, invoice1);
-			Ticket t2 = new Ticket(typeRepo.findByTypeAndEvent("eläkeläinen", eventRepo.findByName("Ruisrock")), 30.00, invoice1);
-			
-			ticketRepo.save(t1); 
-			ticketRepo.save(t2); 			
-			
+			try {
+				Ticket t1 = new Ticket(typeRepo.findByTypeAndEvent("aikuinen", eventRepo.findByName("Ruisrock")), 20.9, invoice1);
+				Ticket t2 = new Ticket(typeRepo.findByTypeAndEvent("eläkeläinen", eventRepo.findByName("Muumirock")), 30.00, invoice1);
+				
+				ticketRepo.save(t1); 
+				ticketRepo.save(t2);
+			}catch(Error e) {
+				log.info(e.toString());
+			}			
 		}; 	
 	}
 

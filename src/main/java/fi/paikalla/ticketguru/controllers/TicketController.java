@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,7 +72,7 @@ public class TicketController {
 	}
 	
 	@PostMapping("/tickets")
-	public @ResponseBody ResponseEntity<TicketDto> createTicket(@RequestBody TicketDto ticket){
+	public @ResponseBody ResponseEntity<String> createTicket(@Valid @RequestBody TicketDto ticket){
 		Optional<TicketType> ticketType = typeRepo.findById(ticket.getTicketType());
 		Optional<Invoice> invoice = invoiceRepo.findById(ticket.getInvoice());
 		
@@ -83,10 +85,10 @@ public class TicketController {
 			
 			ticketRepo.save(newTicket);
 			
-			return new ResponseEntity<>(ticket, HttpStatus.CREATED);
+			return new ResponseEntity<>("Ticket succesfully created", HttpStatus.CREATED);
 		}
 		
-		return new ResponseEntity<>(ticket, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>("No ticket type or invoice found with the given id's", HttpStatus.BAD_REQUEST);
 	}
 	
 	@PatchMapping("/tickets/{id}")
@@ -107,7 +109,7 @@ public class TicketController {
 	}
 	
 	@PutMapping("/tickets/{id}")
-	public @ResponseBody ResponseEntity<TicketDto> modifyTicket(@RequestBody TicketDto ticketDto, @PathVariable("id") Long ticketId){
+	public @ResponseBody ResponseEntity<TicketDto> modifyTicket(@Valid @RequestBody TicketDto ticketDto, @PathVariable("id") Long ticketId){
 		Optional<TicketType> ticketType = typeRepo.findById(ticketDto.getTicketType());
 		Optional<Invoice> invoice = invoiceRepo.findById(ticketDto.getInvoice());
 		Optional<Ticket> ticket = ticketRepo.findById(ticketId);

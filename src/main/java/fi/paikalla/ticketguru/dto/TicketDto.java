@@ -1,10 +1,20 @@
 package fi.paikalla.ticketguru.dto;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+import org.springframework.validation.annotation.Validated;
+
+@Validated
 public class TicketDto {
 	private double price; 
-	private boolean	used; 
-	private long ticketType;
+	private boolean	used;
+	
+	@Min(value = 1, message = "invoice should be at least 1")
 	private long invoice;
+	
+	@Min(value = 1, message= "ticketType must be at least 1")
+	private long ticketType;
 	
 	public TicketDto() {}
 
