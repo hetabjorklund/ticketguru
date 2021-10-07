@@ -5,9 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -48,50 +51,89 @@ public class StatusController {
 		}
 	}
 	
-	/*
+	// ONGELMA: MILLÄ SAA HAETTUA TAPAHTUMALISTAN? Nyt heittää 500:sen
 	@GetMapping ("/status/{id}/events") // hakee kaikki tapahtumat statuksen perusteella
-	public ResponseEntity<List<Event>> getEventsByStatus(@PathVariable (value = "id") Long statusId) {
-		Optional<EventStatus> status = statusrepo.findById(statusId);
-		List<Event> elist =  eventrepo.findByStatus(status.getStatusName()); 
-		if (status.isEmpty()) {
-			return new ResponseEntity<>(elist, HttpStatus.NOT_FOUND); 
-		} if (elist.isEmpty()) {
-			return new ResponseEntity<>(elist, HttpStatus.OK); 
+	public ResponseEntity<?> getEventsByStatus2(@PathVariable (value = "id") Long statusId) {
+		Optional<EventStatus> status = statusrepo.findById(statusId); // haetaan mahdollinen status statusreposta id:n perusteella
+		try {
+			List<Event> elist =  eventrepo.findByStatus(statusId); // haetaan lista tapahtumista statuksen id:n perusteella
+			if (status.isEmpty()) { // tarkistetaan löytyikö status kannasta
+				return new ResponseEntity<>("Status not found", HttpStatus.NOT_FOUND); // jos statusta ei löydy, palautetaan viesti sekä 404-koodi
+			} if (elist.isEmpty()) { // tarkistetaan onko statukseen liitetty tapahtumia
+				return new ResponseEntity<>(elist, HttpStatus.OK); // jos tapahtumalista on tyhjä, palautuu tyhjä lista ja 200-koodi
+			} else {
+				return new ResponseEntity<>(elist, HttpStatus.OK); // palautetaan tapahtumalista ja 200-koodi
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>("Status not found", HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	@PostMapping ("/status")// luo uuden statuksen, VALIDOINTI HEITTÄÄ AUTOMAATTIRESPONSEN
+	public ResponseEntity<?> createEventStatus (@Valid @RequestBody EventStatus status, BindingResult bindingresult) {
+		if (bindingresult.hasErrors()) { // tarkistetaan tuleeko pyynnön mukana statukselle nimi
+			return new ResponseEntity<> ("Status name is missing", HttpStatus.BAD_REQUEST); // jos ei statukselle ole annettu nimeä, sitä ei luoda ja palautetaan 400-koodi
+		} else { // jos pyynnössä on statukselle nimi
+			if (statusrepo.findByStatusName(status.getStatusName()) != null) { // tarkistetaan onko kyseinen status jo olemassa kannassa
+				return new ResponseEntity<> (statusrepo.findByStatusName(status.getStatusName()), HttpStatus.CONFLICT); //palauttaa olemassa olevan statuksen, jos sellainen löytyy sekä 409-koodin
+			} else {
+				return new ResponseEntity<> (statusrepo.save(status), HttpStatus.CREATED); // luodaan uusi status, palautetaan sen tiedot ja 201-koodi
+			}
+		}
+	}
+	
+	/* itse rakennettu validointi
+	@PostMapping ("/status")// POST luo uuden statuksen
+	public ResponseEntity<EventStatus> createEventStatus(@RequestBody EventStatus status) {
+		if (status.getStatusName() == null) { // tarkistetaan tuleeko pyynnön mukana tapahtuman nimi
+			return new ResponseEntity<> (status, HttpStatus.BAD_REQUEST); // jos ei statuksella ole nimeä, sitä ei luoda
+		} 
+		if (statusrepo.findByStatusName(status.getStatusName()) != null) { // tarkistaa onko kyseinen status jo olemassa
+			return new ResponseEntity<> (statusrepo.findByStatusName(status.getStatusName()), HttpStatus.CONFLICT); //palauttaa olemassa olevan statuksen, jos sellainen löytyy
 		} else {
-			return new ResponseEntity<>(elist, HttpStatus.OK);
+			return new ResponseEntity<> (statusrepo.save(status), HttpStatus.CREATED); // luodaan uusi status
+		}
+	}
+	*/
+	/*
+	@PatchMapping("/status/{id}")// muokkaa statuksen nimeä
+	public ResponseEntity<?> updateName(@PathVariable(value = "id") Long statusId, 
+			@Valid @RequestBody EventStatus status, BindingResult bindingresult) {
+		if (bindingresult.hasErrors()) { // tarkistetaan tuleeko pyynnön mukana statukselle nimi
+			return new ResponseEntity<> ("Status name is missing", HttpStatus.BAD_REQUEST); // jos ei statukselle ole annettu nimeä, sitä ei luoda ja palautetaan 400-koodi
+		} else { // jos pyynnön mukana tulee statukselle nimi
+			Optional<EventStatus> estatus = statusrepo.findById(statusId); // haetaan mahdollinen status kannasta id:n perusteella
+			if (estatus.isEmpty()) { // tarkistetaan löytyikö status kannasta
+				return new ResponseEntity<>("Status not found", HttpStatus.NOT_FOUND); // jos status ei löydy, palautetaan viesti ja 404-koodi
+			} else { 
+				EventStatus newStatus = estatus.get(); // jos status löytyy kannasta, haetaan statuksen tiedot
+				newStatus.setStatusName(status.getStatusName()); // status nimetään uusiksi pyynnön mukana toimitetulla nimellä
+				statusrepo.save(newStatus); // tallennetaan status uudella nimellä kantaan
+				return new ResponseEntity<>(newStatus, HttpStatus.OK); // palautetaan korjatut statuksen tiedot ja 200-koodi
+			}
 		}
 	}
 	*/
 	
-	@PostMapping ("/status")// POST luo uuden statuksen
-	public ResponseEntity<EventStatus> createEventStatus(@RequestBody EventStatus status) {
-		if (status.getStatusName() == null) { // tarkistetaan tuleeko pyynnön mukana tapahtuman nimi
-			return new ResponseEntity<> (status, HttpStatus.BAD_REQUEST); // jos ei statukselle ole annettu nimeä, sitä ei luoda ja palautetaan 400-koodi
-		} 
-		if (statusrepo.findByStatusName(status.getStatusName()) != null) { // tarkistetaan onko kyseinen status jo olemassa kannassa
-			return new ResponseEntity<> (statusrepo.findByStatusName(status.getStatusName()), HttpStatus.CONFLICT); //palauttaa olemassa olevan statuksen, jos sellainen löytyy sekä 409-koodin
-		} else {
-			return new ResponseEntity<> (statusrepo.save(status), HttpStatus.CREATED); // luodaan uusi status, palautetaan sen tiedot ja 201-koodi
-		}
-	}
-	
-	@PatchMapping("/status/{id}")// muokkaa statuksen nimeä
+	@PatchMapping("/status/{id}")// muokkaa statuksen nimeä, itse rakennettu validointi
 	public ResponseEntity<?> updateName(@PathVariable(value = "id") Long statusId, 
 			@RequestBody EventStatus status) {
 		Optional<EventStatus> estatus = statusrepo.findById(statusId); // haetaan mahdollinen status kannasta id:n perusteella
 		if (estatus.isEmpty()) { // tarkistaa löytyikö status kannasta
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // jos status ei löydy, palautetaan 404-koodi
+			return new ResponseEntity<>("Status not found", HttpStatus.NOT_FOUND); // jos status ei löydy, palautetaan viesti ja 404-koodi
 		} else { 
 			EventStatus newStatus = estatus.get(); // jos status löytyy kannasta, haetaan statuksen tiedot
 			newStatus.setStatusName(status.getStatusName()); // status nimetään uusiksi annetulla nimellä
+			statusrepo.save(newStatus); // tallennetaan status uudella nimellä kantaan
 			return new ResponseEntity<>(newStatus, HttpStatus.OK); // palautetaan korjatut statuksen tiedot ja 200-koodi
 		}
 		
 	}
 	
+	
 	@DeleteMapping("/status/{id}")// merkkaa statuksen poistetuksi
 	public ResponseEntity<HashMap<String, Boolean>> deleteStatusById(@PathVariable(value = "id") Long statusId) {
-		Optional<EventStatus> status = statusrepo.findById(statusId);
+		Optional<EventStatus> status = statusrepo.findById(statusId); // heataan mahdollinen status kannasta id:n perusteella
 		if (status.isEmpty()) { // jos statusta ei löydy kannasta
 			HashMap<String, Boolean> response = new HashMap<>(); // luodaan uusi hashmap responsea varten
 			response.put("deleted", Boolean.FALSE); // asetetaan tiedot hashmapiin

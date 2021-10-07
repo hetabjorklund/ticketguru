@@ -9,6 +9,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotBlank;
 
 import lombok.Data;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ import lombok.NoArgsConstructor;
 //@AllArgsConstructor
 public class EventStatus extends AbstractPersistable<Long> {	
 	
+	@NotBlank
 	private String statusName; // tapahtuman tilanne: 'järjestetään', 'peruttu' tai 'siirretty'	
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="status")
