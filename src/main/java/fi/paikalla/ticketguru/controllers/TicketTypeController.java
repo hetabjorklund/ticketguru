@@ -86,18 +86,6 @@ public class TicketTypeController {
 		return new ResponseEntity<>(type, HttpStatus.BAD_REQUEST);	
 	}
 	
-	@PatchMapping("/types/{id}") //päivittää hintaa
-	public ResponseEntity<?> updatePrice(@PathVariable(value ="id") Long typeId, 
-			@RequestBody TicketTypeDto type) {
-		Optional<TicketType> ticktype = typerepo.findById(typeId); 
-		if (ticktype.isEmpty()) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-		TicketType setting = ticktype.get();
-		setting.setPrice(type.getPrice()); 
-		return new ResponseEntity<>(setting, HttpStatus.CREATED);
-	}
-	
 	@DeleteMapping("/types/{id}")
 	public ResponseEntity<HashMap<String, Boolean>> deleteTypeById(@PathVariable(value = "id") Long typeid) {
 		Optional<TicketType> type = typerepo.findById(typeid); 
