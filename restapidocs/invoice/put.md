@@ -10,7 +10,7 @@ Päivittää haetun laskun tiedot.
 
 **Reunaehdot**
 
-Pyynnössä täytyy lähettää haetun laskun id.
+Pyynnössä täytyy lähettää muokattavan laskun id. Laskulla täytyy olla myyjä (TGUser).
 
 **Esimerkkipyyntö** 
 
@@ -47,12 +47,54 @@ Pyynnössä täytyy lähettää haetun laskun id.
 ## Virhevastaus
 
 ### 1
-
 **Ehto** : Haetulla id:llä ei löydy laskua.
 
 **HTTP-vastauskoodi** : `404 NOT FOUND`
 
 ### 2
+**Ehto** : Myyjä (TGUser) puuttuu.
+
+**HTTP-vastauskoodi** : `400 BAD REQUEST`
+
+**Esimerkkivastaus**
+```json
+{
+    "timestamp": "2021-10-06T15:43:26.536+00:00",
+    "status": 400,
+    "error": "Bad Request",
+    "trace": [stacktrace],
+    "message": "Validation failed for object='invoice'. Error count: 1",
+    "errors": [
+        {
+            "codes": [
+                "NotNull.invoice.tguser",
+                "NotNull.tguser",
+                "NotNull"
+            ],
+            "arguments": [
+                {
+                    "codes": [
+                        "invoice.tguser",
+                        "tguser"
+                    ],
+                    "arguments": null,
+                    "defaultMessage": "tguser",
+                    "code": "tguser"
+                }
+            ],
+            "defaultMessage": "must not be null",
+            "objectName": "invoice",
+            "field": "tguser",
+            "rejectedValue": null,
+            "bindingFailure": false,
+            "code": "NotNull"
+        }
+    ],
+    "path": "/invoices/9"
+}
+```
+
+### 3
 **Ehto** : Jokin attribuutti on väärän tyyppinen (esim. Boolean kun pitäisi olla Array tai String).
 
 **HTTP-vastauskoodi** : `400 BAD REQUEST`

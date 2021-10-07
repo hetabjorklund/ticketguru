@@ -10,41 +10,30 @@ Poistaa tapahtuman tunnisteen perusteella.
 
 **Reunaehdot**
 
-Tapahtuman id tulisi olla tunnettu.  
+Pyynnössä täytyy lähettää haetun tapahtuman id. Tapahtumaan ei saa liittyä myytyjä lippuja. 
 
 **Esimerkkipyyntö** 
 
-Poista tapahtuma, jonka id on 2.
-
-Tyhjä DELETE-tyyppin pyyntö kohteeseen "/events/2"
+Poista tapahtuma, jonka id on 2: lähetä DELETE-tyypin pyyntö polkuun "/events/2". Pyynnön vartalo on tyhjä.
 
 ## Onnistumisvastaus
 
-**Ehto** : Tapahtuman id on olemassa ja poisto onnistui.
+**Ehto** : Tapahtuman id on olemassa, tapahtumaan ei liity myytyjä lippuja ja poisto onnistui.
 
-**HTTP-vastauskoodi** : `200 OK`
-
-**Esimerkkivastaus** : json: deleted: true.
-
-```json
-{
-    deleted: true
-}
-```
+**HTTP-vastauskoodi** : `204 NO CONTENT`
 
 ## Virhevastaus
 
 ### 1
 
-**Ehto** : Tapahtuman tunnistetta ei ole olemassa.
+**Ehto** : Haetun tapahtuman id:tä ei ole olemassa.
 
 **HTTP-vastauskoodi** : `404 NOT FOUND`
 
-**Esimerkkivastaus** : json {deleted: false}
+### 2
 
-```json
-{
-    deleted: false
-}
-```
+**Ehto** : Tapahtumaan liittyy myytyjä lippuja.
 
+**Vastaus** : Event has associated tickets, deletion forbidden
+
+**HTTP-vastauskoodi** : `403 FORBIDDEN`

@@ -55,11 +55,11 @@ Tapahtumalla on oltava nimi, eli name-attribuutti ei saa puuttua. Kunhan name-at
 
 ### 1
 
-**Ehto** : Tapahtuma on jo olemassa (eli on jo tapahtuma jolla on sama nimi).
+**Ehto** : Tapahtuma on jo olemassa (eli on jo tapahtuma jolla on sama nimi ja alkamisaika).
 
 **HTTP-vastauskoodi** : `409 CONFLICT`
 
-**Esimerkkivastaus** : Palautetaan jo olemassaolevan samannimisen tapahtuman tiedot.
+**Esimerkkivastaus** : Palautetaan jo olemassaolevan tapahtuman tiedot.
 
 ```json
 {

@@ -95,3 +95,48 @@ Toimita kaikki pyydetyt kentät. HUOM! Mikäli kaikkia kenttiä ei anneta, puutt
     "path": "/events/"
 }
 ```
+
+### tai
+
+**Ehto** : Pyynnössä ei lähetetty tapahtuman nimeä.
+
+**HTTP-vastauskoodi** : `400 BAD REQUEST`
+
+**Esimerkkivastaus**
+```json
+{
+    "timestamp": "2021-10-06T15:55:25.913+00:00",
+    "status": 400,
+    "error": "Bad Request",
+    "trace": [stacktrace],
+    "message": "Validation failed for object='event'. Error count: 1",
+    "errors": [
+        {
+            "codes": [
+                "NotEmpty.event.name",
+                "NotEmpty.name",
+                "NotEmpty.java.lang.String",
+                "NotEmpty"
+            ],
+            "arguments": [
+                {
+                    "codes": [
+                        "event.name",
+                        "name"
+                    ],
+                    "arguments": null,
+                    "defaultMessage": "name",
+                    "code": "name"
+                }
+            ],
+            "defaultMessage": "must not be empty",
+            "objectName": "event",
+            "field": "name",
+            "rejectedValue": null,
+            "bindingFailure": false,
+            "code": "NotEmpty"
+        }
+    ],
+    "path": "/events/2"
+}
+```

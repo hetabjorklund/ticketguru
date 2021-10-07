@@ -6,6 +6,9 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotEmpty;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.AllArgsConstructor;
@@ -20,23 +23,26 @@ import java.util.*;
 @NoArgsConstructor
 public class Event extends AbstractPersistable<Long> {
 	
+	@NotEmpty
 	private String name; // tapahtuman nimi, esim. 'Ruisrock' tai 'Savonlinnan Oopperajuhlat'
 	private String address; // tapahtuman osoite
 	private Integer maxCapacity; // maksimipaikkamäärä, tickets-listan koko ei voi olla tätä suurempi
+	@FutureOrPresent
 	private LocalDateTime startTime; // tapahtuman alkuaika (pvm ja kellonaika)
+	@FutureOrPresent
 	private LocalDateTime endTime; // tapahtuman loppuaika (pvm ja kellonaika)
+	@FutureOrPresent
 	private LocalDateTime endOfPresale; // ennakkomyynnin loppuminen (pvm ja kellonaika)
 	@ManyToOne
 	private EventStatus status; // tapahtuman status
 	private String description; // tapahtuman kuvaus
 	//private HashMap<TicketType, Double> ticketPrices; // tähän tilaisuuteen saatavilla olevat lipputyypit ja niiden hinnat
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="event")
-	@JsonIgnore // koska muuten hakukatastrofi jos ei käytä api/events/-endpointtia
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="event") @JsonIgnore // koska muuten hakukatastrofi jos ei käytä api/events/-endpointtia
 	private List<TicketType> ticketTypes;
-	//@OneToMany(cascade = CascadeType.ALL, mappedBy="event") // automaatti-api kestää ongelman, mutta normi pyörii ympyrää
-	//@JsonIgnore
+	//@JsonIgnore //@OneToMany(cascade = CascadeType.ALL, mappedBy="event") // automaatti-api kestää ongelman, mutta normi pyörii ympyrää
 	//private List<Ticket> tickets; 
 	
+	// konstruktori jossa kaikki parametrit
 	public Event(String name, String address, Integer maxCapacity, LocalDateTime startTime, LocalDateTime endTime,
 			LocalDateTime endOfPresale, EventStatus status, String description) {
 		super();
@@ -48,10 +54,11 @@ public class Event extends AbstractPersistable<Long> {
 		this.endOfPresale = endOfPresale;
 		this.status = status;
 		this.description = description;
-		//this.ticketTypes = new ArrayList<TicketType>(); 
+		this.ticketTypes = new ArrayList<TicketType>(); 
 		//this.tickets = new ArrayList<Ticket>(); 
 	} 
 	
+	// konstruktori jossa ei status-parametriä
 	public Event(String name, String address, Integer maxCapacity, LocalDateTime startTime, LocalDateTime endTime,
 			LocalDateTime endOfPresale, String description) {
 		super();
@@ -62,7 +69,7 @@ public class Event extends AbstractPersistable<Long> {
 		this.endTime = endTime;
 		this.endOfPresale = endOfPresale;
 		this.description = description;
-		//this.ticketTypes = new ArrayList<TicketType>();
+		this.ticketTypes = new ArrayList<TicketType>();
 		//this.tickets = new ArrayList<Ticket>();
 	} 
 }

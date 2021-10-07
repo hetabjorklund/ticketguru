@@ -10,15 +10,16 @@ Luo uuden laskun.
 
 **Reunaehdot**
 
-Ei reunaehtoja.
+Laskulla täytyy olla myyjä (TGUser).
 
 **Esimerkkipyyntö** 
 
 ```json
 {
-    "timestamp" : "2021-12-31T21:00:00",
-    "tguser" : null,
-    "tickets" : []
+    "tguser": {
+            "id": 8,
+            "userName": "MaiMe"
+        }
 }    
 ```
 
@@ -33,14 +34,23 @@ Ei reunaehtoja.
 ```json
 {
     "invoiceId": 12,
-    "timestamp": "2021-12-31T21:00:00",
-    "tguser": null,
-    "tickets": []
+    "timestamp": "2021-10-06T18:31:16.1974145",
+    "tguser": {
+        "id": 8,
+        "userName": "MaiMe",
+        "new": false
+    }
 }
 ```
 
 ## Virhevastaus
 
+### 1
+**Ehto** : Myyjä (TGUser) puuttuu.
+
+**HTTP-vastauskoodi** : `400 BAD REQUEST`
+
+### 2
 **Ehto** : Jokin attribuutti on väärän tyyppinen (esim. Boolean kun pitäisi olla Array tai String).
 
 **HTTP-vastauskoodi** : `400 BAD REQUEST`

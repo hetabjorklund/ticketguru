@@ -12,37 +12,35 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Invoice {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Id	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long invoiceId;
 	private LocalDateTime timestamp; // aikaleima myyntitapahtumalle	
-	@ManyToOne
-	//@JoinColumn(name = "TGUserId")
-	private TGUser tguser; // laskun myyjä	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "invoice")
-	@JsonIgnore
+	@NotNull @ManyToOne //@JoinColumn(name = "TGUserId")
+	private TGUser tguser; // laskun myyjä
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "invoice")	@JsonIgnore
 	private List<Ticket> tickets; // lista samalla laskulla olevista lipuista
 
-	public Invoice() {}
+	public Invoice() {} // parametriton konstruktori
 	
-	public Invoice(Long invoiceId, LocalDateTime timestamp, TGUser TGUser, List<Ticket> tickets) {
+	/*public Invoice(Long invoiceId, LocalDateTime timestamp, TGUser TGUser, List<Ticket> tickets) {
 		super();
 		this.invoiceId = invoiceId;
 		this.timestamp = timestamp;
 		this.tguser = TGUser;
 		this.tickets = tickets;
+	}*/
+	
+	public Invoice(TGUser tguser) { // parametrillisessä konstruktorissa ei tarvita muuta kuin myyjä; id tulee automaattisesti
+		this.tguser = tguser; 
+		this.timestamp = LocalDateTime.now(); // myyntiaika on automaattisesti nykyinen aika
+		this.tickets = new ArrayList<Ticket>(); // lippulista on automaattisesti tyhjä lista; liput lisätään laskuun vasta kun ne luodaan/myydään
 	}
 	
-	public Invoice(TGUser TGUser) {
-		this.tguser = TGUser; 
-		this.timestamp = LocalDateTime.now();
-		this.tickets = new ArrayList<Ticket>(); 
-	}
-
 	public Long getInvoiceId() {
 		return this.invoiceId;
 	}
@@ -63,8 +61,8 @@ public class Invoice {
 		return this.tguser;
 	}
 
-	public void setTGuser(TGUser TGUser) {
-		this.tguser = TGUser;
+	public void setTGuser(TGUser tguser) {
+		this.tguser = tguser;
 	}
 
 	public List<Ticket> getTickets() {

@@ -3,9 +3,12 @@ package fi.paikalla.ticketguru.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,69 +64,93 @@ public class InvoiceController {
 	
 	// POST
 	@PostMapping("/invoices")
-	public ResponseEntity<Invoice> addInvoice(@RequestBody Invoice invoice) { // luodaan uusi lasku
-		
-		if (invoice.getTickets() != null) { // tarkistetaan onko pyynnön mukana tulevassa laskussa lippulista
-			invoice.getTickets().clear(); // jos on, varmuuden vuoksi tyhjennetään pyynnön mukana tulevan laskun lippulista: liput lisätään tiettyyn laskuun vasta kun ne luodaan/myydään			
+	public ResponseEntity<Invoice> addInvoice(@Valid @RequestBody Invoice invoice, BindingResult bindingresult) { // luodaan uusi lasku
+
+		if (bindingresult.hasErrors()) { // tarkistetaan onko mukana TGUser
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // jos ei, palautetaan 400
 		}
-		return new ResponseEntity<>(invoicerepo.save(invoice), HttpStatus.CREATED); // palautetaan luotu lasku ja 201
+		else {			
+			Invoice newInvoice = new Invoice(invoice.getTGuser()); // luodaan tässä uusi, jotta konstruktori tekee a) tyhjän lippulistan ja b) timestampiksi kuluvan hetken - muuten timestamp on joko pyynnössä lähetetty tai null
+			invoicerepo.save(newInvoice);			
+			return new ResponseEntity<>(newInvoice, HttpStatus.CREATED); // palautetaan luotu lasku ja 201
+		}
 	}		
 	
 	// PUT
 	@PutMapping("/invoices/{id}") // päivittää haluttua laskua
-	public ResponseEntity<Invoice> updateInvoice(@RequestBody Invoice newInvoice, @PathVariable Long id) {
+	public ResponseEntity<Invoice> updateInvoice(@Valid @RequestBody Invoice newInvoice, @PathVariable Long id, BindingResult bindingresult) {
 		
-		if (this.invoicerepo.findById(id).isEmpty()) { // tarkistetaan löytyykö haetulla id:llä laskua
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // jos ei löydy, palautetaan 404
+		if (bindingresult.hasErrors()) { // tarkistetaan onko mukana TGUser	
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // jos ei, palautetaan 400
 		}
-		else {
-			Invoice invoice = this.invoicerepo.findById(id).get(); // jos haetulla id:llä löytyy lasku, päivitetään sen tiedot
-			invoice.setTGuser(newInvoice.getTGuser());
-			invoice.setTickets(newInvoice.getTickets());
-			invoice.setTimestamp(newInvoice.getTimestamp());
-
-			this.invoicerepo.save(invoice); // tallennetaan päivitetty lasku
-			
-			return new ResponseEntity<>(invoice, HttpStatus.OK); // palautetaan uusi, päivitetty lasku ja 200				
+		
+		else {		
+		
+			if (this.invoicerepo.findById(id).isEmpty()) { // tarkistetaan löytyykö haetulla id:llä laskua
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND); // jos ei löydy, palautetaan 404
+			}
+			else {
+				Invoice invoice = this.invoicerepo.findById(id).get(); // jos haetulla id:llä löytyy lasku, päivitetään sen tiedot
+				invoice.setTGuser(newInvoice.getTGuser());
+				invoice.setTickets(newInvoice.getTickets());
+				invoice.setTimestamp(newInvoice.getTimestamp());
+	
+				this.invoicerepo.save(invoice); // tallennetaan päivitetty lasku
+				
+				return new ResponseEntity<>(invoice, HttpStatus.OK); // palautetaan uusi, päivitetty lasku ja 200				
+			}
 		}
 	}
 		
 	// DELETE
 	@DeleteMapping("/invoices")
-	public ResponseEntity<Invoice> deleteAll() { // poistetaan kaikki laskut
+	public ResponseEntity<String> deleteAll() { // poistetaan kaikki laskut
 		
 		if (this.invoicerepo.count() == 0) { // tarkistetaan onko invoicerepossa ylipäätään mitään poistettavaa
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT); // jos ei ole, palautetaan 204
+			return new ResponseEntity<>("There are no invoices to delete", HttpStatus.NOT_FOUND); // jos ei ole, palautetaan viesti ja 404
 		}
 		
 		else { // jos invoicerepossa on laskuja
-			this.invoicerepo.deleteAll(); // tyhjennetään koko invoicerepo
 			
+			// tarkistetaan onko laskussa lippulistaa jonka koko on 0			
+			for (Invoice invoice : this.invoicerepo.findAll()) {
+				if (invoice.getTickets().size() == 0) {
+					this.invoicerepo.delete(invoice); // poistetaan vain ne laskut joissa on tyhjä lippulista
+				}
+			}
+						
 			if (this.invoicerepo.count() == 0) { // jos tyhjennys onnistui
-				return new ResponseEntity<>(HttpStatus.OK);	// palautetaan 200		
+				return new ResponseEntity<>("All invoices have been deleted", HttpStatus.NO_CONTENT); // palautetaan viesti ja 204		
 			}
 			else {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // jos tyhjennys ei onnistunut, tapahtui jokin virhe ja palautetaan 500
+				return new ResponseEntity<>("One or more invoices have associated tickets, deletion forbidden", HttpStatus.FORBIDDEN); // jos tyhjennys ei onnistunut, palautetaan 403
 			}			
 		}
 				
 	}	
 	
 	@DeleteMapping("/invoices/{id}")
-	public ResponseEntity<Invoice> deleteInvoiceById(@PathVariable Long id) throws Exception { // poistetaan haluttu lasku
+	public ResponseEntity<String> deleteInvoiceById(@PathVariable Long id) { // poistetaan haluttu lasku
 		
-		try {
-			if (this.invoicerepo.findById(id) != null) { // jos haetulla id:llä löytyy lasku			
-				Invoice invoice = this.invoicerepo.findById(id).get(); // haetaan lasku talteen palautusta varten
-				this.invoicerepo.deleteById(id); // poistetaan haettu lasku reposta
-				return new ResponseEntity<>(invoice, HttpStatus.OK); // palautetaan poistettu lasku ja 200					
-			}			
-			else { // eli jos haetulla id:llä ei löydy laskua
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND); // palautetaan 404
+		
+		if (this.invoicerepo.findById(id).isPresent()) { // jos haetulla id:llä löytyy lasku	
+			
+			Invoice invoice = this.invoicerepo.findById(id).get(); // otetaan lasku talteen käsittelyä varten
+				
+			if (invoice.getTickets().size() == 0) { // tarkistetaan onko laskulla lippuja
+				this.invoicerepo.delete(invoice); // jos ei, poistetaan lasku
+				return new ResponseEntity<>("Invoice deleted", HttpStatus.NO_CONTENT); // palautetaan viesti ja 204
 			}
-		} catch (Exception e) { 
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // jos tapahtuu jokin virhe, poistaminen ei ole onnistunut ja palautetaan 500			
-		}		
+				
+			else { // jos laskulla on lippuja
+				return new ResponseEntity<>("Invoice has associated tickets, deletion forbidden", HttpStatus.FORBIDDEN); // palautetaan viesti ja 403
+			}
+				
+		}			
+		
+		else { // eli jos haetulla id:llä ei löydy laskua
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // palautetaan 404
+		}
 		
 	}
 
