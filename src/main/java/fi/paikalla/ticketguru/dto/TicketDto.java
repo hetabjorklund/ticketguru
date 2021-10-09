@@ -47,4 +47,5 @@ public class TicketDto {
 	public void setInvoice(long invoice) {
 		this.invoice = invoice;
 	}
+	
 }
