@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import fi.paikalla.ticketguru.Repositories.InvoiceRepository;
@@ -169,6 +170,9 @@ public class InvoiceController {
 	public Invoice patchInvoice(JsonPatch patchDocument, Long id) {
 		
 		ObjectMapper objectMapper = new ObjectMapper();
+		//objectMapper.registerModule(new JSR310Module());
+		objectMapper.registerModule(new JavaTimeModule());
+		
 		
         // Gets the original invoice from the database
         Invoice originalInvoice = invoicerepo.findById(id).get();
