@@ -21,21 +21,19 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import fi.paikalla.ticketguru.Repositories.InvoiceRepository;
 import fi.paikalla.ticketguru.Entities.*;
-import fi.paikalla.ticketguru.Configurations.*;
 
 @RestController
 public class InvoiceController {
 	
 	@Autowired
 	private InvoiceRepository invoicerepo;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
 	
 	// GET	
 	@GetMapping("/invoices") // hae kaikki laskut
@@ -169,10 +167,7 @@ public class InvoiceController {
 	// siirrä invoiceserviceen jos toimii
 	public Invoice patchInvoice(JsonPatch patchDocument, Long id) {
 		
-		ObjectMapper objectMapper = new ObjectMapper();
-		//objectMapper.registerModule(new JSR310Module());
-		objectMapper.registerModule(new JavaTimeModule());
-		
+		//ObjectMapper objectMapper = new ObjectMapper();
 		
         // Gets the original invoice from the database
         Invoice originalInvoice = invoicerepo.findById(id).get();
