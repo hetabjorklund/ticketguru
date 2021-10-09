@@ -3,6 +3,9 @@ package fi.paikalla.ticketguru.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import javax.json.JsonPatch;
+import javax.json.JsonStructure;
+import javax.json.JsonValue;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +25,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.github.fge.jsonpatch.JsonPatch;
 
 import fi.paikalla.ticketguru.Repositories.InvoiceRepository;
 import fi.paikalla.ticketguru.Entities.*;
+import fi.paikalla.ticketguru.Configurations.*;
 
 @RestController
 public class InvoiceController {
@@ -89,10 +92,8 @@ public class InvoiceController {
 		
 		if (bindingresult.hasErrors()) { // tarkistetaan onko mukana TGUser	
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // jos ei, palautetaan 400
-		}
-		
-		else {		
-		
+		}		
+		else {
 			if (this.invoicerepo.findById(id).isEmpty()) { // tarkistetaan löytyykö haetulla id:llä laskua
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND); // jos ei löydy, palautetaan 404
 			}
@@ -122,57 +123,70 @@ public class InvoiceController {
 			
 			if (target.isEmpty()) { // jos id:llä ei löydy laskua
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND); // palautetaan 404
-			}
-			else { // jos id:llä löytyy lasku
-				Invoice invoice = target.get(); // otetaan Invoice-olio talteen käsittelyä varten
-				
-				if (updatedInvoice.getTGuser() != null) { // jos tguser ei ole null
-					invoice.setTGuser(updatedInvoice.getTGuser()); // korvataan vanhan laskun myyjä Patchissa tulevalla
-				}
-				else { // jos tguser on null
+			}	
+			
+			else { // jos id:llä löytyy lasku				
+				try {
+					Invoice invoice = target.get(); // otetaan Invoice-olio talteen käsittelyä varten
+					
+					//if (updatedInvoice.getTGuser() != null) { // jos tguser ei ole null
+						invoice.setTGuser(updatedInvoice.getTGuser()); // korvataan vanhan laskun myyjä Patchissa tulevalla
+					//}
+					//else { // jos tguser on null
+						//return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // palautetaan 400 
+					//}
+					
+					if (updatedInvoice.getTickets() != null) { // tarkistetaan tuleeko Patchissa lippulista
+						invoice.setTickets(updatedInvoice.getTickets()); // jos tulee, korvataan vanha lippulista uudella
+					}
+					
+					// muita oliomuuttujia ei tarvitse käydä läpi: id:tä eikä alkuperäistä luontiaikaa pidä voida muuttaa
+					
+					invoicerepo.save(invoice); // jos tämän kommentoi pois, patch onnistuu vaikka tguser on null, jos ei kommentoi pois, tulee 500 (siksi try-catch)
+					return new ResponseEntity<Invoice>(invoice, HttpStatus.OK);
+				} catch (Exception e) {
+					e.printStackTrace();
 					return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // palautetaan 400 
-				}
-				
-				if (updatedInvoice.getTickets() != null) { // tarkistetaan tuleeko Patchissa lippulista
-					invoice.setTickets(updatedInvoice.getTickets()); // jos tulee, korvataan vanha lippulista uudella
-				}
-				
-				// muita oliomuuttujia ei tarvitse käydä läpi: id:tä eikä alkuperäistä luontiaikaa pidä voida muuttaa
-				
-				invoicerepo.save(invoice);
-				return new ResponseEntity<Invoice>(invoice, HttpStatus.OK);
+					}
 			}
 		}
 	}*/
 	
-	@PatchMapping("/invoices/{id}")
-	public ResponseEntity<Invoice> updateInvoice(@PathVariable Long id, @RequestBody JsonPatch patch) {
+	@PatchMapping(value = "/invoices/{id}", consumes = "application/json-patch+json")
+	public ResponseEntity<Invoice> updateInvoice(@PathVariable Long id, @RequestBody JsonPatch patchDocument) {
 		
-	    try {
-	        Invoice invoice = invoicerepo.findById(id).get();
-	        Invoice invoicePatched = applyPatchToInvoice(patch, invoice);
-	        invoicerepo.save(invoicePatched);
-	        return ResponseEntity.ok(invoicePatched);
-	    } catch (Exception e) {
-	    	e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    } 
-	    
+		Optional<Invoice> target = invoicerepo.findById(id); // haetaan invoicerepositorysta Optional-olio id:n perusteella
+		if (target.isEmpty()) { // jos haettua laskua ei löydy
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // palautetaan 404
+		}
+		else { // jos haettu lasku löytyy			
+			Invoice invoice = patchInvoice(patchDocument, id); // käytetään lasku pathInvoice-metodin kautta			
+			return new ResponseEntity<>(invoice, HttpStatus.OK); // palautetaan muokattu lasku ja 200
+		}		
 	}
 	
-	private Invoice applyPatchToInvoice(JsonPatch patch, Invoice targetInvoice) throws Exception {
-			
-		try {
-			ObjectMapper objectMapper = 
-				    new ObjectMapper().registerModule(new JavaTimeModule())
-				            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-			JsonNode patched = patch.apply(objectMapper.convertValue(targetInvoice, JsonNode.class));
-		    return objectMapper.treeToValue(patched, Invoice.class);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-		}
-	}
+	// siirrä invoiceserviceen jos toimii
+	public Invoice patchInvoice(JsonPatch patchDocument, Long id) {
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		
+        // Gets the original invoice from the database
+        Invoice originalInvoice = invoicerepo.findById(id).get();
+        
+        //Converts the original invoice to a JsonStructure
+        JsonStructure invoiceToBePatched = objectMapper.convertValue(originalInvoice, JsonStructure.class);
+
+        // Applies the patch to the original invoice
+        JsonValue patchedInvoice = patchDocument.apply(invoiceToBePatched);
+
+        // Converts the JsonValue to an Invoice instance
+        Invoice modifiedInvoice = objectMapper.convertValue(patchedInvoice, Invoice.class);
+
+        // Saves the modified invoice in the repository
+        invoicerepo.save(modifiedInvoice); 
+        
+        return modifiedInvoice;
+    }
 				
 	// DELETE
 	@DeleteMapping("/invoices")
