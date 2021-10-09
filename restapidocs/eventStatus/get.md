@@ -69,5 +69,5 @@ Listaa yhden tapahtumastatuksen tietyn id:n perusteella
 **Esimerkkivastaus**
 
 ```json
-null
+Status not found
 ```

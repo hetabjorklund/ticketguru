@@ -30,7 +30,7 @@ Toimita statukselle nimi.
 
 **Ehto** : Mikäli pyynnön mukana toimitetaan statuksen nimi 
 
-**HTTP-vastauskoodi** : `200 OK`
+**HTTP-vastauskoodi** : `201 CREATED`
 
 **Esimerkkivastaus**
 

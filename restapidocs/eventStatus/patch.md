@@ -44,18 +44,14 @@ Toimita statukselle muokattu nimi.
 
 ## Virhevastaus
 
-**Ehto** : Mikäli annettua statusta lei löydy tietokannasta
+**Ehto** : Mikäli annettua statusta ei löydy tietokannasta
 
 **HTTP-vastauskoodi** : `404 NOT FOUND`
 
 **Esimerkkivastaus** :
 
 ```json
-{
-    "id": 12,
-    "statusName": "canceled",
-    "new": false
-}
+Status not found
 ```
 
 ### tai

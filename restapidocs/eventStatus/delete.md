@@ -1,4 +1,4 @@
-# Poista tapahtumam status
+# Poista tapahtumastatus
 
 Poista tietokannasta status id:n perusteella.
 
@@ -10,23 +10,25 @@ Poista tietokannasta status id:n perusteella.
 
 **Reunaehdot**
 
-Toimita URIn mukana statuken id.
+Toimita URIn mukana statuken id. Statuksella ei saa olla liitettyjä tapahtumia.
 
 ## Onnistumisvastaus
 
 **Ehto** : Mikäli URIn mukana toimitetaan haluttu id ja poistaminen onnistuu.
 
-**HTTP-vastauskoodi** : `200 OK`
-
-**Esimerkkivastaus**
-
-```json
-{
-    "deleted": true
-}
-```
+**HTTP-vastauskoodi** : `204 NO CONTENT`
 
 ## Virhevastaus
+
+**Ehto** : Mikäli statukseen on liitetty tapahtumia.
+
+**HTTP-vastauskoodi** : `403 FORBIDDEN`
+
+**Esimerkkivastaus** :
+
+```json
+Status has associated events, deletion forbidden
+```
 
 **Ehto** : Mikäli pyydettyä id:tä ei löydy tietokannasta.
 
@@ -35,7 +37,5 @@ Toimita URIn mukana statuken id.
 **Esimerkkivastaus** :
 
 ```json
-{
-    "deleted": false
-}
+Status not found
 ```

@@ -45,7 +45,7 @@ public class StatusController {
 	public ResponseEntity<?> getEventById(@PathVariable (value = "id") Long statusId) {
 		Optional<EventStatus> status = statusrepo.findById(statusId); // hakee mahdollisen statuksen repositiosta id:n perusteella
 		if (status.isEmpty()) { // tarkistetaan onko status tyhjä
-			return new ResponseEntity<> (status, HttpStatus.NOT_FOUND); // mikäli status on tyhjä, palautetaan status = null ja 404-koodi
+			return new ResponseEntity<> ("Status not found", HttpStatus.NOT_FOUND); // mikäli status on tyhjä, palautetaan status = null ja 404-koodi
 		} else {
 			return new ResponseEntity<> (status, HttpStatus.OK); // mikäli status löytyy, palautetaan statuksen tiedot ja 200-koodi
 		}
@@ -82,21 +82,7 @@ public class StatusController {
 		}
 	}
 	
-	/* itse rakennettu validointi
-	@PostMapping ("/status")// POST luo uuden statuksen
-	public ResponseEntity<EventStatus> createEventStatus(@RequestBody EventStatus status) {
-		if (status.getStatusName() == null) { // tarkistetaan tuleeko pyynnön mukana tapahtuman nimi
-			return new ResponseEntity<> (status, HttpStatus.BAD_REQUEST); // jos ei statuksella ole nimeä, sitä ei luoda
-		} 
-		if (statusrepo.findByStatusName(status.getStatusName()) != null) { // tarkistaa onko kyseinen status jo olemassa
-			return new ResponseEntity<> (statusrepo.findByStatusName(status.getStatusName()), HttpStatus.CONFLICT); //palauttaa olemassa olevan statuksen, jos sellainen löytyy
-		} else {
-			return new ResponseEntity<> (statusrepo.save(status), HttpStatus.CREATED); // luodaan uusi status
-		}
-	}
-	*/
-	/*
-	@PatchMapping("/status/{id}")// muokkaa statuksen nimeä
+	@PatchMapping("/status/{id}")// muokkaa statuksen nimeä, VALIDOINTI HEITTÄÄ AUTOMAATTIRESPONSEN
 	public ResponseEntity<?> updateName(@PathVariable(value = "id") Long statusId, 
 			@Valid @RequestBody EventStatus status, BindingResult bindingresult) {
 		if (bindingresult.hasErrors()) { // tarkistetaan tuleeko pyynnön mukana statukselle nimi
@@ -113,24 +99,23 @@ public class StatusController {
 			}
 		}
 	}
-	*/
 	
-	@PatchMapping("/status/{id}")// muokkaa statuksen nimeä, itse rakennettu validointi
-	public ResponseEntity<?> updateName(@PathVariable(value = "id") Long statusId, 
-			@RequestBody EventStatus status) {
-		Optional<EventStatus> estatus = statusrepo.findById(statusId); // haetaan mahdollinen status kannasta id:n perusteella
-		if (estatus.isEmpty()) { // tarkistaa löytyikö status kannasta
-			return new ResponseEntity<>("Status not found", HttpStatus.NOT_FOUND); // jos status ei löydy, palautetaan viesti ja 404-koodi
-		} else { 
-			EventStatus newStatus = estatus.get(); // jos status löytyy kannasta, haetaan statuksen tiedot
-			newStatus.setStatusName(status.getStatusName()); // status nimetään uusiksi annetulla nimellä
-			statusrepo.save(newStatus); // tallennetaan status uudella nimellä kantaan
-			return new ResponseEntity<>(newStatus, HttpStatus.OK); // palautetaan korjatut statuksen tiedot ja 200-koodi
+	@DeleteMapping("/status/{id}") // poistaa statuksen id:n perusteella, mikäli siihen ei ole liitetty tapahtumia
+	public ResponseEntity<?> deleteStatusById(@PathVariable(value = "id") Long statusId) {
+		Optional<EventStatus> status = statusrepo.findById(statusId); // haetaan mahdollinen status kannasta id:n perusteella
+		if (status.isEmpty()) { // jos statusta ei löydy kannastsa
+			return new ResponseEntity<>("Status not found", HttpStatus.NOT_FOUND); // palautetaan teskti sekä 404-koodi
+		} else { // jos status löytyy kannasta
+			if (status.get().getEvent().isEmpty()) { // tarkistetaan onko statukseen tapahtumalista tyhjä
+				statusrepo.deleteById(statusId); // poistetaan status kannasta
+				return new ResponseEntity<>("Status deleted", HttpStatus.NO_CONTENT); // palautetaan teksti sekä 204-koodi
+			} else { // jos statuksen tapahtumalistassa on tapahtumia
+				return new ResponseEntity<>("Status has associated events, deletion forbidden", HttpStatus.FORBIDDEN); // palautetaan teksti sekä 403-koodi
+			}
 		}
-		
 	}
 	
-	
+	/*
 	@DeleteMapping("/status/{id}")// merkkaa statuksen poistetuksi
 	public ResponseEntity<HashMap<String, Boolean>> deleteStatusById(@PathVariable(value = "id") Long statusId) {
 		Optional<EventStatus> status = statusrepo.findById(statusId); // heataan mahdollinen status kannasta id:n perusteella
@@ -145,6 +130,6 @@ public class StatusController {
 			return new ResponseEntity<>(response, HttpStatus.OK); // palautetaan luotu hashmap sekä 200-koodi
 		}
 	}
-	
+	*/
 	
 }
