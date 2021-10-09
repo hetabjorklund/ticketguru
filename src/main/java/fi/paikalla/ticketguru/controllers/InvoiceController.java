@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.json.JsonPatch;
-import javax.json.JsonStructure;
-import javax.json.JsonValue;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +19,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import fi.paikalla.ticketguru.Repositories.InvoiceRepository;
+import fi.paikalla.ticketguru.Services.InvoiceService;
 import fi.paikalla.ticketguru.Entities.*;
 
 @RestController
@@ -33,7 +30,7 @@ public class InvoiceController {
 	private InvoiceRepository invoicerepo;
 	
 	@Autowired
-	private ObjectMapper objectMapper;
+	private InvoiceService invoiceservice;
 	
 	// GET	
 	@GetMapping("/invoices") // hae kaikki laskut
@@ -110,47 +107,6 @@ public class InvoiceController {
 	}
 	
 	// PATCH
-	/*@PatchMapping("/invoices/{id}")
-	public ResponseEntity<Invoice> updateInvoice(@Valid @PathVariable Long id, @RequestBody Invoice updatedInvoice, BindingResult bindingresult) {
-		
-		if (bindingresult.hasErrors()) { // jos validointi epäonnistuu eli tguser on null
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // palautetaan 400 
-		}
-		else { // jos validointi onnistuu eli tguser ei ole null			
-		
-			Optional<Invoice> target = invoicerepo.findById(id); // haetaan Optional-olio id:n perusteella invoicereposta
-			
-			if (target.isEmpty()) { // jos id:llä ei löydy laskua
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND); // palautetaan 404
-			}	
-			
-			else { // jos id:llä löytyy lasku				
-				try {
-					Invoice invoice = target.get(); // otetaan Invoice-olio talteen käsittelyä varten
-					
-					//if (updatedInvoice.getTGuser() != null) { // jos tguser ei ole null
-						invoice.setTGuser(updatedInvoice.getTGuser()); // korvataan vanhan laskun myyjä Patchissa tulevalla
-					//}
-					//else { // jos tguser on null
-						//return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // palautetaan 400 
-					//}
-					
-					if (updatedInvoice.getTickets() != null) { // tarkistetaan tuleeko Patchissa lippulista
-						invoice.setTickets(updatedInvoice.getTickets()); // jos tulee, korvataan vanha lippulista uudella
-					}
-					
-					// muita oliomuuttujia ei tarvitse käydä läpi: id:tä eikä alkuperäistä luontiaikaa pidä voida muuttaa
-					
-					invoicerepo.save(invoice); // jos tämän kommentoi pois, patch onnistuu vaikka tguser on null, jos ei kommentoi pois, tulee 500 (siksi try-catch)
-					return new ResponseEntity<Invoice>(invoice, HttpStatus.OK);
-				} catch (Exception e) {
-					e.printStackTrace();
-					return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // palautetaan 400 
-					}
-			}
-		}
-	}*/
-	
 	@PatchMapping(value = "/invoices/{id}", consumes = "application/json-patch+json")
 	public ResponseEntity<Invoice> updateInvoice(@PathVariable Long id, @RequestBody JsonPatch patchDocument) {
 		
@@ -159,33 +115,10 @@ public class InvoiceController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // palautetaan 404
 		}
 		else { // jos haettu lasku löytyy			
-			Invoice invoice = patchInvoice(patchDocument, id); // käytetään lasku pathInvoice-metodin kautta			
+			Invoice invoice = invoiceservice.patchInvoice(patchDocument, id); // käytetään lasku pathInvoice-metodin kautta			
 			return new ResponseEntity<>(invoice, HttpStatus.OK); // palautetaan muokattu lasku ja 200
 		}		
 	}
-	
-	// siirrä invoiceserviceen jos toimii
-	public Invoice patchInvoice(JsonPatch patchDocument, Long id) {
-		
-		//ObjectMapper objectMapper = new ObjectMapper();
-		
-        // Gets the original invoice from the database
-        Invoice originalInvoice = invoicerepo.findById(id).get();
-        
-        //Converts the original invoice to a JsonStructure
-        JsonStructure invoiceToBePatched = objectMapper.convertValue(originalInvoice, JsonStructure.class);
-
-        // Applies the patch to the original invoice
-        JsonValue patchedInvoice = patchDocument.apply(invoiceToBePatched);
-
-        // Converts the JsonValue to an Invoice instance
-        Invoice modifiedInvoice = objectMapper.convertValue(patchedInvoice, Invoice.class);
-
-        // Saves the modified invoice in the repository
-        invoicerepo.save(modifiedInvoice); 
-        
-        return modifiedInvoice;
-    }
 				
 	// DELETE
 	@DeleteMapping("/invoices")
