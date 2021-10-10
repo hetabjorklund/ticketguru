@@ -53,20 +53,17 @@ public class TicketguruApplication {
 			Event event2 = new Event("Muumirock", "Muumilaakso", 700, 
 					start, end, presaleend, "Pihoo!"); 
 			Event event3 = new Event("Mörkörock", "Yksinäiset vuoret", 1, 
-<<<<<<< HEAD
 					start, end, presaleend, statusRepo.findByStatusName("upcoming"), "Mörkö narisee yksin");
 			Event event4 = new Event("Yhden miehen rokki", "Savonlinnankatu 50", 1, 
 					start, end, presaleend, "Jepjep");
-=======
-					start, end, presaleend, statusRepo.findByStatusName("upcoming"), "Mörkö narisee yksin"); 
-			Event event4 = new Event("Mysteerisoinnut", "Jekkukamari",300, 
+			Event event5 = new Event("Mysteerisoinnut", "Jekkukamari",300, 
 					next, one, test, statusRepo.findByStatusName("upcoming"), "Yhteislaulutilaisuus");
->>>>>>> validate
 			
 			eventRepo.save(event1);
 			eventRepo.save(event2);
 			eventRepo.save(event3);
 			eventRepo.save(event4);
+			eventRepo.save(event5);
 			
 			TicketType tt1 = new TicketType(eventRepo.findByName("Ruisrock"), "aikuinen", 20.90); 
 			TicketType tt2 = new TicketType(eventRepo.findByName("Muumirock"), "eläkeläinen", 30.00); 
