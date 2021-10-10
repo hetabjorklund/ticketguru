@@ -3,6 +3,7 @@ package fi.paikalla.ticketguru.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import javax.json.JsonPatch;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import fi.paikalla.ticketguru.Repositories.InvoiceRepository;
+import fi.paikalla.ticketguru.Services.InvoiceService;
 import fi.paikalla.ticketguru.Entities.*;
 
 @RestController
@@ -25,6 +28,9 @@ public class InvoiceController {
 	
 	@Autowired
 	private InvoiceRepository invoicerepo;
+	
+	@Autowired
+	private InvoiceService invoiceservice;
 	
 	// GET	
 	@GetMapping("/invoices") // hae kaikki laskut
@@ -82,10 +88,8 @@ public class InvoiceController {
 		
 		if (bindingresult.hasErrors()) { // tarkistetaan onko mukana TGUser	
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // jos ei, palautetaan 400
-		}
-		
-		else {		
-		
+		}		
+		else {
 			if (this.invoicerepo.findById(id).isEmpty()) { // tarkistetaan löytyykö haetulla id:llä laskua
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND); // jos ei löydy, palautetaan 404
 			}
@@ -101,7 +105,21 @@ public class InvoiceController {
 			}
 		}
 	}
+	
+	// PATCH
+	@PatchMapping(value = "/invoices/{id}", consumes = "application/json-patch+json")
+	public ResponseEntity<Invoice> updateInvoice(@PathVariable Long id, @RequestBody JsonPatch patchDocument) {
 		
+		Optional<Invoice> target = invoicerepo.findById(id); // haetaan invoicerepositorysta Optional-olio id:n perusteella
+		if (target.isEmpty()) { // jos haettua laskua ei löydy
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // palautetaan 404
+		}
+		else { // jos haettu lasku löytyy			
+			Invoice invoice = invoiceservice.patchInvoice(patchDocument, id); // käytetään lasku pathInvoice-metodin kautta			
+			return new ResponseEntity<>(invoice, HttpStatus.OK); // palautetaan muokattu lasku ja 200
+		}		
+	}
+				
 	// DELETE
 	@DeleteMapping("/invoices")
 	public ResponseEntity<String> deleteAll() { // poistetaan kaikki laskut

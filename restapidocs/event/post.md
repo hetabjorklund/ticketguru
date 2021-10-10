@@ -100,6 +100,27 @@ Tapahtumalla on oltava nimi, eli name-attribuutti ei saa puuttua. Kunhan name-at
 ```
 
 ### 3
+**Ehto** : Tapahtuman alkuaika, loppuaika tai lippujen ennakkomyynnin loppuaika on menneisyydessä.
+
+**HTTP-vastauskoodi** : `400 BAD REQUEST`
+
+**Esimerkkivastaus**
+```json
+{
+    "id": null,
+    "name": "Mörkörock",
+    "address": "Yksinäiset vuoret",
+    "maxCapacity": 1,
+    "startTime": "2000-12-31T21:00:00",
+    "endTime": "2022-01-01T12:00:00",
+    "endOfPresale": "2021-12-30T00:00:00",
+    "status": null,
+    "description": "Hngngnggggg",
+    "new": true
+}
+```
+
+### 4
 
 **Ehto** : Jokin attribuutti on väärän tyyppinen (esim. Boolean kun pitäisi olla String tai Array).
 
