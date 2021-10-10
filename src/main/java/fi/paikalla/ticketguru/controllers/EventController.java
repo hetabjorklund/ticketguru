@@ -37,22 +37,7 @@ public class EventController {
 	private TicketService ticketservice;
 	@Autowired
 	private EventService eventservice; 
-	
-	// DELETE
-	/*@DeleteMapping("/events/{id}") // poista yksittäinen tapahtuma id:n perusteella
-	public ResponseEntity<Map<String, Boolean>> deleteEvent (@PathVariable(value = "id") Long eventId ) {
-		 Optional<Event> ev = eventrepo.findById(eventId);
-		 Map<String, Boolean> response = new HashMap<>();
-		 if (ev.isEmpty()) {
-			 response.put("deleted", Boolean.FALSE);
-			 return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
-		 } else {
-			 eventrepo.delete(ev.get());
-			 response.put("deleted", Boolean.TRUE);
-			 return new ResponseEntity<>(response,HttpStatus.OK);
-		 }
-			//palauttaa nyt {deleted: true/false} vastauksen. Tästä voi olla montaa mieltä	
-	}*/
+
 	
 	@DeleteMapping("/events/{id}") // poista yksittäinen tapahtuma id:n perusteella. Endpointia /events joka poistaisi kaikki tapahtumat, ei tarvita
 	public ResponseEntity<String> deleteEvent(@PathVariable Long id) {
@@ -80,34 +65,29 @@ public class EventController {
 	// hae kaikki tapahtumat parametreilla ja ilman. 
 	@GetMapping("/events") // haetaan kaikki tapahtumat
 	public ResponseEntity<?> getEvents(@RequestParam(required = false) String start, 
-			@RequestParam(required = false) String end) {
-		//jos parametrejä ei ole
+			@RequestParam(required = false) String end) {//parametrit pyydetään merkkijonoina jotta virhetilanteesta saadaan kiinni
+		//jos parametrejä ei ole, haetaan kaikki normaalisti
 		if (start == null && end == null) {
 			return new ResponseEntity<List<Event>>((List<Event>) eventrepo.findAll(), HttpStatus.OK); 
-		}
-		try {
+		}//try-catch jotta pvm muutosvirheet kiinnni kauniisti
+		try {//jos ei loppupvm, haetaan alkupvm eteenpäin
 			if (end == null) {
+				//konvertoi merkkijonon => pvm
 				LocalDate date1 = LocalDate.parse(start, DateTimeFormatter.ISO_LOCAL_DATE);
 				return new ResponseEntity<List<Event>>(eventservice.getAllByStart(date1), HttpStatus.OK); 
-			}
+			}//jos ei alkupvm, haetaan loppupvm asti. 
 			if (start == null) {
 				LocalDate date2 = LocalDate.parse(end, DateTimeFormatter.ISO_LOCAL_DATE);
 				return new ResponseEntity<List<Event>>(eventservice.getAllByEnd(date2), HttpStatus.OK); 
 			}
-			
+			//jos molemmat, haetaan pvm väliltä
 			return new ResponseEntity<List<Event>>(eventservice.getBtwDates(
 					LocalDate.parse(start, DateTimeFormatter.ISO_LOCAL_DATE),
 					LocalDate.parse(end, DateTimeFormatter.ISO_LOCAL_DATE)), HttpStatus.OK);
 			
-		} catch (Exception e) {
+		} catch (Exception e) {//molempien date konvertointivirheet kiinni täällä
 			return new ResponseEntity<>("Check dates", HttpStatus.BAD_REQUEST); 
 		}
-		
-		
-		
-		
-	
-		//return new ResponseEntity<List<Event>>((List<Event>) eventrepo.findAll(), HttpStatus.OK); 
 	}
 	
 	@GetMapping("/events/{id}") // haetaan yksittäinen tapahtuma id:n perusteella

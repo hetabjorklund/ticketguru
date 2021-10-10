@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +19,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import fi.paikalla.ticketguru.Entities.Event;
+import fi.paikalla.ticketguru.Entities.Ticket;
 import fi.paikalla.ticketguru.Entities.TicketType;
 import fi.paikalla.ticketguru.Repositories.EventRepository;
+import fi.paikalla.ticketguru.Repositories.TicketRepository;
 import fi.paikalla.ticketguru.Repositories.TicketTypeRepository;
 import fi.paikalla.ticketguru.dto.TicketTypeDto;
 
@@ -28,6 +32,8 @@ public class TicketTypeController {
 	private TicketTypeRepository typerepo; 
 	@Autowired
 	private EventRepository eventrepo; 
+	@Autowired
+	private TicketRepository tickrepo; 
 	
 	
 	@GetMapping("/events/{id}/types") //lipputyypit per eventId
@@ -55,49 +61,68 @@ public class TicketTypeController {
 	}
 	
 	@PostMapping("/types") //luo uusi tyyppi
-	public ResponseEntity<TicketTypeDto> makeNewType(@RequestBody TicketTypeDto type) {
-		Optional<Event> event = eventrepo.findById(type.getEvent()); 
-		if (!event.isEmpty()) {
-			TicketType make = new TicketType(event.get(), 
+	public ResponseEntity<?> makeNewType(@RequestBody TicketTypeDto type) {
+		Optional<Event> event = eventrepo.findById(type.getEvent()); //onko tapahtumaa olemassa?
+		if (!event.isEmpty()) { //jos tapahtuma
+			try {
+				if(!type.getType().isEmpty()) { //jos lähetetyllä entiteetillä on tyyppi, luo uusi tyyppi.
+					TicketType make = new TicketType(event.get(), 
 					type.getType(), 
 					type.getPrice()); 
-			typerepo.save(make); 
-			return new ResponseEntity<>(type, HttpStatus.CREATED); 
+				typerepo.save(make); //tallenna tyyppi
+				return new ResponseEntity<TicketType>(make, HttpStatus.CREATED); //palauta varsinainen luotu objekti
+				}
+					 
+			} catch (Exception e){
+				return new ResponseEntity<>(type, HttpStatus.BAD_REQUEST);//palauta pyyntöobjekti (type:null) ja bad request	
+			}
 		}
-		return new ResponseEntity<>(type, HttpStatus.BAD_REQUEST); 
+		return new ResponseEntity<>(type, HttpStatus.BAD_REQUEST); //ei tapahtumaa, palauta objekti ja bad request. 
 	}
+	
 	
 	@PutMapping("/types/{id}") //päivitä idn perusteella
-	public ResponseEntity<TicketTypeDto> updateType(@PathVariable(value = "id") Long typeId, 
+	public ResponseEntity<?> updateType(@PathVariable(value = "id") Long typeId, 
 			@RequestBody TicketTypeDto type) {
-		Optional<TicketType> ticktype = typerepo.findById(typeId); 
-		Optional<Event> ev = eventrepo.findById(type.getEvent()); 
-		if (ticktype.isEmpty()) {
+		Optional<TicketType> ticktype = typerepo.findById(typeId); //onko tyyppitunnistetta olemassa, jos ei, not found
+		Optional<Event> ev = eventrepo.findById(type.getEvent()); //onko pyynnön tapahtumaa olemassa, jos ei, bad request
+		if (ticktype.isEmpty()) {// tyyppitunniste ei olemassa. 
 			return new ResponseEntity<>(type, HttpStatus.NOT_FOUND);
 		}
-		if(!ev.isEmpty()) {
-			TicketType setting = ticktype.get();
-			setting.setEvent(ev.get()); 
-			setting.setType(type.getType()); 
-			setting.setPrice(type.getPrice()); 
-			typerepo.save(setting); 
-			return new ResponseEntity<>(type, HttpStatus.OK);
+		if(!ev.isEmpty()) {//jos viitattu event on olemassa. 
+			TicketType setting = ticktype.get(); //hae päivitettävä tyyppi
+			setting.setEvent(ev.get()); //aseta viitattu tapahtuma
+			try {
+				if (!type.getType().isEmpty()) { //jos tyyppikuvausta ei ole, heitä bad request. 
+				setting.setType(type.getType()); //päivitä kuvaus
+			}
+			if (type.getPrice() != 0) { //jos hinta ei ole nolla (sitä ei ole annettu), päivitä annettuun. 
+				setting.setPrice(type.getPrice()); 
+			}
+			typerepo.save(setting); //tallenna
+			return new ResponseEntity<>(setting, HttpStatus.OK); //palauta varsinainen entitettii ja ok. 
+			} catch (Exception e) {
+				return new ResponseEntity<>(type, HttpStatus.BAD_REQUEST); //virheet kiinni
+			}
+			
+			
 		}
-		return new ResponseEntity<>(type, HttpStatus.BAD_REQUEST);	
+		return new ResponseEntity<>(type, HttpStatus.BAD_REQUEST);	//muut virheet kiinni.
 	}
 	
-	@DeleteMapping("/types/{id}")
-	public ResponseEntity<HashMap<String, Boolean>> deleteTypeById(@PathVariable(value = "id") Long typeid) {
-		Optional<TicketType> type = typerepo.findById(typeid); 
-		if (type.isEmpty()) {
-			HashMap<String, Boolean> response = new HashMap<>(); 
-			response.put("deleted", Boolean.FALSE); 
-			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); 
-		} else {
-			typerepo.delete(type.get());
-			HashMap<String, Boolean> response = new HashMap<>(); 
-			response.put("deleted", Boolean.TRUE); 
-			return new ResponseEntity<>(response, HttpStatus.OK); 
+	@DeleteMapping("/types/{id}")// poistetaan idn perusteella
+	public ResponseEntity<?> deleteTypeById(@PathVariable(value = "id") Long typeid) {
+		Optional<TicketType> type = typerepo.findById(typeid); //löytyykö tyyppi
+		if (type.isPresent()) { //jos löytyy, onko lippuja?
+			List<Ticket> tickets = tickrepo.findByTicketType(type.get());
+			if (tickets.size() > 0) { //jos on lippuja, palauttaa kiellon. 
+				return new ResponseEntity<String>("There are tickets associated with this type", HttpStatus.FORBIDDEN); 
+			} else { //ei lippuja, poistetaan tyyppi
+				typerepo.delete(type.get());
+				return new ResponseEntity<String>("Type deleted", HttpStatus.NO_CONTENT); //palauta no content. 
+			}
+		} else {//tyyppiä ei ole olemassa, palauta not found. 
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
 		}
 	}
 	
