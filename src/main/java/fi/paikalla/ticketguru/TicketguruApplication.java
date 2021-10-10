@@ -43,15 +43,25 @@ public class TicketguruApplication {
 			LocalDateTime start = LocalDateTime.of(2021,12,03,9,00);
 			LocalDateTime end = LocalDateTime.of(2021,12,03,16,00); 
 			LocalDateTime presaleend = LocalDateTime.of(2021,11,27,16,00); 
+			LocalDateTime next = LocalDateTime.of(2021,11,3,21,00); 
+			LocalDateTime one = LocalDateTime.of(2021,11,4,2,00);
+			LocalDateTime test = LocalDateTime.of(2021,10,31,12,00);
+			
 			
 			Event event1 = new Event("Ruisrock", "Savonlinnankatu 50", 600, 
 					start, end, presaleend, "Ruissalossa rokataan"); 
 			Event event2 = new Event("Muumirock", "Muumilaakso", 700, 
 					start, end, presaleend, "Pihoo!"); 
 			Event event3 = new Event("Mörkörock", "Yksinäiset vuoret", 1, 
+<<<<<<< HEAD
 					start, end, presaleend, statusRepo.findByStatusName("upcoming"), "Mörkö narisee yksin");
 			Event event4 = new Event("Yhden miehen rokki", "Savonlinnankatu 50", 1, 
 					start, end, presaleend, "Jepjep");
+=======
+					start, end, presaleend, statusRepo.findByStatusName("upcoming"), "Mörkö narisee yksin"); 
+			Event event4 = new Event("Mysteerisoinnut", "Jekkukamari",300, 
+					next, one, test, statusRepo.findByStatusName("upcoming"), "Yhteislaulutilaisuus");
+>>>>>>> validate
 			
 			eventRepo.save(event1);
 			eventRepo.save(event2);
