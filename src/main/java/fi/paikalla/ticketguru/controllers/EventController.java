@@ -1,5 +1,7 @@
 package fi.paikalla.ticketguru.controllers;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +10,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -17,10 +20,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import fi.paikalla.ticketguru.Entities.*;
 import fi.paikalla.ticketguru.Repositories.*;
+import fi.paikalla.ticketguru.Services.EventService;
 import fi.paikalla.ticketguru.Services.TicketService;
 
 @RestController
@@ -30,6 +35,8 @@ public class EventController {
 	private EventRepository eventrepo; 
 	@Autowired
 	private TicketService ticketservice;
+	@Autowired
+	private EventService eventservice; 
 	
 	// DELETE
 	/*@DeleteMapping("/events/{id}") // poista yksittäinen tapahtuma id:n perusteella
@@ -68,11 +75,39 @@ public class EventController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // palautetaan 404
 		}
 	}	
+	
 		
-	// GET
+	// hae kaikki tapahtumat parametreilla ja ilman. 
 	@GetMapping("/events") // haetaan kaikki tapahtumat
-	public List<Event> getEvents() {
-		return (List<Event>) eventrepo.findAll(); 
+	public ResponseEntity<?> getEvents(@RequestParam(required = false) String start, 
+			@RequestParam(required = false) String end) {
+		//jos parametrejä ei ole
+		if (start == null && end == null) {
+			return new ResponseEntity<List<Event>>((List<Event>) eventrepo.findAll(), HttpStatus.OK); 
+		}
+		try {
+			if (end == null) {
+				LocalDate date1 = LocalDate.parse(start, DateTimeFormatter.ISO_LOCAL_DATE);
+				return new ResponseEntity<List<Event>>(eventservice.getAllByStart(date1), HttpStatus.OK); 
+			}
+			if (start == null) {
+				LocalDate date2 = LocalDate.parse(end, DateTimeFormatter.ISO_LOCAL_DATE);
+				return new ResponseEntity<List<Event>>(eventservice.getAllByEnd(date2), HttpStatus.OK); 
+			}
+			
+			return new ResponseEntity<List<Event>>(eventservice.getBtwDates(
+					LocalDate.parse(start, DateTimeFormatter.ISO_LOCAL_DATE),
+					LocalDate.parse(end, DateTimeFormatter.ISO_LOCAL_DATE)), HttpStatus.OK);
+			
+		} catch (Exception e) {
+			return new ResponseEntity<>("Check dates", HttpStatus.BAD_REQUEST); 
+		}
+		
+		
+		
+		
+	
+		//return new ResponseEntity<List<Event>>((List<Event>) eventrepo.findAll(), HttpStatus.OK); 
 	}
 	
 	@GetMapping("/events/{id}") // haetaan yksittäinen tapahtuma id:n perusteella
