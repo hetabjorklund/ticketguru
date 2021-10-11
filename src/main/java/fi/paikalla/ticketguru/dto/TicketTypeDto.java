@@ -6,8 +6,6 @@ public class TicketTypeDto {
 	private String type; 
 	private double price;
 	
-	
-	
 	public TicketTypeDto(long event, String type, double price) {
 		super();
 		this.event = event;
@@ -42,6 +40,4 @@ public class TicketTypeDto {
 		this.price = price;
 	} 
 	
-	
-
 }

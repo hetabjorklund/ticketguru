@@ -2,7 +2,6 @@ package fi.paikalla.ticketguru.controllers;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -21,10 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fi.paikalla.ticketguru.Entities.Event;
 import fi.paikalla.ticketguru.Entities.EventStatus;
-import fi.paikalla.ticketguru.Entities.TicketType;
 import fi.paikalla.ticketguru.Repositories.EventRepository;
 import fi.paikalla.ticketguru.Repositories.EventStatusRepository;
-import fi.paikalla.ticketguru.dto.TicketTypeDto;
 
 @RestController
 public class StatusController {
