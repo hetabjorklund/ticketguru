@@ -1,5 +1,6 @@
 package fi.paikalla.ticketguru.dto;
 
+
 public class TicketTypeDto {
 	private long event; 
 	private String type; 

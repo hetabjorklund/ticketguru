@@ -68,6 +68,42 @@ Sisältö : Tässä esimerkissä käyttäjä näkee kolme tapahtumaa:
     }
 ]
 ```
+## Hae tapahtumia päivämäärien perusteella
+
+URL : `/events?start={ISODate}&end={ISODate}`
+
+Metodi : GET
+
+Vaaditaanko autorisointi : kyllä
+
+Pyyntöesimerkki: 
+
+URL : `/events?start=2021-11-3&end=2021-12-12`
+  
+Parametrit ovat vapaaehtoisia. `start` hakee tapahtumalle merkitys aloitusajan perusteella kaikki ne tapahtumat, 
+joiden aloitusaika on parametrin arvon keskiyön jälkeen 
+(esim. haettaessa arvolla `start=2021-03-12` tulokset haetaan arvon `2021-03-12-00-00` perusteella)
+
+`end` hakee vastaavasti kaikki tapahtumat, joiden aloitusaika on ennen annetun päivämäärän loppua
+(esim `end=2021-03-12` tulokset haetaan arvon `2021-03-12-59-59` perusteella).  
+
+Annettaessa molemmat parametrit, tulokset palautetaan päivämäärien väliltä samoin periaattein kuin yllä. 
+
+Onnistuneen pyynnön vastaukset:
+
+Ehto: päivämäärät ovat ISO Date muodossa, eli `2021-03-21` 
+
+Ks yllä. 
+
+Epäonnistuneen pyynnön vastaus: 
+
+Ehto: päivämäärät eivät ole ISO Date muodossa, esim `2021-3-21`.
+
+Koodi : `400 BAD REQUEST`
+
+Sisältö : Check dates
+
+
 
 ## Näytä yksi tapahtuma
 

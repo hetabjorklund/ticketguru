@@ -2,7 +2,6 @@ package fi.paikalla.ticketguru.Services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,4 +57,10 @@ public class TicketService {
 		
 	}
 
+	
+	// palauttaa lipusta Eventin id:n
+	public Long getEventIdFromTicket(Ticket ticket) {
+		//haetaan tickettypen kautta tapahtuma
+		return ticket.getTicketType().getEvent().getId();
+	}
 }

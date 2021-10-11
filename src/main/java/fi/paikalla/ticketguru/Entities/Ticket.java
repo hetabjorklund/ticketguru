@@ -1,11 +1,16 @@
 package fi.paikalla.ticketguru.Entities;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+import org.springframework.data.jpa.domain.AbstractPersistable;
+import org.springframework.validation.annotation.Validated;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -13,14 +18,19 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
 @NoArgsConstructor
+@Validated
 public class Ticket extends AbstractPersistable<Long> {
 
-	private Double price; 
+	@Min(0)
+	private Double price;
+	
+	@NotNull
 	private boolean	used; 
 	//@ManyToOne // tulee rekursioympyrä
 	//@JsonIgnore
 	//private Event event;
 	
+	@NotNull
 	@ManyToOne
 	private TicketType ticketType; 
 	

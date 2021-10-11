@@ -3,9 +3,9 @@
 ## Näytä kaikki lipputyypit
 Näytä kaikki tietokantaan lisätyt lipputyypit
 
-URL : /types
+URL: `/types`
 
-Metodi : GET
+Metodi: `GET`
 
 Vaaditaanko autorisointi : kyllä
 
@@ -13,7 +13,7 @@ Onnistuneen pyynnön vastaukset:
 
 Ehto : Tietokannassa ei ole lipputyyppejä
 
-Koodi : 200 OK
+Koodi : `200 OK`
 
 Sisältö : []
 
@@ -21,7 +21,7 @@ TAI
 
 Ehto : Tietokannassa on lipputyyppejä
 
-Koodi : 200 OK
+Koodi : `200 OK`
 
 Sisältö : Tässä esimerkissä käyttäjä näkee kolme lipputyyppiä tapahtumatietoineen:
 
@@ -93,29 +93,29 @@ Sisältö : Tässä esimerkissä käyttäjä näkee kolme lipputyyppiä tapahtum
 
 Näytä lipputyypit tapahtumatunnisteen perusteella.
 
-URL : /events/{id}/types
+URL: `/events/{id}/types`
 
-Metodi : GET
+Metodi: `GET` 
 
 Vaatiiko autorisoinnin : kyllä
 
 Tietorajoitteet: Pyyntö ohjattava validiin tapahtumatunnukseen.
 
-##Onnistuneen pyynnön vastaus
+### Onnistuneen pyynnön vastaus
 
-Ehto : Annetulla tunnisteella on tapahtuma mutta ei lipputyyppejä.
+Ehto: Annetulla tunnisteella on tapahtuma mutta ei lipputyyppejä.
 
-Koodi : 200 OK
+Koodi: `200 OK`
 
-Sisältö : []
+Sisältö: []
 
 TAI
 
-Ehto : Annetulla tunnisteella on tapahtuma ja lipputyyppejä.
+Ehto: Annetulla tunnisteella on tapahtuma ja lipputyyppejä.
 
-Koodi : 200 OK
+Koodi: `200 OK`
 
-Sisältö :
+Sisältö:
 
 ```json
 [
@@ -144,13 +144,13 @@ Sisältö :
 ]
 ```
 
-##Virheellisen pyynnön vastaus
+### Virheellisen pyynnön vastaus
 
-Ehto : Annetulla tunnisteella ei ole tapahtumaa.
+Ehto: Annetulla tunnisteella ei ole tapahtumaa.
 
-Koodi : 404 NOT FOUND
+Koodi: `404 NOT FOUND`
 
-Sisältö : []
+Sisältö: []
 
 
 # TicketTypes-POST
@@ -159,13 +159,14 @@ Sisältö : []
 
 Lisää tietokantaan uuden lipputyypin
 
-URL : /types
+URL: `/types`
 
-Metodi : POST
+Metodi: `POST`
 
 Vaatiiko autorisoinnin : Kyllä
 
-Tietorajoitteet: Pyynnössä on oltava validi tapahtumatunnus.
+Tietorajoitteet: Pyynnössä on oltava validi tapahtumatunnus sekä kuvaus (type).
+Hinnan puuttuessa se asettuu automattisesti arvoon `0.0`. 
 
 Esimerkkipyyntö:
 
@@ -177,28 +178,45 @@ Esimerkkipyyntö:
 }
 ```
 
-###Onnistuneen pyynnön vastaus
+### Onnistuneen pyynnön vastaus
 
-Ehto : Annetulla tunnisteella on tapahtuma.
+Ehto: Annetulla tunnisteella on tapahtuma ja pyynnössa annettiin myös kuvaus.
 
-Koodi : 201 CREATED
+Koodi: `201 CREATED`
 
 Esimerkkivastaus:
 
 ```json
 {
-	"event": 3,
-	"type": "lapsi 6-14",
-	"price": 23.6
-}
+    "id": 5,
+    "event": {
+      "id": 3,
+      "name": "Ruisrock3",
+      "address": "Savonlinnankatu 50",
+      "maxCapacity": 700,
+      "startTime": "2021-12-03T09:00:00",
+      "endTime": "2021-12-03T16:00:00",
+      "endOfPresale": "2021-11-27T16:00:00",
+      "status": {
+        "id": 1,
+        "statusName": "upcoming",
+        "new": false
+      },
+      "description": "murderdeathkillevent",
+      "new": false
+    },
+    "type": "lapsi 6-14",
+    "price": 23.6,
+    "new": false
+  }
 ```
-###Virheellisen pyynnön vastaus
+### Virheellisen pyynnön vastaus
 
-Ehto : Annetulla tunnisteella ei ole tapahtumaa.
+Ehto: Annetulla tunnisteella ei ole tapahtumaa.
 
-Koodi : 400 BAD REQUEST
+Koodi: `400 BAD REQUEST`
 
-Sisältö : 
+Sisältö: 
 
 ```json
 {
@@ -207,19 +225,48 @@ Sisältö :
 	"price": 23.6
 }
 ```
-#TicketTypes-PUT
 
-##Olemassaolevan lipputyypin päivitys
+Ehto: Tapahtumatunnistetta ei ole annettu.
+
+Koodi: `400 BAD REQUEST`
+
+Sisältö: 
+
+```json
+{
+	"event": 0,
+	"type": "lapsi 6-14",
+	"price": 23.6
+}
+```
+
+Ehto: Pyynnössä ei ole annetty tyyppiä. 
+
+Koodi: `400 BAD REQUEST`
+
+Sisältö: 
+
+```json
+{
+	"event": 8,
+	"type": null,
+	"price": 23.6
+}
+```
+# TicketTypes-PUT
+
+## Olemassaolevan lipputyypin päivitys
  
  Päivittää tyypin tunnisteen perusteella
  
- URL: /types/{id}
+URL: `/types/{id}`
  
- Metodi: PUT
+Metodi: `PUT`
  
- Vaatiiko autorisoinnin : Kyllä
+Vaatiiko autorisoinnin : Kyllä
 
-Tietorajoitteet: Pyynnössä on oltava validi tapahtumatunnus ja lipputyypin tunnus.
+Tietorajoitteet: Pyynnössä on oltava validi tapahtumatunnus ja lipputyypin kuvaus. 
+Hinta on mahdollista jättää pois, jolloin se ei myöskään päivity. 
 
 Esimerkkipyyntö:
 
@@ -230,27 +277,44 @@ Esimerkkipyyntö:
 	"price": 23.6
 }
 ```
-##Onnistuneen pyynnön vastaus
+### Onnistuneen pyynnön vastaus
  
- Ehto: Tietojen päivitys onnistui
+Ehto: Tietojen päivitys onnistui
  
- Koodi: 200 OK
+Koodi: `200 OK`
 
 Vastauksen sisältö:
 
 ```json
 {
-	"event": 3,
-	"type": "lapsi 6-14",
-	"price": 23.6
-}
+    "id": 5,
+    "event": {
+      "id": 3,
+      "name": "Ruisrock3",
+      "address": "Savonlinnankatu 50",
+      "maxCapacity": 700,
+      "startTime": "2021-12-03T09:00:00",
+      "endTime": "2021-12-03T16:00:00",
+      "endOfPresale": "2021-11-27T16:00:00",
+      "status": {
+        "id": 1,
+        "statusName": "upcoming",
+        "new": false
+      },
+      "description": "murderdeathkillevent",
+      "new": false
+    },
+    "type": "lapsi 6-14",
+    "price": 23.6,
+    "new": false
+  }
 ```
 
-##Virheellisen pyynnön vastaus
+### Virheellisen pyynnön vastaus
 
 Ehto: Lipputyypin tunnistetta ei löydy
 
-Koodi: 404 NOT FOUND
+Koodi: `404 NOT FOUND`
 
 Vastauksen sisältö:
 
@@ -266,7 +330,7 @@ TAI
 
 Ehto: Tapahtumatunnistetta ei löydy
 
-Koodi: 400 BAD REQUEST
+Koodi: `400 BAD REQUEST`
 
 Vastauksen sisältö:
 
@@ -278,45 +342,58 @@ Vastauksen sisältö:
 }
 ```
 
-#TicketTypes-DELETE
-##Lipputyypin poistaminen
+TAI
+
+Ehto: Kuvausta ei ole annettu
+
+Koodi: `400 BAD REQUEST`
+
+Vastauksen sisältö:
+
+```json
+{
+	"event": 3,
+	"type": null,
+	"price": 23.6
+}
+```
+
+# TicketTypes-DELETE
+
+## Lipputyypin poistaminen
 
 Poistaa lipputyypin tunnisteen perusteella
 
-URL: /types/{id}
+URL: `/types/{id}`
 
-Metodi: DELETE
+Metodi: `DELETE`
 
 Vaatiiko autorisoinnin : Kyllä
 
-Tietorajoitteet: Pyynnössä on oltava validi lipputyypin tunnus.
+Tietorajoitteet: Pyynnössä on oltava validi lipputyypin tunnus, eikä tyyppiin voi liittyä lippuja.
 
-##Onnistuneen pyynön vastaus
+### Onnistuneen pyynön vastaus
 
 Ehto: Tyyppi-id on olemassa
 
-Koodi 200 OK
+Koodi `204 NO CONTENT`
 
-Vastaus:
+Vastaus: tyhjä.
 
-```json
-{
-	"deleted": true
-}
 
-```
-
-##Virheellisen pyynnön vastaus
+### Virheellisen pyynnön vastaus
 
 Ehto: Tunnistetta ei ole olemassa
 
-Koodi: 404 NOT FOUND
+Koodi: `404 NOT FOUND`
 
-Vastaus:
+Vastaus: tyhjä
 
-```json
-{
-	"deleted": false
-}
+TAI
 
-```
+Ehto: Tyyppiin liittyy lippuja
+
+Koodi: `403 FORBIDDEN`
+
+Vastaus: `There are tickets associated with this type`
+
