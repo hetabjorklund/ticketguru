@@ -10,12 +10,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import fi.paikalla.ticketguru.Services.UserDetailsServiceImplementation;
+
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled= true)
 @EnableWebSecurity
 public class WebSecConfig extends WebSecurityConfigurerAdapter {
-	//@Autowired
-	//private UserDetailServiceImp serviceImp; 
+	@Autowired
+	private UserDetailsServiceImplementation serviceImp; 
 	
 	@Override
 	protected void configure (HttpSecurity http) throws Exception {
@@ -24,7 +26,8 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
 			.anyRequest().authenticated()
 			.and()
 			.httpBasic()
-			.realmName("TicketGuru");
+			.and()
+			.csrf().disable(); 
 		}
 	
 	@Autowired
