@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.json.JsonPatch;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +14,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+
 import fi.paikalla.ticketguru.Entities.*;
 import fi.paikalla.ticketguru.Repositories.*;
+import fi.paikalla.ticketguru.Services.EventService;
 import fi.paikalla.ticketguru.Services.TicketService;
 
 @RestController
@@ -30,6 +37,7 @@ public class EventController {
 	private EventRepository eventrepo; 
 	@Autowired
 	private TicketService ticketservice;
+	@Autowired EventService eventservice;
 	
 	// DELETE
 	/*@DeleteMapping("/events/{id}") // poista yksittäinen tapahtuma id:n perusteella
@@ -144,5 +152,38 @@ public class EventController {
 			}
 		}	
 	}
+	
+	// PATCH
+	@PatchMapping (path="/events/{id}", consumes = "application/json-patch+json") //muokkaa osittain haluttua eventtiä id:n perusteella
+	public ResponseEntity<?> partiallyUpdateEvent(@PathVariable long id, @RequestBody JsonPatch patchDocument) {
+		Optional<Event> event = eventrepo.findById(id); // haetaan eventreposta mahdollinen event annetulla id:llä
+		if (event.isEmpty()) { //tarkistetaan löytyykö eventiä, ellei löydy
+			return new ResponseEntity<>("Event not found", HttpStatus.NOT_FOUND); // palautetaan viesti ja 404-koodi
+		} else { // jos event löytyy annetulla id:llä
+			Event patchedEvent = eventservice.patchEvent(patchDocument, id); // käytetään event patchEvent-metodin kautta
+			return new ResponseEntity<>(patchedEvent, HttpStatus.OK);
+		}
+	}
+	
+	/*
+	// PATCH
+	@PatchMapping (path="/events/{id}", consumes = "application/json-patch+json") //muokkaa osittain haluttua eventtiä id:n perusteella
+	public ResponseEntity<?> partiallyUpdateEvent(@RequestBody JsonPatch patch, @PathVariable (value = "id") Long eventId) throws Exception {
+		try {
+			Event event = eventrepo.findById(eventId).orElseThrow(() -> new Exception("Event not found"));
+			Event eventPatched = applyPatchToEvent(patch, event);
+			eventrepo.save(eventPatched);
+			return new ResponseEntity<>(eventPatched, HttpStatus.OK);
+		} catch (JsonPatchException | JsonProcessingException e) {
+			return new ResponseEntity<>("Ongelma", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	private Event applyPatchToEvent(JsonPatch patch, Event targetEvent) throws JsonPatchException, JsonProcessingException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonNode patched = patch.apply(objectMapper.convertValue(targetEvent, JsonNode.class));
+		return objectMapper.treeToValue(patched, Event.class);
+	}
+	*/
 
 }

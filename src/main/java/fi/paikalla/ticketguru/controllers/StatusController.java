@@ -65,7 +65,7 @@ public class StatusController {
 				return new ResponseEntity<>(elist, HttpStatus.OK); // palautetaan tapahtumalista ja 200-koodi
 			}
 		} catch (Exception e) {
-			return new ResponseEntity<>("Status not found", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("Exception", HttpStatus.NOT_FOUND);
 		}
 	}
 	
