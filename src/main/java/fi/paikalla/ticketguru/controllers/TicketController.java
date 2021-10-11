@@ -10,6 +10,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -72,7 +74,19 @@ public class TicketController {
 	}
 	
 	@PostMapping("/tickets")
-	public @ResponseBody ResponseEntity<String> createTicket(@Valid @RequestBody TicketDto ticket){
+	public @ResponseBody ResponseEntity<String> createTicket(@Valid @RequestBody TicketDto ticket, BindingResult bindingResult){
+		if(bindingResult.hasErrors()) { // Mikäli validoinnissa on virheitä
+			List<ObjectError> errors = bindingResult.getAllErrors(); // Haetaan kaikki virheet listaan
+			StringBuilder strBuilder = new StringBuilder(errors.size()); // Alustetaan vastausviestiä
+			
+			for(ObjectError error: errors) { //Käydään kaikki virheet läpi ja lisätään niiden default message palautusviestiin
+				strBuilder.append(error.getDefaultMessage() + "\n");
+			}
+			
+			String errorMessage = strBuilder.toString().trim(); // Muutetaan palautusviesti Stringiksi ja lähetetään se clientille
+			return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+		}
+		
 		Optional<TicketType> ticketType = typeRepo.findById(ticket.getTicketType());
 		Optional<Invoice> invoice = invoiceRepo.findById(ticket.getInvoice());
 		
