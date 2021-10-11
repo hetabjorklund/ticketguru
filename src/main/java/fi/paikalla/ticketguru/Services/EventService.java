@@ -24,7 +24,7 @@ public class EventService {
 	private ObjectMapper objectMapper;
 	
 	@Autowired
-	EventRepository eventrepo;
+	private EventRepository eventrepo;
 	
 	// eventin PATCH-toiminto
 	public Event patchEvent(JsonPatch patchDocument, Long id) {

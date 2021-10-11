@@ -169,34 +169,13 @@ public class EventController {
 	// PATCH
 	@PatchMapping (path="/events/{id}", consumes = "application/json-patch+json") //muokkaa osittain haluttua eventtiä id:n perusteella
 	public ResponseEntity<?> partiallyUpdateEvent(@PathVariable long id, @RequestBody JsonPatch patchDocument) {
-		Optional<Event> event = eventrepo.findById(id); // haetaan eventreposta mahdollinen event annetulla id:llä
-		if (event.isEmpty()) { //tarkistetaan löytyykö eventiä, ellei löydy
+		Optional<Event> target = eventrepo.findById(id); // haetaan eventreposta mahdollinen event annetulla id:llä
+		if (target.isEmpty()) { //tarkistetaan löytyykö eventiä, ellei löydy
 			return new ResponseEntity<>("Event not found", HttpStatus.NOT_FOUND); // palautetaan viesti ja 404-koodi
 		} else { // jos event löytyy annetulla id:llä
 			Event patchedEvent = eventservice.patchEvent(patchDocument, id); // käytetään event patchEvent-metodin kautta
 			return new ResponseEntity<>(patchedEvent, HttpStatus.OK);
 		}
 	}
-	
-	/*
-	// PATCH
-	@PatchMapping (path="/events/{id}", consumes = "application/json-patch+json") //muokkaa osittain haluttua eventtiä id:n perusteella
-	public ResponseEntity<?> partiallyUpdateEvent(@RequestBody JsonPatch patch, @PathVariable (value = "id") Long eventId) throws Exception {
-		try {
-			Event event = eventrepo.findById(eventId).orElseThrow(() -> new Exception("Event not found"));
-			Event eventPatched = applyPatchToEvent(patch, event);
-			eventrepo.save(eventPatched);
-			return new ResponseEntity<>(eventPatched, HttpStatus.OK);
-		} catch (JsonPatchException | JsonProcessingException e) {
-			return new ResponseEntity<>("Ongelma", HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-	
-	private Event applyPatchToEvent(JsonPatch patch, Event targetEvent) throws JsonPatchException, JsonProcessingException {
-		ObjectMapper objectMapper = new ObjectMapper();
-		JsonNode patched = patch.apply(objectMapper.convertValue(targetEvent, JsonNode.class));
-		return objectMapper.treeToValue(patched, Event.class);
-	}
-	*/
 
 }
