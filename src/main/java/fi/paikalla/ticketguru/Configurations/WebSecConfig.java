@@ -1,6 +1,7 @@
 package fi.paikalla.ticketguru.Configurations;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -9,35 +10,41 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import fi.paikalla.ticketguru.Services.UserDetailsServiceImplementation;
+//import fi.paikalla.ticketguru.Services.UserDetailsServiceImplementation;
 
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled= true)
+@EnableGlobalMethodSecurity(prePostEnabled= true) //eli metoditasolla @PreAuthorize("hasRole('USER')") https://www.baeldung.com/spring-security-method-security
 @EnableWebSecurity
 public class WebSecConfig extends WebSecurityConfigurerAdapter {
-	@Autowired
-	private UserDetailsServiceImplementation serviceImp; 
+	//@Autowired
+	//private UserDetailsServiceImplementation serviceImp; 
 	
 	@Override
 	protected void configure (HttpSecurity http) throws Exception {
 		http
 			.authorizeRequests()
-			.anyRequest().authenticated()
+			.anyRequest().authenticated()//kaiken pitää olla autorisoitua
 			.and()
-			.httpBasic()
+			.httpBasic() //http Basic protokollalla
 			.and()
-			.csrf().disable(); 
+			.csrf().disable(); //eikä mitään sessioita. 
 		}
 	
 	@Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        //auth.userDetailsService(serviceImp).passwordEncoder(new BCryptPasswordEncoder());
+        //auth.userDetailsService(serviceImp).passwordEncoder(new BCryptPasswordEncoder()); //sitten kun tätä tarvitaan. 
 		auth
-		.inMemoryAuthentication()
-		.withUser("user").password("pssword")
+		.inMemoryAuthentication() //käytä näitä tunnuksia postmanissa. 
+		.withUser("user").password(passCoder().encode("password"))
 		.authorities("USER"); 
     }
+	
+	@Bean
+	public PasswordEncoder passCoder() {
+		return new BCryptPasswordEncoder(); 
+	}
 	
 	
 
