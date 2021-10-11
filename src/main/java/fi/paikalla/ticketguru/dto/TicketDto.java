@@ -9,10 +9,10 @@ public class TicketDto {
 	private double price; 
 	private boolean	used;
 	
-	@Min(value = 1, message = "invoice should be at least 1")
+	@Min(value = 0, message = "invoice should be at least 1")
 	private long invoice;
 	
-	@Min(value = 1, message= "ticketType must be at least 1")
+	@Min(value = 0, message= "ticketType must be at least 1")
 	private long ticketType;
 	
 	public TicketDto() {}
