@@ -177,26 +177,5 @@ public class EventController {
 			return new ResponseEntity<>(patchedEvent, HttpStatus.OK);
 		}
 	}
-	
-	/*
-	// PATCH
-	@PatchMapping (path="/events/{id}", consumes = "application/json-patch+json") //muokkaa osittain haluttua eventtiä id:n perusteella
-	public ResponseEntity<?> partiallyUpdateEvent(@RequestBody JsonPatch patch, @PathVariable (value = "id") Long eventId) throws Exception {
-		try {
-			Event event = eventrepo.findById(eventId).orElseThrow(() -> new Exception("Event not found"));
-			Event eventPatched = applyPatchToEvent(patch, event);
-			eventrepo.save(eventPatched);
-			return new ResponseEntity<>(eventPatched, HttpStatus.OK);
-		} catch (JsonPatchException | JsonProcessingException e) {
-			return new ResponseEntity<>("Ongelma", HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-	
-	private Event applyPatchToEvent(JsonPatch patch, Event targetEvent) throws JsonPatchException, JsonProcessingException {
-		ObjectMapper objectMapper = new ObjectMapper();
-		JsonNode patched = patch.apply(objectMapper.convertValue(targetEvent, JsonNode.class));
-		return objectMapper.treeToValue(patched, Event.class);
-	}
-	*/
 
 }
