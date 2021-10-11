@@ -38,31 +38,29 @@ public class StatusController {
 		return new ResponseEntity<>(list, HttpStatus.OK); // palauttaa haetun listan
 	}
 	
-	@GetMapping("/status/{id}")
+	@GetMapping("/status/{id}") // hakee statuksen id:n perusteella
 	public ResponseEntity<?> getEventById(@PathVariable (value = "id") Long statusId) {
 		Optional<EventStatus> status = statusrepo.findById(statusId); // hakee mahdollisen statuksen repositiosta id:n perusteella
 		if (status.isEmpty()) { // tarkistetaan onko status tyhjä
-			return new ResponseEntity<> ("Status not found", HttpStatus.NOT_FOUND); // mikäli status on tyhjä, palautetaan status = null ja 404-koodi
+			return new ResponseEntity<> ("Status not found", HttpStatus.NOT_FOUND); // mikäli status on tyhjä, palautetaan viesti ja 404-koodi
 		} else {
 			return new ResponseEntity<> (status, HttpStatus.OK); // mikäli status löytyy, palautetaan statuksen tiedot ja 200-koodi
 		}
 	}
 	
-	// ONGELMA: MILLÄ SAA HAETTUA TAPAHTUMALISTAN? Nyt heittää 500:sen
 	@GetMapping ("/status/{id}/events") // hakee kaikki tapahtumat statuksen perusteella
-	public ResponseEntity<?> getEventsByStatus2(@PathVariable (value = "id") Long statusId) {
-		Optional<EventStatus> status = statusrepo.findById(statusId); // haetaan mahdollinen status statusreposta id:n perusteella
-		try {
-			List<Event> elist =  eventrepo.findByStatus(statusId); // haetaan lista tapahtumista statuksen id:n perusteella
-			if (status.isEmpty()) { // tarkistetaan löytyikö status kannasta
-				return new ResponseEntity<>("Status not found", HttpStatus.NOT_FOUND); // jos statusta ei löydy, palautetaan viesti sekä 404-koodi
-			} if (elist.isEmpty()) { // tarkistetaan onko statukseen liitetty tapahtumia
-				return new ResponseEntity<>(elist, HttpStatus.OK); // jos tapahtumalista on tyhjä, palautuu tyhjä lista ja 200-koodi
-			} else {
-				return new ResponseEntity<>(elist, HttpStatus.OK); // palautetaan tapahtumalista ja 200-koodi
+	public ResponseEntity<?> getEventsByStatus(@PathVariable (value = "id") Long statusId) {
+		Optional<EventStatus> optionalStatus = statusrepo.findById(statusId); // haetaan mahdollinen status statusreposta id:n perusteella
+		if (optionalStatus.isEmpty()) { // tarkitsetaan onko status tyhjä
+			return new ResponseEntity<> ("Status not found", HttpStatus.NOT_FOUND); // mikäli status on tyhjä, palautetaan viesti ja 404-koodi
+		} else { // jos status löytyy
+			EventStatus status = optionalStatus.get();// haetaan mahdollisen statuksen tiedot
+			List<Event> elist = status.getEvent(); // haetaan statukseen liitetyt eventit
+			if (elist.isEmpty()) { // tarkistetaan onko statukseen liitetty tapahtumia
+				return new ResponseEntity<> ("No associated events", HttpStatus.OK); // mikäli tapahtumalista on tyhjä, palautetaan viesti ja 200-koodi
+			} else { // mikäli statukseen on liitetty tapahtumia
+				return new ResponseEntity<> (elist, HttpStatus.OK); // palautetaan tapahtumalista ja 200-koodi
 			}
-		} catch (Exception e) {
-			return new ResponseEntity<>("Exception", HttpStatus.NOT_FOUND);
 		}
 	}
 	
@@ -111,22 +109,5 @@ public class StatusController {
 			}
 		}
 	}
-	
-	/*
-	@DeleteMapping("/status/{id}")// merkkaa statuksen poistetuksi
-	public ResponseEntity<HashMap<String, Boolean>> deleteStatusById(@PathVariable(value = "id") Long statusId) {
-		Optional<EventStatus> status = statusrepo.findById(statusId); // heataan mahdollinen status kannasta id:n perusteella
-		if (status.isEmpty()) { // jos statusta ei löydy kannasta
-			HashMap<String, Boolean> response = new HashMap<>(); // luodaan uusi hashmap responsea varten
-			response.put("deleted", Boolean.FALSE); // asetetaan tiedot hashmapiin
-			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); // palautetaan luotu hashmap sekä 404-koodi
-		} else { // jos status löytyy kannasta
-			statusrepo.delete(status.get());
-			HashMap<String, Boolean> response = new HashMap<>(); // luodaan uusi hashmap responsea varten
-			response.put("deleted", Boolean.TRUE); // asetetaan tiedot hashmapiin
-			return new ResponseEntity<>(response, HttpStatus.OK); // palautetaan luotu hashmap sekä 200-koodi
-		}
-	}
-	*/
 	
 }
