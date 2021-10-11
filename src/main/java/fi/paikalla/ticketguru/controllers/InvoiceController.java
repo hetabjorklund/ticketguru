@@ -116,7 +116,7 @@ public class InvoiceController {
 		}
 		else { // jos haettu lasku löytyy			
 			try {
-				Invoice invoice = invoiceservice.patchInvoice(patchDocument, id); // käytetään lasku pathInvoice-metodin kautta			
+				Invoice invoice = invoiceservice.patchInvoice(patchDocument, id); // käytetään lasku patchInvoice-metodin kautta			
 				return new ResponseEntity<>(invoice, HttpStatus.OK); // palautetaan muokattu lasku ja 200
 			} catch (Exception e) {
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // jos jokin patchin attibuutti on väärää tyyppiä, tulee virhe, joten palautetaan 400 
