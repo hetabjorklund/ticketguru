@@ -1,6 +1,8 @@
 package fi.paikalla.ticketguru.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.json.JsonPatch;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import fi.paikalla.ticketguru.Repositories.InvoiceRepository;
@@ -82,8 +85,10 @@ public class InvoiceController {
 				invoicerepo.save(newInvoice);			
 				return new ResponseEntity<>(newInvoice, HttpStatus.CREATED); // palautetaan luotu lasku ja 201
 			}
-		} catch (DataIntegrityViolationException e) { // jos yritetään päivittää laskua sellaisella tguserilla jonka id:tä ei ole olemassa, tulee virhe
+		} catch (DataIntegrityViolationException e) { // jos yritetään luoda laskua sellaisella tguserilla jonka id:tä ei ole olemassa, tulee virhe
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // joten palautetaan 404
+		} catch (Exception e) { // kaikki muut mahdolliset virheet paitsi DataIntegrityViolationException, esim. jokin attibuutti on väärää tyyppiä
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // joten palautetaan 400
 		}
 	}		
 	
@@ -112,6 +117,8 @@ public class InvoiceController {
 			}
 		} catch (DataIntegrityViolationException e) { // jos yritetään päivittää laskua sellaisella tguserilla jonka id:tä ei ole olemassa, tulee virhe
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // joten palautetaan 404
+		} catch (Exception e) { // kaikki muut mahdolliset virheet paitsi DataIntegrityViolationException, esim. jokin attibuutti on väärää tyyppiä
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // joten palautetaan 400
 		}
 	}
 	
@@ -129,7 +136,7 @@ public class InvoiceController {
 				return new ResponseEntity<>(invoice, HttpStatus.OK); // palautetaan muokattu lasku ja 200
 			} catch (DataIntegrityViolationException e) { // jos yritetään päivittää laskua sellaisella tguserilla jonka id:tä ei ole olemassa, tulee virhe
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND); // joten palautetaan 404
-			} catch (Exception e) { // kaikki muut mahdolliset virheet paitsi DataIntegrityViolationException, esim. jokin patchin attibuutti on väärää tyyppiä
+			} catch (Exception e) { // kaikki muut mahdolliset virheet paitsi DataIntegrityViolationException, esim. jokin attibuutti on väärää tyyppiä
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // joten palautetaan 400
 			}
 		}		
@@ -137,10 +144,13 @@ public class InvoiceController {
 				
 	// DELETE
 	@DeleteMapping("/invoices")
-	public ResponseEntity<String> deleteAll() { // poistetaan kaikki laskut
+	public @ResponseBody ResponseEntity<Map<String, String>> deleteAll() { // poistetaan kaikki laskut
+		
+		Map<String, String> response = new HashMap<String, String>();
 		
 		if (this.invoicerepo.count() == 0) { // tarkistetaan onko invoicerepossa ylipäätään mitään poistettavaa
-			return new ResponseEntity<>("There are no invoices to delete", HttpStatus.NOT_FOUND); // jos ei ole, palautetaan viesti ja 404
+			response.put("message", "There are no invoices to delete");
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); // jos ei ole, palautetaan viesti ja 404
 		}
 		
 		else { // jos invoicerepossa on laskuja
@@ -153,18 +163,21 @@ public class InvoiceController {
 			}
 						
 			if (this.invoicerepo.count() == 0) { // jos tyhjennys onnistui
-				return new ResponseEntity<>("All invoices have been deleted", HttpStatus.NO_CONTENT); // palautetaan viesti ja 204		
+				response.put("message", "All invoices have been deleted");
+				return new ResponseEntity<>(response, HttpStatus.NO_CONTENT); // palautetaan viesti ja 204		
 			}
-			else {
-				return new ResponseEntity<>("One or more invoices have associated tickets, deletion forbidden", HttpStatus.FORBIDDEN); // jos tyhjennys ei onnistunut, palautetaan 403
+			else { // jos tyhjennys ei onnistunut
+				response.put("message", "One or more invoices have associated tickets, deletion forbidden");
+				return new ResponseEntity<>(response, HttpStatus.FORBIDDEN); // palautetaan viesti ja 403
 			}			
 		}
 				
 	}	
 	
 	@DeleteMapping("/invoices/{id}")
-	public ResponseEntity<String> deleteInvoiceById(@PathVariable Long id) { // poistetaan haluttu lasku
+	public @ResponseBody ResponseEntity<Map<String, String>> deleteInvoiceById(@PathVariable Long id) { // poistetaan haluttu lasku
 		
+		Map<String, String> response = new HashMap<String, String>();
 		
 		if (this.invoicerepo.findById(id).isPresent()) { // jos haetulla id:llä löytyy lasku	
 			
@@ -172,11 +185,13 @@ public class InvoiceController {
 				
 			if (invoice.getTickets().size() == 0) { // tarkistetaan onko laskulla lippuja
 				this.invoicerepo.delete(invoice); // jos ei, poistetaan lasku
-				return new ResponseEntity<>("Invoice deleted", HttpStatus.NO_CONTENT); // palautetaan viesti ja 204
+				response.put("message", "Invoice deleted");
+				return new ResponseEntity<>(response, HttpStatus.NO_CONTENT); // palautetaan viesti ja 204
 			}
 				
 			else { // jos laskulla on lippuja
-				return new ResponseEntity<>("Invoice has associated tickets, deletion forbidden", HttpStatus.FORBIDDEN); // palautetaan viesti ja 403
+				response.put("message", "Invoice has associated tickets, deletion forbidden");
+				return new ResponseEntity<>(response, HttpStatus.FORBIDDEN); // palautetaan viesti ja 403
 			}
 				
 		}			
