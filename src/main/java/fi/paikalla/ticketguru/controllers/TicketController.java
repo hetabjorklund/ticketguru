@@ -74,7 +74,8 @@ public class TicketController {
 	}
 	
 	@PostMapping("/tickets")
-	public @ResponseBody ResponseEntity<String> createTicket(@Valid @RequestBody TicketDto ticket, BindingResult bindingResult){
+	public @ResponseBody ResponseEntity<Map<String, String>> createTicket(@Valid @RequestBody TicketDto ticket, BindingResult bindingResult){
+		Map<String, String> response = new HashMap<>();
 		if(bindingResult.hasErrors()) { // Mikäli validoinnissa on virheitä
 			List<ObjectError> errors = bindingResult.getAllErrors(); // Haetaan kaikki virheet listaan
 			StringBuilder strBuilder = new StringBuilder(errors.size()); // Alustetaan vastausviestiä
@@ -84,7 +85,9 @@ public class TicketController {
 			}
 			
 			String errorMessage = strBuilder.toString().trim(); // Muutetaan palautusviesti Stringiksi ja lähetetään se clientille
-			return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+			response.put("status", "400");
+			response.put("message", errorMessage);
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 		}
 		
 		Optional<TicketType> ticketType = typeRepo.findById(ticket.getTicketType());
@@ -110,13 +113,18 @@ public class TicketController {
 			//Mikäli lippuja on jäljellä, luodaan uusi lippu. Mikäli lippuja ei ole jäljellä, palautetaan BAD_REQUEST
 			if(hasAvailableTickets) {
 				ticketRepo.save(newTicket);
-				return new ResponseEntity<>("Ticket succesfully created", HttpStatus.CREATED);
+				response = new HashMap<>();
+				response.put("status", "201");
+				response.put("message", "Ticket succesfully created");
+				return new ResponseEntity<>(response, HttpStatus.CREATED);
 			} else {
-				return new ResponseEntity<>("The event is sold out", HttpStatus.BAD_REQUEST);
+				response.put("status", "400");
+				return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 			}
 		}
 		
-		return new ResponseEntity<>("No ticket type or invoice found with the given id's", HttpStatus.BAD_REQUEST);
+		response.put("status", "400");
+		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
 	
 	@PatchMapping("/tickets/{id}")
@@ -137,7 +145,13 @@ public class TicketController {
 	}
 	
 	@PutMapping("/tickets/{id}")
-	public @ResponseBody ResponseEntity<TicketDto> modifyTicket(@Valid @RequestBody TicketDto ticketDto, @PathVariable("id") Long ticketId){
+	public @ResponseBody ResponseEntity<TicketDto> modifyTicket(@Valid @RequestBody TicketDto ticketDto, @PathVariable("id") Long ticketId, BindingResult bindingResult){
+		
+		
+		if(bindingResult.hasErrors()) {
+			
+		}
+		
 		Optional<TicketType> ticketType = typeRepo.findById(ticketDto.getTicketType());
 		Optional<Invoice> invoice = invoiceRepo.findById(ticketDto.getInvoice());
 		Optional<Ticket> ticket = ticketRepo.findById(ticketId);
