@@ -46,6 +46,8 @@
 
 **Ehto** : Haettu lasku löytyy ja sen poistaminen onnistui.
 
+**Vastaus** : Invoice deleted
+
 **HTTP-vastauskoodi** : `204 NO CONTENT`
 
 ### Virhevastaus
