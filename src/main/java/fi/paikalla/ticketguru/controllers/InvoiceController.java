@@ -71,15 +71,19 @@ public class InvoiceController {
 	
 	// POST
 	@PostMapping("/invoices")
-	public ResponseEntity<Invoice> addInvoice(@Valid @RequestBody Invoice invoice, BindingResult bindingresult) { // luodaan uusi lasku
+	public ResponseEntity<Invoice> addInvoice(@Valid @RequestBody Invoice invoice, BindingResult bindingresult) throws DataIntegrityViolationException { // luodaan uusi lasku
 
-		if (bindingresult.hasErrors()) { // tarkistetaan onko mukana TGUser
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // jos ei, palautetaan 400
-		}
-		else {			
-			Invoice newInvoice = new Invoice(invoice.getTGuser()); // luodaan tässä uusi, jotta konstruktori tekee a) tyhjän lippulistan ja b) timestampiksi kuluvan hetken - muuten timestamp on joko pyynnössä lähetetty tai null
-			invoicerepo.save(newInvoice);			
-			return new ResponseEntity<>(newInvoice, HttpStatus.CREATED); // palautetaan luotu lasku ja 201
+		try {
+			if (bindingresult.hasErrors()) { // tarkistetaan onko mukana TGUser
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // jos ei, palautetaan 400
+			}
+			else {			
+				Invoice newInvoice = new Invoice(invoice.getTGuser()); // luodaan tässä uusi, jotta konstruktori tekee a) tyhjän lippulistan ja b) timestampiksi kuluvan hetken - muuten timestamp on joko pyynnössä lähetetty tai null
+				invoicerepo.save(newInvoice);			
+				return new ResponseEntity<>(newInvoice, HttpStatus.CREATED); // palautetaan luotu lasku ja 201
+			}
+		} catch (DataIntegrityViolationException e) { // jos yritetään päivittää laskua sellaisella tguserilla jonka id:tä ei ole olemassa, tulee virhe
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // joten palautetaan 404
 		}
 	}		
 	
