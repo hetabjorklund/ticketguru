@@ -113,9 +113,8 @@ public class InvoiceController {
 	
 	// PATCH
 	@PatchMapping(value = "/invoices/{id}", consumes = "application/json-patch+json")
-	public ResponseEntity<Invoice> updateInvoice(@PathVariable Long id, @RequestBody JsonPatch patchDocument) {
+	public ResponseEntity<Invoice> updateInvoice(@PathVariable Long id, @RequestBody JsonPatch patchDocument) throws DataIntegrityViolationException {
 		
-	
 		Optional<Invoice> target = invoicerepo.findById(id); // haetaan invoicerepositorysta Optional-olio id:n perusteella
 		if (target.isEmpty()) { // jos haettua laskua ei löydy
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // palautetaan 404
@@ -123,13 +122,11 @@ public class InvoiceController {
 		else { // jos haettu lasku löytyy			
 			try {
 				Invoice invoice = invoiceservice.patchInvoice(patchDocument, id); // käytetään lasku patchInvoice-metodin kautta
-				
-				//if (invoice.getTGuser() != null) {
-					return new ResponseEntity<>(invoice, HttpStatus.OK); // palautetaan muokattu lasku ja 200
-				//}
-				
-			} catch (Exception e) {
-				return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // jos jokin patchin attibuutti on väärää tyyppiä, tulee virhe, joten palautetaan 400 
+				return new ResponseEntity<>(invoice, HttpStatus.OK); // palautetaan muokattu lasku ja 200
+			} catch (DataIntegrityViolationException e) { // jos yritetään päivittää laskua sellaisella tguserilla jonka id:tä ei ole olemassa, tulee virhe
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND); // joten palautetaan 404
+			} catch (Exception e) { // kaikki muut mahdolliset virheet paitsi DataIntegrityViolationException, esim. jokin patchin attibuutti on väärää tyyppiä
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // joten palautetaan 400
 			}
 		}		
 	}

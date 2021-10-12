@@ -60,11 +60,16 @@ Content-type: application/json-patch+json
 **HTTP-vastauskoodi** : `404 NOT FOUND`
 
 ### 2
+**Ehto** : Yritetään lähettää pyyntö, jossa laskun myyjän id:tä ei ole olemassa.
+
+**HTTP-vastauskoodi** : `404 NOT FOUND`
+
+### 3
 **Ehto** : Content-type ei ole application/json-patch+json vaan esimerkiksi application/json.
 
 **HTTP-vastauskoodi** : `415 UNSUPPORTED MEDIA TYPE`
 
-### 3
+### 4
 **Ehto** : Jokin attribuutti on väärän tyyppinen (esim. Boolean kun pitäisi olla Array tai String).
 
 **HTTP-vastauskoodi** : `400 BAD REQUEST`
