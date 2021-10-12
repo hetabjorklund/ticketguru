@@ -7,6 +7,7 @@ import javax.json.JsonPatch;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -84,25 +85,29 @@ public class InvoiceController {
 	
 	// PUT
 	@PutMapping("/invoices/{id}") // päivittää haluttua laskua
-	public ResponseEntity<Invoice> updateInvoice(@Valid @RequestBody Invoice newInvoice, @PathVariable Long id, BindingResult bindingresult) {
+	public ResponseEntity<Invoice> updateInvoice(@Valid @RequestBody Invoice newInvoice, @PathVariable Long id, BindingResult bindingresult) throws DataIntegrityViolationException {
 		
-		if (bindingresult.hasErrors()) { // tarkistetaan onko mukana TGUser	
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // jos ei, palautetaan 400
-		}		
-		else {
-			if (this.invoicerepo.findById(id).isEmpty()) { // tarkistetaan löytyykö haetulla id:llä laskua
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND); // jos ei löydy, palautetaan 404
-			}
+		try {
+			if (bindingresult.hasErrors()) { // tarkistetaan onko mukana TGUser	
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // jos ei, palautetaan 400
+			}		
 			else {
-				Invoice invoice = this.invoicerepo.findById(id).get(); // jos haetulla id:llä löytyy lasku, päivitetään sen tiedot
-				invoice.setTGuser(newInvoice.getTGuser());
-				invoice.setTickets(newInvoice.getTickets());
-				invoice.setTimestamp(newInvoice.getTimestamp());
-	
-				this.invoicerepo.save(invoice); // tallennetaan päivitetty lasku
-				
-				return new ResponseEntity<>(invoice, HttpStatus.OK); // palautetaan uusi, päivitetty lasku ja 200				
+				if (this.invoicerepo.findById(id).isEmpty()) { // tarkistetaan löytyykö haetulla id:llä laskua
+					return new ResponseEntity<>(HttpStatus.NOT_FOUND); // jos ei löydy, palautetaan 404
+				}
+				else {
+					Invoice invoice = this.invoicerepo.findById(id).get(); // jos haetulla id:llä löytyy lasku, päivitetään sen tiedot
+					invoice.setTGuser(newInvoice.getTGuser());
+					invoice.setTickets(newInvoice.getTickets());
+					invoice.setTimestamp(newInvoice.getTimestamp());
+
+					this.invoicerepo.save(invoice); // tallennetaan päivitetty lasku
+					
+					return new ResponseEntity<>(invoice, HttpStatus.OK); // palautetaan uusi, päivitetty lasku ja 200				
+				}
 			}
+		} catch (DataIntegrityViolationException e) { // jos yritetään päivittää laskua sellaisella tguserilla jonka id:tä ei ole olemassa, tulee virhe
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // joten palautetaan 404
 		}
 	}
 	
@@ -110,14 +115,19 @@ public class InvoiceController {
 	@PatchMapping(value = "/invoices/{id}", consumes = "application/json-patch+json")
 	public ResponseEntity<Invoice> updateInvoice(@PathVariable Long id, @RequestBody JsonPatch patchDocument) {
 		
+	
 		Optional<Invoice> target = invoicerepo.findById(id); // haetaan invoicerepositorysta Optional-olio id:n perusteella
 		if (target.isEmpty()) { // jos haettua laskua ei löydy
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // palautetaan 404
 		}
 		else { // jos haettu lasku löytyy			
 			try {
-				Invoice invoice = invoiceservice.patchInvoice(patchDocument, id); // käytetään lasku patchInvoice-metodin kautta			
-				return new ResponseEntity<>(invoice, HttpStatus.OK); // palautetaan muokattu lasku ja 200
+				Invoice invoice = invoiceservice.patchInvoice(patchDocument, id); // käytetään lasku patchInvoice-metodin kautta
+				
+				//if (invoice.getTGuser() != null) {
+					return new ResponseEntity<>(invoice, HttpStatus.OK); // palautetaan muokattu lasku ja 200
+				//}
+				
 			} catch (Exception e) {
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // jos jokin patchin attibuutti on väärää tyyppiä, tulee virhe, joten palautetaan 400 
 			}
