@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Configuration
-public class ApplicationConfig {
+public class ObjectMapperConfig {
 
 	 @Bean
 	 public ObjectMapper objectMapper() {
