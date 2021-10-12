@@ -95,6 +95,12 @@ Pyynnössä täytyy lähettää muokattavan laskun id. Laskulla täytyy olla myy
 ```
 
 ### 3
+**Ehto** : Yritetään lähettää pyyntö, jossa laskun myyjän id:tä ei ole olemassa.
+
+**HTTP-vastauskoodi** : `404 NOT FOUND`
+
+
+### 4
 **Ehto** : Jokin attribuutti on väärän tyyppinen (esim. Boolean kun pitäisi olla Array tai String).
 
 **HTTP-vastauskoodi** : `400 BAD REQUEST`
