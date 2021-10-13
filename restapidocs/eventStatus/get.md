@@ -69,7 +69,9 @@ Listaa yhden tapahtumastatuksen tietyn id:n perusteella
 **Esimerkkivastaus**
 
 ```json
-Status not found
+{
+    "message": "Status not found"
+}
 ```
 
 # Listaa tapahtumastatukseen liitetyt tapahtumat statuksen id:n perusteella
@@ -171,7 +173,9 @@ Listaa kaikki yhteen tapahtumastatukseen liitetyt tapahtumat
 **Esimerkkivastaus**
 
 ```json
-No associated events
+{
+    "message": "No associated events"
+}
 ```
 
 ## Virhevastaus
@@ -183,5 +187,7 @@ No associated events
 **Esimerkkivastaus**
 
 ```json
-Status not found
+{
+    "message": "Status not found"
+}
 ```

@@ -27,7 +27,10 @@ Toimita URIn mukana statuken id. Statuksella ei saa olla liitettyjä tapahtumia.
 **Esimerkkivastaus** :
 
 ```json
-Status has associated events, deletion forbidden
+{
+    "message": "Status has associated events, deletion forbidden"
+}
+
 ```
 
 **Ehto** : Mikäli pyydettyä id:tä ei löydy tietokannasta.
@@ -37,5 +40,7 @@ Status has associated events, deletion forbidden
 **Esimerkkivastaus** :
 
 ```json
-Status not found
+{
+    "message": "Status not found"
+}
 ```

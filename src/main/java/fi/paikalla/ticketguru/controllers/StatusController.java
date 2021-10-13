@@ -2,6 +2,7 @@ package fi.paikalla.ticketguru.controllers;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -40,9 +41,12 @@ public class StatusController {
 	
 	@GetMapping("/status/{id}") // hakee statuksen id:n perusteella
 	public ResponseEntity<?> getEventById(@PathVariable (value = "id") Long statusId) {
+		Map<String, String> response = new HashMap<String, String>(); // alustetaan uusi response
+		
 		Optional<EventStatus> status = statusrepo.findById(statusId); // hakee mahdollisen statuksen repositiosta id:n perusteella
 		if (status.isEmpty()) { // tarkistetaan onko status tyhjä
-			return new ResponseEntity<> ("Status not found", HttpStatus.NOT_FOUND); // mikäli status on tyhjä, palautetaan viesti ja 404-koodi
+			response.put("message", "Status not found");
+			return new ResponseEntity<> (response, HttpStatus.NOT_FOUND); // mikäli status on tyhjä, palautetaan viesti ja 404-koodi
 		} else {
 			return new ResponseEntity<> (status, HttpStatus.OK); // mikäli status löytyy, palautetaan statuksen tiedot ja 200-koodi
 		}
@@ -50,14 +54,18 @@ public class StatusController {
 	
 	@GetMapping ("/status/{id}/events") // hakee kaikki tapahtumat statuksen perusteella
 	public ResponseEntity<?> getEventsByStatus(@PathVariable (value = "id") Long statusId) {
+		Map<String, String> response = new HashMap<String, String>(); // alustetaan uusi response
+		
 		Optional<EventStatus> optionalStatus = statusrepo.findById(statusId); // haetaan mahdollinen status statusreposta id:n perusteella
 		if (optionalStatus.isEmpty()) { // tarkitsetaan onko status tyhjä
-			return new ResponseEntity<> ("Status not found", HttpStatus.NOT_FOUND); // mikäli status on tyhjä, palautetaan viesti ja 404-koodi
+			response.put("message", "Status not found");
+			return new ResponseEntity<> (response, HttpStatus.NOT_FOUND); // mikäli status on tyhjä, palautetaan viesti ja 404-koodi
 		} else { // jos status löytyy
 			EventStatus status = optionalStatus.get();// haetaan mahdollisen statuksen tiedot
 			List<Event> elist = status.getEvent(); // haetaan statukseen liitetyt eventit
 			if (elist.isEmpty()) { // tarkistetaan onko statukseen liitetty tapahtumia
-				return new ResponseEntity<> ("No associated events", HttpStatus.OK); // mikäli tapahtumalista on tyhjä, palautetaan viesti ja 200-koodi
+				response.put("message", "No associated events");
+				return new ResponseEntity<> (response, HttpStatus.OK); // mikäli tapahtumalista on tyhjä, palautetaan viesti ja 200-koodi
 			} else { // mikäli statukseen on liitetty tapahtumia
 				return new ResponseEntity<> (elist, HttpStatus.OK); // palautetaan tapahtumalista ja 200-koodi
 			}
@@ -66,8 +74,11 @@ public class StatusController {
 	
 	@PostMapping ("/status")// luo uuden statuksen, VALIDOINTI HEITTÄÄ AUTOMAATTIRESPONSEN
 	public ResponseEntity<?> createEventStatus (@Valid @RequestBody EventStatus status, BindingResult bindingresult) {
+		Map<String, String> response = new HashMap<String, String>(); // alustetaan uusi response
+		
 		if (bindingresult.hasErrors()) { // tarkistetaan tuleeko pyynnön mukana statukselle nimi
-			return new ResponseEntity<> ("Status name is missing", HttpStatus.BAD_REQUEST); // jos ei statukselle ole annettu nimeä, sitä ei luoda ja palautetaan 400-koodi
+			response.put("message", "Status name is missing");
+			return new ResponseEntity<> (response, HttpStatus.BAD_REQUEST); // jos ei statukselle ole annettu nimeä, sitä ei luoda ja palautetaan 400-koodi
 		} else { // jos pyynnössä on statukselle nimi
 			if (statusrepo.findByStatusName(status.getStatusName()) != null) { // tarkistetaan onko kyseinen status jo olemassa kannassa
 				return new ResponseEntity<> (statusrepo.findByStatusName(status.getStatusName()), HttpStatus.CONFLICT); //palauttaa olemassa olevan statuksen, jos sellainen löytyy sekä 409-koodin
@@ -80,12 +91,16 @@ public class StatusController {
 	@PatchMapping("/status/{id}")// muokkaa statuksen nimeä, VALIDOINTI HEITTÄÄ AUTOMAATTIRESPONSEN
 	public ResponseEntity<?> updateName(@PathVariable(value = "id") Long statusId, 
 			@Valid @RequestBody EventStatus status, BindingResult bindingresult) {
+		Map<String, String> response = new HashMap<String, String>(); // alustetaan uusi response
+		
 		if (bindingresult.hasErrors()) { // tarkistetaan tuleeko pyynnön mukana statukselle nimi
-			return new ResponseEntity<> ("Status name is missing", HttpStatus.BAD_REQUEST); // jos ei statukselle ole annettu nimeä, sitä ei luoda ja palautetaan 400-koodi
+			response.put("message", "Status name is missing");
+			return new ResponseEntity<> (response, HttpStatus.BAD_REQUEST); // jos ei statukselle ole annettu nimeä, sitä ei luoda ja palautetaan 400-koodi
 		} else { // jos pyynnön mukana tulee statukselle nimi
 			Optional<EventStatus> estatus = statusrepo.findById(statusId); // haetaan mahdollinen status kannasta id:n perusteella
 			if (estatus.isEmpty()) { // tarkistetaan löytyikö status kannasta
-				return new ResponseEntity<>("Status not found", HttpStatus.NOT_FOUND); // jos status ei löydy, palautetaan viesti ja 404-koodi
+				response.put("message", "Status not found");
+				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); // jos status ei löydy, palautetaan viesti ja 404-koodi
 			} else { 
 				EventStatus newStatus = estatus.get(); // jos status löytyy kannasta, haetaan statuksen tiedot
 				newStatus.setStatusName(status.getStatusName()); // status nimetään uusiksi pyynnön mukana toimitetulla nimellä
@@ -97,15 +112,20 @@ public class StatusController {
 	
 	@DeleteMapping("/status/{id}") // poistaa statuksen id:n perusteella, mikäli siihen ei ole liitetty tapahtumia
 	public ResponseEntity<?> deleteStatusById(@PathVariable(value = "id") Long statusId) {
+		Map<String, String> response = new HashMap<String, String>(); // alustetaan uusi response
+		
 		Optional<EventStatus> status = statusrepo.findById(statusId); // haetaan mahdollinen status kannasta id:n perusteella
 		if (status.isEmpty()) { // jos statusta ei löydy kannastsa
-			return new ResponseEntity<>("Status not found", HttpStatus.NOT_FOUND); // palautetaan teskti sekä 404-koodi
+			response.put("message", "Status not found");
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); // palautetaan viesti sekä 404-koodi
 		} else { // jos status löytyy kannasta
 			if (status.get().getEvent().isEmpty()) { // tarkistetaan onko statukseen tapahtumalista tyhjä
+				response.put("message", "Status deleted");
 				statusrepo.deleteById(statusId); // poistetaan status kannasta
-				return new ResponseEntity<>("Status deleted", HttpStatus.NO_CONTENT); // palautetaan teksti sekä 204-koodi
+				return new ResponseEntity<>(response, HttpStatus.NO_CONTENT); // palautetaan viesti sekä 204-koodi
 			} else { // jos statuksen tapahtumalistassa on tapahtumia
-				return new ResponseEntity<>("Status has associated events, deletion forbidden", HttpStatus.FORBIDDEN); // palautetaan teksti sekä 403-koodi
+				response.put("message", "Status has associated events, deletion forbidden");
+				return new ResponseEntity<>(response, HttpStatus.FORBIDDEN); // palautetaan viesti sekä 403-koodi
 			}
 		}
 	}

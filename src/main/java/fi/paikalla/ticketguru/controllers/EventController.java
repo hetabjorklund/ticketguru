@@ -134,15 +134,18 @@ public class EventController {
 	
 	// PUT
 	@PutMapping(path = "/events/{id}") // muokkaa haluttua eventtiä id:n perusteella
-	public ResponseEntity<Event> updateEvent(@Valid @RequestBody Event newEvent, @PathVariable (value = "id") Long eventId, BindingResult bindingresult) {
+	public ResponseEntity<?> updateEvent(@Valid @RequestBody Event newEvent, @PathVariable (value = "id") Long eventId, BindingResult bindingresult) {
+		Map<String, String> response = new HashMap<String, String>(); // alustetaan uusi response
 		
 		if (bindingresult.hasErrors()) { // tarkistetaan tuleeko pyynnössä mukana tapahtuman nimi
-			return new ResponseEntity<>(newEvent, HttpStatus.BAD_REQUEST); // jos ei ole, palautetaan 400
+			response.put("message", "Event name is missing");
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // jos ei ole, palautetaan 400
 		}
 		
 		else {			
 			if (eventId == null) {
-				return new ResponseEntity<>(newEvent, HttpStatus.NOT_FOUND); // id puuttuu
+				response.put("message", "Id is missing");
+				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); // id puuttuu
 			}
 			else {
 				return eventrepo.findById(eventId) // annettu id löytyy, tiedot muokataan
@@ -169,9 +172,12 @@ public class EventController {
 	// PATCH
 	@PatchMapping (path="/events/{id}", consumes = "application/json-patch+json") //muokkaa osittain haluttua eventtiä id:n perusteella
 	public ResponseEntity<?> partiallyUpdateEvent(@PathVariable long id, @RequestBody JsonPatch patchDocument) {
+		Map<String, String> response = new HashMap<String, String>(); // alustetaan uusi response
+		
 		Optional<Event> target = eventrepo.findById(id); // haetaan eventreposta mahdollinen event annetulla id:llä
 		if (target.isEmpty()) { //tarkistetaan löytyykö eventiä, ellei löydy
-			return new ResponseEntity<>("Event not found", HttpStatus.NOT_FOUND); // palautetaan viesti ja 404-koodi
+			response.put("message", "Event not found");
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); // palautetaan viesti ja 404-koodi
 		} else { // jos event löytyy annetulla id:llä
 			Event patchedEvent = eventservice.patchEvent(patchDocument, id); // käytetään event patchEvent-metodin kautta
 			return new ResponseEntity<>(patchedEvent, HttpStatus.OK);
