@@ -11,9 +11,9 @@ import javax.json.JsonPatch;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,15 +26,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-
 import fi.paikalla.ticketguru.Entities.*;
 import fi.paikalla.ticketguru.Repositories.*;
 import fi.paikalla.ticketguru.Services.EventService;
 import fi.paikalla.ticketguru.Services.TicketService;
 
-@RestController
+@RestController @Secured("ADMIN")
 public class EventController {
 	
 	@Autowired
@@ -67,11 +64,9 @@ public class EventController {
 		}
 	}	
 	
-		
-	// hae kaikki tapahtumat parametreilla ja ilman. 
-	@GetMapping("/events") // haetaan kaikki tapahtumat
-	public ResponseEntity<?> getEvents(@RequestParam(required = false) String start, 
-			@RequestParam(required = false) String end) {//parametrit pyydetään merkkijonoina jotta virhetilanteesta saadaan kiinni
+	@GetMapping("/events") //hae kaikki tapahtumat parametreilla ja ilman 
+	public ResponseEntity<?> getEvents(@RequestParam(required = false) String start, @RequestParam(required = false) String end) {
+		//parametrit pyydetään merkkijonoina jotta virhetilanteesta saadaan kiinni
 		//jos parametrejä ei ole, haetaan kaikki normaalisti
 		if (start == null && end == null) {
 			return new ResponseEntity<List<Event>>((List<Event>) eventrepo.findAll(), HttpStatus.OK); 
@@ -81,7 +76,7 @@ public class EventController {
 				//konvertoi merkkijonon => pvm
 				LocalDate date1 = LocalDate.parse(start, DateTimeFormatter.ISO_LOCAL_DATE);
 				return new ResponseEntity<List<Event>>(eventservice.getAllByStart(date1), HttpStatus.OK); 
-			}//jos ei alkupvm, haetaan loppupvm asti. 
+			}//jos ei alkupvm, haetaan loppupvm asti 
 			if (start == null) {
 				LocalDate date2 = LocalDate.parse(end, DateTimeFormatter.ISO_LOCAL_DATE);
 				return new ResponseEntity<List<Event>>(eventservice.getAllByEnd(date2), HttpStatus.OK); 

@@ -28,6 +28,7 @@ import fi.paikalla.ticketguru.Entities.TicketType;
 import fi.paikalla.ticketguru.Repositories.InvoiceRepository;
 import fi.paikalla.ticketguru.Repositories.TicketRepository;
 import fi.paikalla.ticketguru.Repositories.TicketTypeRepository;
+import fi.paikalla.ticketguru.Services.EventService;
 import fi.paikalla.ticketguru.Services.TicketService;
 import fi.paikalla.ticketguru.dto.TicketDto;
 
@@ -42,6 +43,8 @@ public class TicketController {
 	private InvoiceRepository invoiceRepo;
 	@Autowired
 	private TicketService ticketservice;
+	@Autowired
+	private EventService eventservice;
 	
 	@GetMapping("/tickets") // kaikki liput, vähän kustomointia vois tehdä, koska tulee aika paljon tietoa. 
 	public List<Ticket> getTickets() {
@@ -105,7 +108,7 @@ public class TicketController {
 			boolean hasAvailableTickets;
 			
 			try {
-				hasAvailableTickets = ticketservice.hasAvailableTickets(eventId);
+				hasAvailableTickets = eventservice.hasAvailableTickets(eventId);
 			} catch(Exception e) {
 				hasAvailableTickets = false;
 			}
