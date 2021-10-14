@@ -16,7 +16,7 @@ import fi.paikalla.ticketguru.Repositories.InvoiceRepository;
 public class InvoiceService {
 	
 	@Autowired
-	private ObjectMapper objectMapper;
+	private ObjectMapper objectmapper;
 	
 	@Autowired
 	private InvoiceRepository invoicerepo;
@@ -27,13 +27,13 @@ public class InvoiceService {
         Invoice originalInvoice = invoicerepo.findById(id).get();
         
         // Muunnetaan Invoice-olio JsonStructure-olioksi
-        JsonStructure invoiceToBePatched = objectMapper.convertValue(originalInvoice, JsonStructure.class);
+        JsonStructure invoiceToBePatched = objectmapper.convertValue(originalInvoice, JsonStructure.class);
 
         // Lisätään pyynnössä saatu JsonPatch haluttuun laskuun
         JsonValue patchedInvoice = patchDocument.apply(invoiceToBePatched);
 
         // Muunnetaan JsonValue-olio takaisin Invoice-olioksi
-        Invoice modifiedInvoice = objectMapper.convertValue(patchedInvoice, Invoice.class);
+        Invoice modifiedInvoice = objectmapper.convertValue(patchedInvoice, Invoice.class);
 
         // Tallennetaan muokattu lasku invoicerepoon
         invoicerepo.save(modifiedInvoice); 

@@ -9,6 +9,5 @@ import fi.paikalla.ticketguru.Entities.TicketType;
 public interface TicketRepository extends CrudRepository<Ticket, Long> {
 	
 	List<Ticket> findByTicketType(TicketType type); 
-	
 
 }

@@ -4,6 +4,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -12,29 +13,27 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
 
 import lombok.Data;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
-//@NoArgsConstructor
-//@AllArgsConstructor
+@EqualsAndHashCode(callSuper=false)
 public class EventStatus extends AbstractPersistable<Long> {	
 	
 	@NotBlank
-	private String statusName; // tapahtuman tilanne: 'järjestetään', 'peruttu' tai 'siirretty'	
-	
+	private String statusName; // tapahtuman tilanne: 'järjestetään', 'peruttu' tai 'siirretty'		
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="status")
 	@JsonIgnore
-	private List<Event> event;
+	private List<Event> events;
 	
 	public EventStatus() {
-		super(); 
+		super();
+		this.events = new ArrayList<Event>();
 	}
 	
 	public EventStatus(String statusName) {
 		super(); 
-		this.statusName = statusName; 
-		// TODO Auto-generated constructor stub
+		this.statusName = statusName;
+		this.events = new ArrayList<Event>();
 	}
 }

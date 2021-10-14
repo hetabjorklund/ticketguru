@@ -21,7 +21,7 @@ import fi.paikalla.ticketguru.Repositories.EventRepository;
 public class EventService {
 
 	@Autowired
-	private ObjectMapper objectMapper;
+	private ObjectMapper objectmapper;
 	
 	@Autowired
 	private EventRepository eventrepo;
@@ -34,11 +34,11 @@ public class EventService {
 		// Haetaan event eventreposta (EventControllerissa tarkistettu jo että event löytyy eikä tule virheilmoitusta)
         Event originalEvent = eventrepo.findById(id).get();        
         // Muunnetaan Event-olio JsonStructure-olioksi
-        JsonStructure eventToBePatched = objectMapper.convertValue(originalEvent, JsonStructure.class);
+        JsonStructure eventToBePatched = objectmapper.convertValue(originalEvent, JsonStructure.class);
         // Lisätään pyynnössä saatu JsonPatch haluttuun eventtiin
         JsonValue patchedEvent = patchDocument.apply(eventToBePatched);
         // Muunnetaan JsonValue-olio takaisin Event-olioksi
-        Event modifiedEvent = objectMapper.convertValue(patchedEvent, Event.class);
+        Event modifiedEvent = objectmapper.convertValue(patchedEvent, Event.class);
         // Tallennetaan muokattu event eventrepoon
         eventrepo.save(modifiedEvent);         
         // Palautetaan muokattu event

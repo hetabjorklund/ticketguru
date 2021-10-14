@@ -36,11 +36,11 @@ import fi.paikalla.ticketguru.dto.TicketDto;
 public class TicketController {
 	
 	@Autowired
-	private TicketRepository ticketRepo;
+	private TicketRepository ticketrepo;
 	@Autowired
-	private TicketTypeRepository typeRepo;
+	private TicketTypeRepository typerepo;
 	@Autowired
-	private InvoiceRepository invoiceRepo;
+	private InvoiceRepository invoicerepo;
 	@Autowired
 	private TicketService ticketservice;
 	@Autowired
@@ -53,7 +53,7 @@ public class TicketController {
 	
 	@GetMapping("/tickets/{id}")
 	public @ResponseBody ResponseEntity<Optional<Ticket>> getTicketById(@PathVariable("id") Long ticketId){
-		Optional<Ticket> ticket = ticketRepo.findById(ticketId);
+		Optional<Ticket> ticket = ticketrepo.findById(ticketId);
 		
 		if(ticket.isEmpty()) {
 			return new ResponseEntity<>(ticket, HttpStatus.NOT_FOUND);
@@ -64,7 +64,7 @@ public class TicketController {
 	
 	@GetMapping("/tickets/{id}/used")
 	public @ResponseBody ResponseEntity<Map<String, Boolean>> getTicketUsed(@PathVariable("id") Long ticketId){
-		Optional<Ticket> ticket = ticketRepo.findById(ticketId);
+		Optional<Ticket> ticket = ticketrepo.findById(ticketId);
 		Map<String, Boolean> responseMap = new HashMap<>();
 		
 		if(ticket.isEmpty()) {
@@ -93,8 +93,8 @@ public class TicketController {
 			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 		}
 		
-		Optional<TicketType> ticketType = typeRepo.findById(ticket.getTicketType());
-		Optional<Invoice> invoice = invoiceRepo.findById(ticket.getInvoice());
+		Optional<TicketType> ticketType = typerepo.findById(ticket.getTicketType());
+		Optional<Invoice> invoice = invoicerepo.findById(ticket.getInvoice());
 		
 		if(!ticketType.isEmpty() && !invoice.isEmpty()) {
 			Ticket newTicket = new Ticket(
@@ -115,7 +115,7 @@ public class TicketController {
 			
 			//Mikäli lippuja on jäljellä, luodaan uusi lippu. Mikäli lippuja ei ole jäljellä, palautetaan BAD_REQUEST
 			if(hasAvailableTickets) {
-				ticketRepo.save(newTicket);
+				ticketrepo.save(newTicket);
 				response = new HashMap<>();
 				response.put("status", "201");
 				response.put("message", "Ticket succesfully created");
@@ -132,7 +132,7 @@ public class TicketController {
 	
 	@PatchMapping("/tickets/{id}")
 	public @ResponseBody ResponseEntity<Optional<Ticket>> markTicketAsUsed(@PathVariable("id") Long ticketId){
-		Optional<Ticket> ticket = ticketRepo.findById(ticketId);
+		Optional<Ticket> ticket = ticketrepo.findById(ticketId);
 		
 		if(!ticket.isEmpty()) {
 			Ticket usedTicket = ticket.get();
@@ -140,7 +140,7 @@ public class TicketController {
 				return new ResponseEntity<>(ticket, HttpStatus.BAD_REQUEST);
 			}
 			usedTicket.setUsed(true);
-			ticketRepo.save(usedTicket);
+			ticketrepo.save(usedTicket);
 			return new ResponseEntity<>(ticket, HttpStatus.OK);
 		}
 		
@@ -155,9 +155,9 @@ public class TicketController {
 			
 		}
 		
-		Optional<TicketType> ticketType = typeRepo.findById(ticketDto.getTicketType());
-		Optional<Invoice> invoice = invoiceRepo.findById(ticketDto.getInvoice());
-		Optional<Ticket> ticket = ticketRepo.findById(ticketId);
+		Optional<TicketType> ticketType = typerepo.findById(ticketDto.getTicketType());
+		Optional<Invoice> invoice = invoicerepo.findById(ticketDto.getInvoice());
+		Optional<Ticket> ticket = ticketrepo.findById(ticketId);
 		
 		if(ticket.isEmpty()) {
 			return new ResponseEntity<>(ticketDto, HttpStatus.NOT_FOUND);
@@ -169,7 +169,7 @@ public class TicketController {
 			newTicket.setUsed(ticketDto.isUsed());
 			newTicket.setTicketType(ticketType.get());
 			newTicket.setInvoice(invoice.get());
-			ticketRepo.save(newTicket);
+			ticketrepo.save(newTicket);
 			
 			return new ResponseEntity<>(ticketDto, HttpStatus.OK);
 		}
@@ -179,13 +179,13 @@ public class TicketController {
 	
 	@DeleteMapping("/tickets/{id}")
 	public @ResponseBody ResponseEntity<Optional<Ticket>> deleteTicket(@PathVariable("id") Long ticketId){
-		Optional<Ticket> ticket = ticketRepo.findById(ticketId);
+		Optional<Ticket> ticket = ticketrepo.findById(ticketId);
 		
 		if(ticket.isEmpty()) {
 			return new ResponseEntity<>(ticket, HttpStatus.NOT_FOUND);
 		}
 		
-		ticketRepo.delete(ticket.get());
+		ticketrepo.delete(ticket.get());
 		return new ResponseEntity<>(ticket, HttpStatus.NO_CONTENT);
 	}
 }
