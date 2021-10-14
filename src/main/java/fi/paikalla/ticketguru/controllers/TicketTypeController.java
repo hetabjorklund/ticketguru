@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -61,6 +62,7 @@ public class TicketTypeController {
 		}
 	}
 	
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping("/types") //luo uusi tyyppi
 	public ResponseEntity<?> makeNewType(@RequestBody TicketTypeDto type) {
 		Optional<Event> event = eventrepo.findById(type.getEvent()); //onko tapahtumaa olemassa?
@@ -110,7 +112,7 @@ public class TicketTypeController {
 		}
 		return new ResponseEntity<>(type, HttpStatus.BAD_REQUEST);	//muut virheet kiinni.
 	}
-	
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/types/{id}")// poistetaan idn perusteella
 	public ResponseEntity<?> deleteTypeById(@PathVariable(value = "id") Long typeid) {
 		Optional<TicketType> type = typerepo.findById(typeid); //löytyykö tyyppi

@@ -1,23 +1,20 @@
 package fi.paikalla.ticketguru.Configurations;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
+import fi.paikalla.ticketguru.Components.UserDetailsServiceImplementation;
 import fi.paikalla.ticketguru.Entities.TGUser;
-import fi.paikalla.ticketguru.Services.UserDetailsServiceImplementation;
 
 //import fi.paikalla.ticketguru.Services.UserDetailsServiceImplementation;
 
-@Configuration
+@Component
 @EnableGlobalMethodSecurity(prePostEnabled= true) //eli metoditasolla @PreAuthorize("hasRole('USER')") https://www.baeldung.com/spring-security-method-security
 @EnableWebSecurity
 public class WebSecConfig extends WebSecurityConfigurerAdapter {
@@ -46,12 +43,12 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
 		*/
     }
     
-	
+	/*
 	@Bean
 	public PasswordEncoder passCoder() {
 		return new BCryptPasswordEncoder(); 
 	}
-	
+	*/
 	
 
 }

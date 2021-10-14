@@ -5,37 +5,42 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import lombok.Data;
+
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
-@Data
+@Getter
+@Setter(value = AccessLevel.PRIVATE)
+@ToString
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
 @NoArgsConstructor
 
 public class TGUser extends AbstractPersistable<Long> {
 	
-	@JsonIgnore
+	public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 	private String firstName;
-	@JsonIgnore
 	private String lastName; 
 	private String userName;
-	@JsonIgnore // ei lähetetä kuitenkaan salasanaa tai auth tasoa clientille
+	@ToString.Exclude @JsonIgnore // ei lähetetä  salasanaa tai auth-tasoa clientille tai paljasteta toStringissä
 	private String password; 
-	@JsonIgnore
+	@ToString.Exclude @JsonIgnore
 	private String auth; 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "tguser")
 	@JsonIgnore
 	private List<Invoice> invoices; 
-	public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
 	public TGUser(String firstName, String lastName, String userName, String password, String auth) {
 		super();
@@ -47,9 +52,10 @@ public class TGUser extends AbstractPersistable<Long> {
 		this.invoices = new ArrayList<Invoice>(); 
 	}
 	
-	public void setPassword(String pass) {
-		this.password = PASSWORD_ENCODER.encode(pass); 
-	}
+	private void setPassword(String password) {
+        this.password = PASSWORD_ENCODER.encode(password);
+    }
+
 
 }
 
