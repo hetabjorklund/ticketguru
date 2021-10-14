@@ -12,14 +12,17 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import fi.paikalla.ticketguru.Entities.TGUser;
+import fi.paikalla.ticketguru.Services.UserDetailsServiceImplementation;
+
 //import fi.paikalla.ticketguru.Services.UserDetailsServiceImplementation;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled= true) //eli metoditasolla @PreAuthorize("hasRole('USER')") https://www.baeldung.com/spring-security-method-security
 @EnableWebSecurity
 public class WebSecConfig extends WebSecurityConfigurerAdapter {
-	//@Autowired
-	//private UserDetailsServiceImplementation serviceImp; 
+	@Autowired
+	private UserDetailsServiceImplementation serviceImp; 
 	
 	@Override
 	protected void configure (HttpSecurity http) throws Exception {
@@ -34,12 +37,15 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        //auth.userDetailsService(serviceImp).passwordEncoder(new BCryptPasswordEncoder()); //sitten kun tätä tarvitaan. 
+        auth.userDetailsService(serviceImp).passwordEncoder(TGUser.PASSWORD_ENCODER); //sitten kun tätä tarvitaan. 
+		/*
 		auth
 		.inMemoryAuthentication() //käytä näitä tunnuksia postmanissa. 
 		.withUser("user").password(passCoder().encode("password"))
-		.authorities("USER"); 
+		.authorities("USER").authorities("USER");
+		*/
     }
+    
 	
 	@Bean
 	public PasswordEncoder passCoder() {

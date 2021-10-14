@@ -22,7 +22,10 @@ public class UserDetailsServiceImplementation implements UserDetailsService {
 	 @Override
 	 public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {   
 	    	TGUser curruser = urepo.findByUserName(username);
-	        UserDetails user = new User(username, curruser.getPassword(), 
+	    	if (curruser == null) {
+	    		throw new UsernameNotFoundException(username + " was not found");
+	    	}
+	        UserDetails user = new User(curruser.getUserName(), curruser.getPassword(), 
 	        		AuthorityUtils.createAuthorityList(curruser.getAuth()));
 	        return user;
 	    }

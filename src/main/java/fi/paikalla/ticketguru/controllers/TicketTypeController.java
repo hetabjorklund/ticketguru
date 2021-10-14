@@ -2,6 +2,7 @@ package fi.paikalla.ticketguru.controllers;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -113,13 +114,16 @@ public class TicketTypeController {
 	@DeleteMapping("/types/{id}")// poistetaan idn perusteella
 	public ResponseEntity<?> deleteTypeById(@PathVariable(value = "id") Long typeid) {
 		Optional<TicketType> type = typerepo.findById(typeid); //löytyykö tyyppi
+		Map<String, String> response = new HashMap<String, String>(); 
 		if (type.isPresent()) { //jos löytyy, onko lippuja?
 			List<Ticket> tickets = tickrepo.findByTicketType(type.get());
 			if (tickets.size() > 0) { //jos on lippuja, palauttaa kiellon. 
-				return new ResponseEntity<String>("There are tickets associated with this type", HttpStatus.FORBIDDEN); 
+				response.put("message", "There are tickets associated with this type");
+				return new ResponseEntity<>(response, HttpStatus.FORBIDDEN); 
 			} else { //ei lippuja, poistetaan tyyppi
 				typerepo.delete(type.get());
-				return new ResponseEntity<String>("Type deleted", HttpStatus.NO_CONTENT); //palauta no content. 
+				response.put("message", "Ticket Type deleted");
+				return new ResponseEntity<>(response, HttpStatus.NO_CONTENT); //palauta no content. 
 			}
 		} else {//tyyppiä ei ole olemassa, palauta not found. 
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
