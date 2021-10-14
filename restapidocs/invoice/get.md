@@ -6,7 +6,7 @@
 
 **Pyynnön tyyppi** : `GET`
 
-**Autentikaatio vaadittu** : EI
+**Autentikaatio vaadittu** : Kyllä, ADMIN tai USER
 
 **Reunaehdot** : Ei ehtoja.
 
@@ -37,7 +37,7 @@
 
 **Pyynnön tyyppi** : `GET`
 
-**Autentikaatio vaadittu** : EI
+**Autentikaatio vaadittu** : Kyllä, ADMIN tai USER
 
 **Reunaehdot** : Pyynnössä täytyy lähettää haetun laskun id.
 
@@ -75,7 +75,7 @@
 
 **Pyynnön tyyppi** : `GET`
 
-**Autentikaatio vaadittu** : EI
+**Autentikaatio vaadittu** : Kyllä, ADMIN tai USER
 
 **Reunaehdot** : Pyynnössä täytyy lähettää haetun laskun id.
 

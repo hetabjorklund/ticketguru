@@ -6,7 +6,7 @@ Päivittää haetun laskun tiedot.
 
 **Pyynnön tyyppi** : `PUT`
 
-**Autentikaatio vaadittu** : EI
+**Autentikaatio vaadittu** : Kyllä, ADMIN tai USER
 
 **Reunaehdot**
 

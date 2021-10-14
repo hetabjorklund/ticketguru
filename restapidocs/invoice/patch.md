@@ -6,7 +6,7 @@ Päivittää haetun laskun tiedot.
 
 **Pyynnön tyyppi** : `PATCH`
 
-**Autentikaatio vaadittu** : EI
+**Autentikaatio vaadittu** : Kyllä, ADMIN tai USER
 
 **Reunaehdot**
 
@@ -14,9 +14,7 @@ Pyynnössä täytyy lähettää muokattavan laskun id.
 
 **Esimerkkipyyntö** 
 
-osoite ja muut
-
-Content-type: application/json-patch+json
+Content-Type: application/json-patch+json
 ```json
 [
     {"op":"replace","path":"/timestamp","value":"2000-10-07T18:36:25.3401761"}

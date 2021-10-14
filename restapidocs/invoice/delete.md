@@ -6,7 +6,7 @@
 
 **Pyynnön tyyppi** : `DELETE`
 
-**Autentikaatio vaadittu** : EI
+**Autentikaatio vaadittu** : Kyllä, ADMIN tai USER
 
 **Reunaehdot** : Laskuun ei saa liittyä lippuja.
 
@@ -38,7 +38,7 @@
 
 **Pyynnön tyyppi** : `DELETE`
 
-**Autentikaatio vaadittu** : EI
+**Autentikaatio vaadittu** : Kyllä, ADMIN tai USER
 
 **Reunaehdot** : Pyynnössä täytyy lähettää haetun laskun id. Laskuun ei saa liittyä lippuja.
 

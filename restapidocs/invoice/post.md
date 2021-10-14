@@ -6,7 +6,7 @@ Luo uuden laskun.
 
 **Pyynnön tyyppi** : `POST`
 
-**Autentikaatio vaadittu** : EI
+**Autentikaatio vaadittu** : Kyllä, ADMIN tai USER
 
 **Reunaehdot**
 
