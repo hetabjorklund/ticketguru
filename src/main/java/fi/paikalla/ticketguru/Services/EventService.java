@@ -84,11 +84,15 @@ public class EventService {
 	}
 	
 	// tapahtuman jäljelläoleva lippumäärä
-	public Integer availableCapacityOfEvent(Long id) {
+	public Integer availableCapacityOfEvent(Long id) throws Exception {
 		
-		Event event = eventrepo.findById(id).get();
-		int ticketsLeft = event.getMaxCapacity() - ticketservice.getTicketsByEvent(id).size();
-		return ticketsLeft;
+		try {
+			Event event = eventrepo.findById(id).get();
+			int ticketsLeft = event.getMaxCapacity() - ticketservice.getTicketsByEvent(id).size();
+			return ticketsLeft;
+		} catch (Exception e) { // jos tapahtuman id:llä ei löydy tapahtumaa
+			return -1;
+		}
 		
 	}
 	
