@@ -6,7 +6,7 @@ Luo uuden tapahtuman mikäli tapahtumaa ei ole jo olemassa.
 
 **Pyynnön tyyppi** : `POST`
 
-**Autentikaatio vaadittu** : EI
+**Autentikaatio vaadittu** : Kyllä, ADMIN
 
 **Reunaehdot**
 

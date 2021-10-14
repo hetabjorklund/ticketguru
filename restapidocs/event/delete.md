@@ -6,7 +6,7 @@ Poistaa tapahtuman tunnisteen perusteella.
 
 **Pyynnön tyyppi** : `DELETE`
 
-**Autentikaatio vaadittu** : Kyllä
+**Autentikaatio vaadittu** : Kyllä, ADMIN
 
 **Reunaehdot**
 

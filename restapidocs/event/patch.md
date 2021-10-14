@@ -6,7 +6,7 @@ Muokkaa tietokannasta löytyvän tapahtumasta annetut tiedot.
 
 **Pyynnön tyyppi** : `PATCH`
 
-**Autentikaatio vaadittu** : ei
+**Autentikaatio vaadittu** : Kyllä, ADMIN
 
 **Reunaehdot**
 

@@ -7,9 +7,10 @@ URL : /events
 
 Metodi : GET
 
-Vaaditaanko autorisointi : kyllä
+Vaaditaanko autorisointi : Kyllä, ADMIN tai USER
 
 Onnistuneen pyynnön vastaukset:
+
 Ehto : Tietokannassa ei ole tapahtumia
 
 Koodi : 200 OK
@@ -17,6 +18,7 @@ Koodi : 200 OK
 Sisältö : []
 
 TAI
+
 Ehto : Tietokannassa on tapahtumia
 
 Koodi : 200 OK
@@ -74,7 +76,7 @@ URL : `/events?start={ISODate}&end={ISODate}`
 
 Metodi : GET
 
-Vaaditaanko autorisointi : kyllä
+Vaaditaanko autorisointi : Kyllä, ADMIN tai USER
 
 Pyyntöesimerkki: 
 
@@ -113,9 +115,10 @@ URL : /events/{id}
 
 Metodi : GET
 
-Vaatiiko autorisoinnin : Kyllä
+Vaatiiko autorisoinnin : Kyllä, ADMIN tai USER
 
-Onnistuneen pyynnön vastaus
+Onnistuneen pyynnön vastaus:
+
 Ehto : Annetulla tunnisteella ei ole tapahtumaa.
 
 Koodi : 404 NOT FOUND

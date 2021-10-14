@@ -6,7 +6,7 @@ Muokkaa olemassa olevaa tapahtumaa (event) annetun id:n perusteella tai id:n puu
 
 **Pyynnön tyyppi** : `PUT`
 
-**Autentikaatio vaadittu** : Ei
+**Autentikaatio vaadittu** : Kyllä, ADMIN
 
 **Reunaehdot**
 
