@@ -38,7 +38,6 @@ public class EventController {
 	private EventRepository eventrepo; 
 	@Autowired
 	private TicketService ticketservice;
-
 	@Autowired
 	private EventService eventservice; 
 	

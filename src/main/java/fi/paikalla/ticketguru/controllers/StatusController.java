@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fi.paikalla.ticketguru.Entities.Event;
 import fi.paikalla.ticketguru.Entities.EventStatus;
-import fi.paikalla.ticketguru.Repositories.EventRepository;
 import fi.paikalla.ticketguru.Repositories.EventStatusRepository;
 
 @RestController
@@ -29,13 +28,10 @@ public class StatusController {
 	
 	@Autowired
 	private EventStatusRepository statusrepo;
-	
-	@Autowired
-	private EventRepository eventrepo;
-	
+		
 	@GetMapping("/status") // hakee kaikki statukset
 	public ResponseEntity<List<EventStatus>> getAllStatuses() {
-		List<EventStatus> list = (List<EventStatus>) statusrepo.findAll(); // muodostaa listan kaikista reposition statuksista
+		List<EventStatus> list = (List<EventStatus>) statusrepo.findAll(); // muodostaa listan kaikista repositoryn statuksista
 		return new ResponseEntity<>(list, HttpStatus.OK); // palauttaa haetun listan
 	}
 	
@@ -62,7 +58,7 @@ public class StatusController {
 			return new ResponseEntity<> (response, HttpStatus.NOT_FOUND); // mikäli status on tyhjä, palautetaan viesti ja 404-koodi
 		} else { // jos status löytyy
 			EventStatus status = optionalStatus.get();// haetaan mahdollisen statuksen tiedot
-			List<Event> elist = status.getEvent(); // haetaan statukseen liitetyt eventit
+			List<Event> elist = status.getEvents(); // haetaan statukseen liitetyt eventit
 			if (elist.isEmpty()) { // tarkistetaan onko statukseen liitetty tapahtumia
 				response.put("message", "No associated events");
 				return new ResponseEntity<> (response, HttpStatus.OK); // mikäli tapahtumalista on tyhjä, palautetaan viesti ja 200-koodi
@@ -119,7 +115,7 @@ public class StatusController {
 			response.put("message", "Status not found");
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); // palautetaan viesti sekä 404-koodi
 		} else { // jos status löytyy kannasta
-			if (status.get().getEvent().isEmpty()) { // tarkistetaan onko statukseen tapahtumalista tyhjä
+			if (status.get().getEvents().isEmpty()) { // tarkistetaan onko statukseen tapahtumalista tyhjä
 				response.put("message", "Status deleted");
 				statusrepo.deleteById(statusId); // poistetaan status kannasta
 				return new ResponseEntity<>(response, HttpStatus.NO_CONTENT); // palautetaan viesti sekä 204-koodi
