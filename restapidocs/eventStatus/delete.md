@@ -6,7 +6,7 @@ Poista tietokannasta status id:n perusteella.
 
 **Pyynnön tyyppi** : `DELETE`
 
-**Autentikaatio vaadittu** : ei
+**Autentikaatio vaadittu** : kyllä, `ADMIN`
 
 **Reunaehdot**
 

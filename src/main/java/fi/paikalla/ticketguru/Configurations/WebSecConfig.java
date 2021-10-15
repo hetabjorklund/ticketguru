@@ -2,6 +2,8 @@ package fi.paikalla.ticketguru.Configurations;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -35,6 +37,7 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		
         auth.userDetailsService(serviceImp).passwordEncoder(TGUser.PASSWORD_ENCODER); //sitten kun tätä tarvitaan 
 		
         // lisätään user-tasoinen käyttäjä (käytä näitä tunnuksia Postmanissa)
@@ -50,6 +53,7 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
         .authorities("ROLE_ADMIN").roles("ADMIN");
 
     }    
+
 	
 	@Bean
 	public PasswordEncoder passCoder() {

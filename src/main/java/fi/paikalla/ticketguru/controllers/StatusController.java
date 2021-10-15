@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,13 +29,15 @@ public class StatusController {
 	
 	@Autowired
 	private EventStatusRepository statusrepo;
-		
+	
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/status") // hakee kaikki statukset
 	public ResponseEntity<List<EventStatus>> getAllStatuses() {
 		List<EventStatus> list = (List<EventStatus>) statusrepo.findAll(); // muodostaa listan kaikista repositoryn statuksista
 		return new ResponseEntity<>(list, HttpStatus.OK); // palauttaa haetun listan
 	}
 	
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/status/{id}") // hakee statuksen id:n perusteella
 	public ResponseEntity<?> getEventById(@PathVariable (value = "id") Long statusId) {
 		Map<String, String> response = new HashMap<String, String>(); // alustetaan uusi response
@@ -48,6 +51,7 @@ public class StatusController {
 		}
 	}
 	
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping ("/status/{id}/events") // hakee kaikki tapahtumat statuksen perusteella
 	public ResponseEntity<?> getEventsByStatus(@PathVariable (value = "id") Long statusId) {
 		Map<String, String> response = new HashMap<String, String>(); // alustetaan uusi response
@@ -68,6 +72,7 @@ public class StatusController {
 		}
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping ("/status")// luo uuden statuksen, VALIDOINTI HEITTÄÄ AUTOMAATTIRESPONSEN
 	public ResponseEntity<?> createEventStatus (@Valid @RequestBody EventStatus status, BindingResult bindingresult) {
 		Map<String, String> response = new HashMap<String, String>(); // alustetaan uusi response
@@ -84,6 +89,7 @@ public class StatusController {
 		}
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@PatchMapping("/status/{id}")// muokkaa statuksen nimeä, VALIDOINTI HEITTÄÄ AUTOMAATTIRESPONSEN
 	public ResponseEntity<?> updateName(@PathVariable(value = "id") Long statusId, 
 			@Valid @RequestBody EventStatus status, BindingResult bindingresult) {
@@ -106,6 +112,7 @@ public class StatusController {
 		}
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/status/{id}") // poistaa statuksen id:n perusteella, mikäli siihen ei ole liitetty tapahtumia
 	public ResponseEntity<?> deleteStatusById(@PathVariable(value = "id") Long statusId) {
 		Map<String, String> response = new HashMap<String, String>(); // alustetaan uusi response

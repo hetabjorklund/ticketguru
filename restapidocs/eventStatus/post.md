@@ -6,7 +6,7 @@ Luo uusi status tapahtumille
 
 **Pyynnön tyyppi** : `POST`
 
-**Autentikaatio vaadittu** : ei
+**Autentikaatio vaadittu** : kyllä, `ADMIN`
 
 **Reunaehdot**
 

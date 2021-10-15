@@ -5,7 +5,7 @@ Listaa kaikki tietokantaan lisätyt tapahtumien statukset
 
 **Pyynnön tyyppi** : `GET`
 
-**Autentikaatio vaadittu** : ei
+**Autentikaatio vaadittu** : kyllä, `ADMIN` tai `USER`
 
 ## Onnistumisvastaus
 
@@ -43,7 +43,7 @@ Listaa yhden tapahtumastatuksen tietyn id:n perusteella
 
 **Pyynnön tyyppi** : `GET`
 
-**Autentikaatio vaadittu** : ei
+**Autentikaatio vaadittu** : kyllä, `ADMIN`tai `USER`
 
 ## Onnistumisvastaus
 
@@ -81,7 +81,7 @@ Listaa kaikki yhteen tapahtumastatukseen liitetyt tapahtumat
 
 **Pyynnön tyyppi** : `GET`
 
-**Autentikaatio vaadittu** : ei
+**Autentikaatio vaadittu** : kyllä `ADMIN`tai `USER`
 
 ## Onnistumisvastaus
 

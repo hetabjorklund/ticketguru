@@ -6,7 +6,7 @@ Muokkaa tietokannasta löytyvän statuksen nimeä.
 
 **Pyynnön tyyppi** : `PATCH`
 
-**Autentikaatio vaadittu** : ei
+**Autentikaatio vaadittu** : kyllä, `ADMIN`
 
 **Reunaehdot**
 
