@@ -106,7 +106,9 @@ public class InvoiceController {
 	// PUT
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PutMapping("/invoices/{id}") // päivittää haluttua laskua
-	public ResponseEntity<Invoice> updateInvoice(@Valid @RequestBody Invoice newInvoice, @PathVariable Long id, BindingResult bindingresult) throws DataIntegrityViolationException {
+	public ResponseEntity<?> updateInvoice(@Valid @RequestBody Invoice newInvoice, @PathVariable Long id, BindingResult bindingresult) throws DataIntegrityViolationException {
+		
+		Map<String, String> response = new HashMap<String, String>();
 		
 		try {
 			if (bindingresult.hasErrors()) { // tarkistetaan onko mukana TGUser	
@@ -128,7 +130,9 @@ public class InvoiceController {
 				}
 			}
 		} catch (DataIntegrityViolationException e) { // jos yritetään päivittää laskua sellaisella tguserilla jonka id:tä ei ole olemassa, tulee virhe
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // joten palautetaan 404
+			response.put("message", "TGUser does not exist");
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); // joten palautetaan viesti ja 404
+			
 		} catch (Exception e) { // kaikki muut mahdolliset virheet paitsi DataIntegrityViolationException, esim. jokin attibuutti on väärää tyyppiä
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // joten palautetaan 400
 		}
@@ -138,7 +142,7 @@ public class InvoiceController {
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PatchMapping(value = "/invoices/{id}", consumes = "application/json-patch+json")
 	public ResponseEntity<Invoice> updateInvoice(@PathVariable Long id, @RequestBody JsonPatch patchDocument) throws DataIntegrityViolationException {
-		
+			
 		Optional<Invoice> target = invoicerepo.findById(id); // haetaan invoicerepositorysta Optional-olio id:n perusteella
 		if (target.isEmpty()) { // jos haettua laskua ei löydy
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // palautetaan 404
