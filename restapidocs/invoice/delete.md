@@ -21,16 +21,16 @@
 ### 1
 **Ehto** : Mitään laskuja ei ole, eli ei ole poistettavaa.
 
-**Vastaus** : There are no invoices to delete
-
 **HTTP-vastauskoodi** : `404 NOT FOUND`
+
+**Vastaus** : There are no invoices to delete
 
 ### 2
 **Ehto** : Yhdessä tai useammassa laskussa on lippuja.
 
-**Vastaus** : One or more invoices have associated tickets, deletion forbidden
-
 **HTTP-vastauskoodi** : `403 FORBIDDEN`
+
+**Vastaus** : One or more invoices have associated tickets, deletion forbidden
 
 ## Poista tietty lasku
 
@@ -46,9 +46,9 @@
 
 **Ehto** : Haettu lasku löytyy ja sen poistaminen onnistui.
 
-**Vastaus** : Invoice deleted
-
 **HTTP-vastauskoodi** : `204 NO CONTENT`
+
+**Vastaus** : Invoice deleted
 
 ### Virhevastaus
 
@@ -60,6 +60,6 @@
 ### 2
 **Ehto** : Haettu lasku löytyy, mutta laskussa on lippuja.
 
-**Vastaus** : Invoice has associated tickets, deletion forbidden
-
 **HTTP-vastauskoodi** : `403 FORBIDDEN`
+
+**Vastaus** : Invoice has associated tickets, deletion forbidden

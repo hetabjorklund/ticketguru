@@ -99,6 +99,7 @@ Pyynnössä täytyy lähettää muokattavan laskun id. Laskulla täytyy olla myy
 
 **HTTP-vastauskoodi** : `404 NOT FOUND`
 
+**Vastaus** : TGUser does not exist
 
 ### 4
 **Ehto** : Jokin attribuutti on väärän tyyppinen (esim. Boolean kun pitäisi olla Array tai String).

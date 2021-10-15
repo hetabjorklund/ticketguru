@@ -50,17 +50,21 @@ Laskulla täytyy olla myyjä (TGUser).
 
 **HTTP-vastauskoodi** : `400 BAD REQUEST`
 
+**Vastaus** : TGUser cannot be empty
+
 ### 2
 **Ehto** : Yritetään luoda lasku, jossa laskun myyjän id:tä ei ole olemassa.
 
 **HTTP-vastauskoodi** : `404 NOT FOUND`
+
+**Vastaus** : TGUser does not exist
 
 ### 3
 **Ehto** : Jokin attribuutti on väärän tyyppinen (esim. Boolean kun pitäisi olla Array tai String).
 
 **HTTP-vastauskoodi** : `400 BAD REQUEST`
 
-**Esimerkkivastaus**
+**Vastaus** :
 
 ```json
 {
