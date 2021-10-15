@@ -37,16 +37,21 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        // auth.userDetailsService(serviceImp).passwordEncoder(TGUser.PASSWORD_ENCODER); //sitten kun tätä tarvitaan. 
-		//kommentoi pois tämä
+        auth.userDetailsService(serviceImp).passwordEncoder(TGUser.PASSWORD_ENCODER); //sitten kun tätä tarvitaan. 
+		
 		auth
 		.inMemoryAuthentication() //käytä näitä tunnuksia postmanissa. 
 		.withUser("user").password(passCoder().encode("password"))
 		.authorities("USER").authorities("USER");
 		
+		auth
+		.inMemoryAuthentication()
+		.withUser("admin").password(passCoder().encode("password"))
+		.authorities("ADMIN").authorities("ADMIN");
+		
     }
     
-	// ja tämä
+	
 	@Bean
 	public PasswordEncoder passCoder() {
 		return new BCryptPasswordEncoder(); 

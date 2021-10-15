@@ -29,13 +29,15 @@ public class StatusController {
 	
 	@Autowired
 	private EventStatusRepository statusrepo;
-		
+	
+	@PreAuthorize("hasAnyAuthority('ADMIN','USER')")
 	@GetMapping("/status") // hakee kaikki statukset
 	public ResponseEntity<List<EventStatus>> getAllStatuses() {
 		List<EventStatus> list = (List<EventStatus>) statusrepo.findAll(); // muodostaa listan kaikista repositoryn statuksista
 		return new ResponseEntity<>(list, HttpStatus.OK); // palauttaa haetun listan
 	}
 	
+	@PreAuthorize("hasAnyAuthority('ADMIN','USER')")
 	@GetMapping("/status/{id}") // hakee statuksen id:n perusteella
 	public ResponseEntity<?> getEventById(@PathVariable (value = "id") Long statusId) {
 		Map<String, String> response = new HashMap<String, String>(); // alustetaan uusi response
@@ -49,6 +51,7 @@ public class StatusController {
 		}
 	}
 	
+	@PreAuthorize("hasAnyAuthority('ADMIN','USER')")
 	@GetMapping ("/status/{id}/events") // hakee kaikki tapahtumat statuksen perusteella
 	public ResponseEntity<?> getEventsByStatus(@PathVariable (value = "id") Long statusId) {
 		Map<String, String> response = new HashMap<String, String>(); // alustetaan uusi response
