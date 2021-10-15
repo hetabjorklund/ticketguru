@@ -13,6 +13,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,13 +39,15 @@ public class InvoiceController {
 	private InvoiceService invoiceservice;
 	
 	// GET	
-	@Secured({ "ADMIN", "USER" })
+	//@Secured({ "ADMIN", "USER" })
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/invoices") // hae kaikki laskut
 	public List<Invoice> getAllInvoices() {
 		return (List<Invoice>) this.invoicerepo.findAll();		
 	}
 	
-	@Secured({ "ADMIN", "USER" })
+	//@Secured({ "ADMIN", "USER" })
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("invoices/{id}") // hae tietty lasku
 	public ResponseEntity<Optional<Invoice>> getInvoiceById(@PathVariable Long id) {
 		Optional<Invoice> invoice = this.invoicerepo.findById(id); // haetaan annetulla id:llä lasku
@@ -57,7 +60,8 @@ public class InvoiceController {
 		}
 	}
 	
-	@Secured({ "ADMIN", "USER" })
+	//@Secured({ "ADMIN", "USER" })
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/invoices/{id}/tickets") // hae kaikki tietyllä laskulla myydyt liput
 	public ResponseEntity<List<Ticket>> getTicketsOfInvoiceById(@PathVariable Long id) throws Exception {
 		
@@ -77,7 +81,8 @@ public class InvoiceController {
 	}	
 	
 	// POST
-	@Secured({ "ADMIN", "USER" })
+	//@Secured({ "ADMIN", "USER" })
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PostMapping("/invoices")
 	public ResponseEntity<Invoice> addInvoice(@Valid @RequestBody Invoice invoice, BindingResult bindingresult) throws DataIntegrityViolationException { // luodaan uusi lasku
 
@@ -98,7 +103,8 @@ public class InvoiceController {
 	}		
 	
 	// PUT
-	@Secured({ "ADMIN", "USER" })
+	//@Secured({ "ADMIN", "USER" })
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PutMapping("/invoices/{id}") // päivittää haluttua laskua
 	public ResponseEntity<Invoice> updateInvoice(@Valid @RequestBody Invoice newInvoice, @PathVariable Long id, BindingResult bindingresult) throws DataIntegrityViolationException {
 		
@@ -129,7 +135,8 @@ public class InvoiceController {
 	}
 	
 	// PATCH
-	@Secured({ "ADMIN", "USER" })
+	//@Secured({ "ADMIN", "USER" })
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PatchMapping(value = "/invoices/{id}", consumes = "application/json-patch+json")
 	public ResponseEntity<Invoice> updateInvoice(@PathVariable Long id, @RequestBody JsonPatch patchDocument) throws DataIntegrityViolationException {
 		
@@ -150,7 +157,8 @@ public class InvoiceController {
 	}
 				
 	// DELETE
-	@Secured({ "ADMIN", "USER" })
+	//@Secured({ "ADMIN", "USER" })
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@DeleteMapping("/invoices")
 	public @ResponseBody ResponseEntity<Map<String, String>> deleteAll() { // poistetaan kaikki laskut
 		
@@ -182,7 +190,8 @@ public class InvoiceController {
 				
 	}	
 	
-	@Secured({ "ADMIN", "USER" })
+	//@Secured({ "ADMIN", "USER" })
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@DeleteMapping("/invoices/{id}")
 	public @ResponseBody ResponseEntity<Map<String, String>> deleteInvoiceById(@PathVariable Long id) { // poistetaan haluttu lasku
 		

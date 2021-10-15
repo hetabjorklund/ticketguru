@@ -66,7 +66,7 @@ public class EventController {
 		}
 	}	
 	
-//	@Secured({ "ADMIN", "USER" })
+	//@Secured({ "ADMIN", "USER" })
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/events") //hae kaikki tapahtumat parametreilla ja ilman 
 	public ResponseEntity<?> getEvents(@RequestParam(required = false) String start, @RequestParam(required = false) String end) {
