@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,8 +40,9 @@ public class InvoiceController {
 	// GET	
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/invoices") // hae kaikki laskut
-	public List<Invoice> getAllInvoices() {
-		return (List<Invoice>) this.invoicerepo.findAll();		
+	public ResponseEntity<List<Invoice>> getAllInvoices() {
+		List<Invoice> allInvoices = (List<Invoice>) this.invoicerepo.findAll(); // kaikki laskut listaan
+		return new ResponseEntity<>(allInvoices, HttpStatus.OK); // palautetaan lista ja 200
 	}
 	
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
