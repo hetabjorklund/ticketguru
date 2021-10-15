@@ -13,7 +13,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -66,7 +65,6 @@ public class EventController {
 		}
 	}	
 	
-	//@Secured({ "ADMIN", "USER" })
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/events") //hae kaikki tapahtumat parametreilla ja ilman 
 	public ResponseEntity<?> getEvents(@RequestParam(required = false) String start, @RequestParam(required = false) String end) {
@@ -95,7 +93,6 @@ public class EventController {
 		}
 	}
 	
-	//@Secured({ "ADMIN", "USER" })
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/events/{id}") // haetaan yksittäinen tapahtuma id:n perusteella
 	public @ResponseBody ResponseEntity<Optional<Event>> getEventById(@PathVariable("id") Long eventId){
@@ -107,7 +104,6 @@ public class EventController {
 		}
 	}
 	
-	//@Secured({ "ADMIN", "USER" })
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/events/{id}/tickets") // palauttaa tapahtuman liput koko viittauksineen eventId:n perusteella 
 	public List<Ticket> getTicketsByEvent(@PathVariable(value = "id") Long eventId) {
@@ -115,7 +111,6 @@ public class EventController {
 	}	
 
 	// POST
-	//@Secured("ADMIN")
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/events") // lisää uuden tapahtuman
 	public ResponseEntity<Event> addEvent(@Valid @RequestBody Event event, BindingResult bindingresult) {
@@ -134,7 +129,6 @@ public class EventController {
 	}
 	
 	// PUT
-	//@Secured("ADMIN")
 	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping(path = "/events/{id}") // muokkaa haluttua eventtiä id:n perusteella
 	public ResponseEntity<?> updateEvent(@Valid @RequestBody Event newEvent, @PathVariable (value = "id") Long eventId, BindingResult bindingresult) {
@@ -173,7 +167,6 @@ public class EventController {
 	}
 	
 	// PATCH
-	//@Secured("ADMIN")
 	@PreAuthorize("hasRole('ADMIN')")
 	@PatchMapping (path="/events/{id}", consumes = "application/json-patch+json") //muokkaa osittain haluttua eventtiä id:n perusteella
 	public ResponseEntity<?> partiallyUpdateEvent(@PathVariable long id, @RequestBody JsonPatch patchDocument) {
