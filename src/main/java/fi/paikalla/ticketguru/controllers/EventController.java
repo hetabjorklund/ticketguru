@@ -40,8 +40,7 @@ public class EventController {
 	private TicketService ticketservice;
 	@Autowired
 	private EventService eventservice; 
-	
-	//@Secured("ADMIN")
+
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/events/{id}") // poista yksittäinen tapahtuma id:n perusteella. Endpointia /events joka poistaisi kaikki tapahtumat, ei tarvita
 	public ResponseEntity<String> deleteEvent(@PathVariable Long id) {

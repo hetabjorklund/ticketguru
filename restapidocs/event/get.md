@@ -105,8 +105,6 @@ Koodi : `400 BAD REQUEST`
 
 Sisältö : Check dates
 
-
-
 ## Näytä yksi tapahtuma
 
 Näytä yksi tapahtuma sen tunnisteen perusteella.
@@ -122,8 +120,6 @@ Onnistuneen pyynnön vastaus:
 Ehto : Annetulla tunnisteella ei ole tapahtumaa.
 
 Koodi : 404 NOT FOUND
-
-Sisältö : null
 
 TAI
 
@@ -152,3 +148,73 @@ Sisältö :
     "new": false
 }
 ```
+
+## Näytä yhden tapahtuman liput
+
+Näytä yhden tapahtuman liput sen tunnisteen perusteella.
+
+URL : /events/{id}/tickets
+
+Metodi : GET
+
+Vaatiiko autorisoinnin : Kyllä, ADMIN tai USER
+
+Onnistuneen pyynnön vastaus:
+
+Ehto : Annetulla tunnisteella ei ole tapahtumaa.
+
+Koodi : 404 NOT FOUND
+
+TAI
+
+Ehto : Annetulla tunnisteella on tapahtuma.
+
+Koodi : 200 OK
+
+Sisältö :
+
+```json
+[
+    {
+        "id": 10,
+        "price": 20.9,
+        "used": false,
+        "ticketType": {
+            "id": 5,
+            "event": {
+                "id": 2,
+                "name": "Ruisrock",
+                "address": "Savonlinnankatu 50",
+                "maxCapacity": 600,
+                "startTime": "2021-12-03T09:00:00",
+                "endTime": "2021-12-03T16:00:00",
+                "endOfPresale": "2021-11-27T16:00:00",
+                "status": null,
+                "description": "Ruissalossa rokataan",
+                "new": false
+            },
+            "type": "aikuinen",
+            "price": 20.9,
+            "new": false
+        },
+        "invoice": {
+            "invoiceId": 9,
+            "timestamp": "2021-10-06T19:19:47.204019",
+            "tguser": {
+                "id": 8,
+                "userName": "MaiMe",
+                "new": false
+            }
+        },
+        "new": false
+    }
+]
+```
+
+TAI
+
+Ehto : Annetulla tunnisteella on tapahtuma, mutta ei lippuja.
+
+Koodi : 200 OK
+
+Sisältö : []
