@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -79,11 +80,14 @@ public class InvoiceController {
 	// POST
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PostMapping("/invoices")
-	public ResponseEntity<Invoice> addInvoice(@Valid @RequestBody Invoice invoice, BindingResult bindingresult) throws DataIntegrityViolationException { // luodaan uusi lasku
+	public ResponseEntity<?> addInvoice(@Valid @RequestBody Invoice invoice, BindingResult bindingresult) throws Exception { // luodaan uusi lasku
 
+		Map<String, String> response = new HashMap<String, String>();
+		
 		try {
 			if (bindingresult.hasErrors()) { // tarkistetaan onko mukana TGUser
-				return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // jos ei, palautetaan 400
+				response.put("message", "TGUser cannot be empty");
+				return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // jos ei, palautetaan viesti ja 400
 			}
 			else {			
 				Invoice newInvoice = new Invoice(invoice.getTGuser()); // luodaan tässä uusi, jotta konstruktori tekee a) tyhjän lippulistan ja b) timestampiksi kuluvan hetken - muuten timestamp on joko pyynnössä lähetetty tai null
@@ -91,7 +95,9 @@ public class InvoiceController {
 				return new ResponseEntity<>(newInvoice, HttpStatus.CREATED); // palautetaan luotu lasku ja 201
 			}
 		} catch (DataIntegrityViolationException e) { // jos yritetään luoda laskua sellaisella tguserilla jonka id:tä ei ole olemassa, tulee virhe
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // joten palautetaan 404
+			response.put("message", "TGUser does not exist");
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); // joten palautetaan viesti ja 404
+			
 		} catch (Exception e) { // kaikki muut mahdolliset virheet paitsi DataIntegrityViolationException, esim. jokin attibuutti on väärää tyyppiä
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // joten palautetaan 400
 		}
