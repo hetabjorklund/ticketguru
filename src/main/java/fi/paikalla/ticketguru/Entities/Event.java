@@ -36,9 +36,9 @@ public class Event extends AbstractPersistable<Long> {
 	private String address; // tapahtuman osoite
 	private Integer maxCapacity; // maksimipaikkamäärä, tickets-listan koko ei voi olla tätä suurempi
 	@FutureOrPresent
-	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss") //https://stackoverflow.com/questions/28802544/java-8-localdate-jackson-format/38051405
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)//tämä Arrayhomma liittyy kai jotenkin objectMapperiin, tämä on yksi tapa korjata, mutta voi rikkoa muuta.
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
+	//@JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss") //https://stackoverflow.com/questions/28802544/java-8-localdate-jackson-format/38051405
+	//@JsonDeserialize(using = LocalDateTimeDeserializer.class)//tämä Arrayhomma liittyy kai jotenkin objectMapperiin, tämä on yksi tapa korjata, mutta voi rikkoa muuta.
+	//@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime startTime; // tapahtuman alkuaika (pvm ja kellonaika)
 	@FutureOrPresent
 	private LocalDateTime endTime; // tapahtuman loppuaika (pvm ja kellonaika)
