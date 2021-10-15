@@ -84,11 +84,11 @@ public class EventService {
 	}
 	
 	// tapahtuman myymättömien lippujen määrä
-	public Integer getAvailableCapacityOfEvent(Long id) throws Exception {
+	public Integer getAvailableCapacityOfEvent(Long eventId) throws Exception {
 		
 		try {
-			Event event = eventrepo.findById(id).get();
-			int ticketsLeft = event.getMaxCapacity() - ticketservice.getTicketsByEvent(id).size();
+			Event event = eventrepo.findById(eventId).get();
+			int ticketsLeft = event.getMaxCapacity() - getNumberOfSoldTicketsofEvent(eventId);
 			return ticketsLeft;
 		} catch (Exception e) { // jos tapahtuman id:llä ei löydy tapahtumaa
 			return -1;
@@ -97,10 +97,10 @@ public class EventService {
 	}
 	
 	// tapahtuman myytyjen lippujen määrä
-	public Integer getNumberOfSoldTicketsofEvent(Long id) throws Exception {
+	public Integer getNumberOfSoldTicketsofEvent(Long eventId) throws Exception {
 		
 		try {
-			int ticketsSold = ticketservice.getTicketsByEvent(id).size();
+			int ticketsSold = ticketservice.getTicketsByEvent(eventId).size();
 			return ticketsSold;
 		} catch (Exception e) { // jos tapahtuman id:llä ei löydy tapahtumaa
 			return -1;
@@ -109,12 +109,12 @@ public class EventService {
 	}
 	
 	// tarkista, onko tapahtumaan vapaita lippuja
-	public Boolean hasAvailableTickets(Long id) throws Exception {
+	public Boolean hasAvailableTickets(Long eventId) throws Exception {
 		
 		try {
-			Event event = eventrepo.findById(id).get();
+			Event event = eventrepo.findById(eventId).get();
 				
-			if (ticketservice.getTicketsByEvent(id).size() < event.getMaxCapacity()) { // jos tapahtuman lippulista on pienempi kuin maksimipaikkamäärä
+			if (getNumberOfSoldTicketsofEvent(eventId) < event.getMaxCapacity()) { // jos tapahtumaan myytyjen lippujen määrä on pienempi kuin tapahtuman maksimipaikkamäärä
 				return true; // palautetaan true eli lippuja on saatavana
 			}
 			else { // jos lippulista ei ole pienempi kuin maksimipaikkamäärä
