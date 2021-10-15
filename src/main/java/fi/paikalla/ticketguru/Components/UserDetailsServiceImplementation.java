@@ -17,21 +17,15 @@ public class UserDetailsServiceImplementation implements UserDetailsService {
 	@Autowired
 	private TGUserRepository userRepo; 
 	
-	/*@Autowired
-	public void UserDetailServiceImp(TGUserRepository repository) {
-		this.userRepo = repository;
-	} */  // kommentoitu pois koska riittää että oliomuuttuja on Autowired
-	
-	 @Override
-	 public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {   
-	    	TGUser curruser = userRepo.findByUserName(username);
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		TGUser curruser = userRepo.findByUserName(username);
 	    	
-	    	if (curruser == null) {
-	            throw new UsernameNotFoundException(username + " was not found");
-	    	}
+	   	if (curruser == null) {
+	   		throw new UsernameNotFoundException(username + " was not found");
+	    }
 	            
-	        UserDetails user = new User(curruser.getUserName(), curruser.getPassword(), 
-	        		AuthorityUtils.createAuthorityList(curruser.getAuth()));
+	   	UserDetails user = new User(curruser.getUserName(), curruser.getPassword(), AuthorityUtils.createAuthorityList(curruser.getAuth()));
 	        return user;
 	    }
 
