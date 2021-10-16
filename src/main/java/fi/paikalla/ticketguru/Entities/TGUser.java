@@ -11,6 +11,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -34,7 +36,8 @@ public class TGUser extends AbstractPersistable<Long> {
 	private String firstName;
 	private String lastName; 
 	private String userName;
-	@ToString.Exclude @JsonIgnore // ei lähetetä  salasanaa tai auth-tasoa clientille tai paljasteta toStringissä
+	@ToString.Exclude 
+	@JsonIgnore // ei lähetetä  salasanaa tai auth-tasoa clientille tai paljasteta toStringissä
 	private String password; 
 	@ToString.Exclude @JsonIgnore
 	private String auth; 	
@@ -51,6 +54,18 @@ public class TGUser extends AbstractPersistable<Long> {
 		this.auth = auth;
 		this.invoices = new ArrayList<Invoice>(); 
 	}
+	
+	public TGUser(String firstName, String lastName, String userName, String password) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.userName = userName;
+		setPassword(password);
+		this.auth = "ROLE_USER";
+		this.invoices = new ArrayList<Invoice>(); 
+	}
+	
+	
 	
 	private void setPassword(String password) {
         this.password = PASSWORD_ENCODER.encode(password);
