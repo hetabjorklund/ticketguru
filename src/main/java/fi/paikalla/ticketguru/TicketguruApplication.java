@@ -76,8 +76,8 @@ public class TicketguruApplication {
 			typeRepo.save(tt4);
 			
 
-			TGUser user = new TGUser("Maikki", "Menevä", "MaiMe", "salasana", "USER");
-			TGUser admin = new TGUser("Anna", "Admin", "AnnAd", "salasana", "ADMIN");
+			TGUser user = new TGUser("Maikki", "Menevä", "MaiMe", "salasana", "ROLE_USER");
+			TGUser admin = new TGUser("Anna", "Admin", "AnnAd", "salasana", "ROLE_ADMIN");
 			
 			userRepo.save(user); 
 			userRepo.save(admin);

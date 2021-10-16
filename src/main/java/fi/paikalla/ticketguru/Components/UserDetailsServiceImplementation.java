@@ -25,7 +25,8 @@ public class UserDetailsServiceImplementation implements UserDetailsService {
 	   		throw new UsernameNotFoundException(username + " was not found");
 	    }
 	            
-	   	UserDetails user = new User(curruser.getUserName(), curruser.getPassword(), AuthorityUtils.createAuthorityList(curruser.getAuth()));
+	   	UserDetails user = new User(username, curruser.getPassword(), 
+	   			AuthorityUtils.createAuthorityList(curruser.getAuth()));
 	        return user;
 	    }
 

@@ -48,7 +48,8 @@ public class TicketTypeController {
 			return new ResponseEntity<>(list, HttpStatus.OK);
 		}
 	}
-	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	// or hasAuthority('USER')
+	//@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
 	@GetMapping("/types") //kaikki lipputyypit
 	public ResponseEntity<List<TicketType>> getAllTypes() {
 		List<TicketType> list = (List<TicketType>) typerepo.findAll();  
@@ -122,7 +123,7 @@ public class TicketTypeController {
 			} else { //ei lippuja, poistetaan tyyppi
 				typerepo.delete(type.get());
 				response.put("message", "Ticket Type deleted");
-				return new ResponseEntity<>(response, HttpStatus.NO_CONTENT); //palauta no content. 
+				return new ResponseEntity<Map<String, String>>(response, HttpStatus.NO_CONTENT); //palauta no content. 
 			}
 		} else {//tyyppiä ei ole olemassa, palauta not found. 
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 

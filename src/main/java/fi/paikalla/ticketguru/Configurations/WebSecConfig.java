@@ -16,8 +16,10 @@ import org.springframework.stereotype.Component;
 import fi.paikalla.ticketguru.Components.UserDetailsServiceImplementation;
 import fi.paikalla.ticketguru.Entities.TGUser;
 
-@Component
-@EnableGlobalMethodSecurity(prePostEnabled= true, securedEnabled = true) //eli metoditasolla @PreAuthorize("hasRole('USER')") tai @PreAuthorize("hasAnyRole('ADMIN','USER')"), kts. https://www.baeldung.com/spring-security-method-security
+@Configuration
+@EnableGlobalMethodSecurity(prePostEnabled= true 
+//securedEnabled = true
+) //eli metoditasolla @PreAuthorize("hasRole('USER')") tai @PreAuthorize("hasAnyRole('ADMIN','USER')"), kts. https://www.baeldung.com/spring-security-method-security
 @EnableWebSecurity
 public class WebSecConfig extends WebSecurityConfigurerAdapter {
 	
@@ -38,8 +40,9 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		
-        auth.userDetailsService(serviceImp).passwordEncoder(TGUser.PASSWORD_ENCODER); //sitten kun tätä tarvitaan 
-		
+        //auth.userDetailsService(serviceImp).passwordEncoder(TGUser.PASSWORD_ENCODER); //sitten kun tätä tarvitaan 
+        auth.userDetailsService(serviceImp).passwordEncoder(passCoder());
+		/*
         // lisätään user-tasoinen käyttäjä (käytä näitä tunnuksia Postmanissa)
 		auth
 		.inMemoryAuthentication()  
@@ -51,7 +54,7 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
         .inMemoryAuthentication() 
         .withUser("admin").password(passCoder().encode("password"))
         .authorities("ROLE_ADMIN").roles("ADMIN");
-
+		*/
     }    
 
 	
