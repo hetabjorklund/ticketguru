@@ -34,7 +34,7 @@ public class TicketTypeController {
 	@Autowired
 	private TicketRepository tickrepo; 
 	
-	
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/events/{id}/types") //lipputyypit per eventId
 	public ResponseEntity<List<TicketType>> getByEvent(@PathVariable(value = "id") Long eventId) {
 		Optional<Event> ev = eventrepo.findById(eventId); 
@@ -48,7 +48,7 @@ public class TicketTypeController {
 			return new ResponseEntity<>(list, HttpStatus.OK);
 		}
 	}
-	
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/types") //kaikki lipputyypit
 	public ResponseEntity<List<TicketType>> getAllTypes() {
 		List<TicketType> list = (List<TicketType>) typerepo.findAll();  
@@ -59,7 +59,7 @@ public class TicketTypeController {
 		}
 	}
 	
-	@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/types") //luo uusi tyyppi
 	public ResponseEntity<?> makeNewType(@RequestBody TicketTypeDto type) {
 		Optional<Event> event = eventrepo.findById(type.getEvent()); //onko tapahtumaa olemassa?
@@ -80,7 +80,7 @@ public class TicketTypeController {
 		return new ResponseEntity<>(type, HttpStatus.BAD_REQUEST); //ei tapahtumaa, palauta objekti ja bad request. 
 	}
 	
-	
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PutMapping("/types/{id}") //päivitä idn perusteella
 	public ResponseEntity<?> updateType(@PathVariable(value = "id") Long typeId, 
 			@RequestBody TicketTypeDto type) {
@@ -109,7 +109,7 @@ public class TicketTypeController {
 		}
 		return new ResponseEntity<>(type, HttpStatus.BAD_REQUEST);	//muut virheet kiinni.
 	}
-	@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/types/{id}")// poistetaan idn perusteella
 	public ResponseEntity<?> deleteTypeById(@PathVariable(value = "id") Long typeid) {
 		Optional<TicketType> type = typerepo.findById(typeid); //löytyykö tyyppi
