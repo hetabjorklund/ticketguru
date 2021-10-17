@@ -1,17 +1,16 @@
 package fi.paikalla.ticketguru.dto;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class UserDto {
-	@NotNull(message = "Please enter first name")
+	@NotBlank
 	private String firstname;
-	@NotNull(message = "Please enter last name")
+	@NotBlank
 	private String lastname; 
-	@NotNull(message = "Please enter username")
+	@NotBlank
 	private String username;
-	@Size(min= 8, max= 16, message="Length between 8 and 16")
+	@Size(min=8, max=16)
 	private String password;
 	
 	

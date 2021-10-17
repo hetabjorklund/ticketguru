@@ -70,6 +70,10 @@ public class TGUser extends AbstractPersistable<Long> {
 	private void setPassword(String password) {
         this.password = PASSWORD_ENCODER.encode(password);
     }
+	
+	public void updatePassword(String password) {
+		this.password = PASSWORD_ENCODER.encode(password);
+	}
 
 
 }

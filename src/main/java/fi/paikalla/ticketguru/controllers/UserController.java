@@ -3,7 +3,7 @@ package fi.paikalla.ticketguru.controllers;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -12,10 +12,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import fi.paikalla.ticketguru.Entities.Invoice;
 import fi.paikalla.ticketguru.Entities.TGUser;
 import fi.paikalla.ticketguru.Repositories.TGUserRepository;
 import fi.paikalla.ticketguru.dto.UserDto;
@@ -51,12 +56,9 @@ public class UserController {
 	
 	@PostMapping("/users")
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<?> makeUser(@Valid UserDto user, BindingResult bindres) {
+	public ResponseEntity<?> makeUser(@Valid @RequestBody UserDto user, BindingResult bindres) {
 		if(bindres.hasErrors()) {
-			List<String> errors = bindres.getAllErrors().stream()
-					.map(e -> e.getDefaultMessage())
-					.collect(Collectors.toList());
-			return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST); 
+			return new ResponseEntity<>(user, HttpStatus.BAD_REQUEST); 
 		}
 		try {
 			for (TGUser find : userepo.findAll()) {
@@ -79,6 +81,56 @@ public class UserController {
 		}
 		
 	}
+	//TGUserin settereiden privaattiasetus estää täyden päivityksen, 
+	@PutMapping("/users/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<?> alterPassword(@PathVariable(value = "id") long userId, 
+			@Valid @RequestBody UserDto user, BindingResult bindres) {
+		if(bindres.hasErrors()) {
+			return new ResponseEntity<>(user, HttpStatus.BAD_REQUEST); 
+		}
+		Map<String, String> response = new HashMap<>();
+		try {
+			Optional<TGUser> opt = userepo.findById(userId);
+			if (!opt.isPresent()) {
+				throw new Exception();
+			}
+			TGUser setter = opt.get(); 
+			if (setter.getUserName().equals(user.getUserName())) {//jos username sama, päivitä. 
+				setter.updatePassword(user.getPassword()); 
+			}
+			userepo.save(setter); 
+			response.put("message", "password updated");
+			return new ResponseEntity<>(response, HttpStatus.OK); 
+		} catch (Exception e) {
+			response.put("message", "this user id does not exist");
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); 
+		}		
+	}
+	
+	@DeleteMapping("/users")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<?> deleteUser(@PathVariable(value = "id") long userId) {
+		Optional<TGUser> user = userepo.findById(userId); 
+		Map<String, String> response = new HashMap<String, String>(); 
+		if (user.isPresent()) { //jos löytyy, onko lippuja?
+			List<Invoice> invoices = user.get().getInvoices(); 
+			if (invoices.size() > 0) { //jos on laskuja, palauttaa kiellon. 
+				response.put("message", "There are invoices associated with this user");
+				return new ResponseEntity<>(response, HttpStatus.FORBIDDEN); 
+			} else { //ei laskuja, poistetaan tyyppi
+				userepo.delete(user.get()); 
+				response.put("message", "User deleted");
+				return new ResponseEntity<Map<String, String>>(response, HttpStatus.NO_CONTENT); //palauta no content. 
+			}
+		} else {//käyttäjää ei ole olemassa, palauta not found. 
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		}
+		
+	}
+	
+	
+	
 	
 
 }
