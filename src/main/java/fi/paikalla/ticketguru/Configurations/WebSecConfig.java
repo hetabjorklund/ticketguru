@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import fi.paikalla.ticketguru.Components.UserDetailsServiceImplementation;
 import fi.paikalla.ticketguru.Entities.TGUser;
 
-@Component
+@Configuration
 @EnableGlobalMethodSecurity(prePostEnabled= true, securedEnabled = true) //eli metoditasolla @PreAuthorize("hasRole('USER')") tai @PreAuthorize("hasAnyRole('ADMIN','USER')"), kts. https://www.baeldung.com/spring-security-method-security
 @EnableWebSecurity
 public class WebSecConfig extends WebSecurityConfigurerAdapter {
