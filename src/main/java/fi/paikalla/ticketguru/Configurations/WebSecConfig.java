@@ -43,7 +43,7 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
 		
         //auth.userDetailsService(serviceImp).passwordEncoder(TGUser.PASSWORD_ENCODER); //sitten kun tätä tarvitaan 
         auth.userDetailsService(serviceImp).passwordEncoder(passCoder());
-		/*
+		
         // lisätään user-tasoinen käyttäjä (käytä näitä tunnuksia Postmanissa)
         
 		auth
@@ -57,7 +57,7 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
         .withUser("admin").password(passCoder().encode("password"))
         .authorities("ROLE_ADMIN").roles("ADMIN");
 
-		*/
+		
     }    
 
 	

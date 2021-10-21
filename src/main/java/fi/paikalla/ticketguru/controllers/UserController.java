@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,18 +44,29 @@ public class UserController {
 		List<TGUser> list = (List<TGUser>) userepo.findAll(); 
 		return new ResponseEntity<>(list, HttpStatus.OK); 
 	}
-	/*
+	
 	@GetMapping("/users/me") //yritys hakea omia tietoja. ei onnistu
 	//@PreAuthorize("#username == authentication.principal.username")
-	public String getOwnUser (Authentication authentication){
-		//Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		//String currentPrincipalName = authentication.
+	public ResponseEntity<?> getOwnUser (/*Authentication authentication*/){
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		if (principal instanceof UserDetails) {
+			return new ResponseEntity<>((UserDetails)principal, HttpStatus.OK);
+		} else {
+			Map<String, String> response = new HashMap<>();
+			response.put("message", "Something went wrong");
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+		}
+		
+		//authentication = SecurityContextHolder.getContext().getAuthentication();
+		//String currentPrincipalName = authentication.toString();
+		//return currentPrincipalName;
 		//TGUser res = userepo.findByUserName(username); 
 		//return new ResponseEntity<>(authentication, HttpStatus.OK); 
 		//todo 
-		return authentication.toString(); 
+		//return authentication.toString(); 
 	}
-	*/
+	
 	
 	@PostMapping("/users")
 	@PreAuthorize("hasRole('ADMIN')")
@@ -81,7 +95,7 @@ public class UserController {
 		}
 		
 	}
-	//TGUserin settereiden privaattiasetus estää täyden päivityksen, 
+	//TGUserin settereiden privaattiasetus estää täyden päivityksen,
 	@PutMapping("/users/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> alterPassword(@PathVariable(value = "id") long userId, 
