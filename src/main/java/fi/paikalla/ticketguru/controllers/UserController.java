@@ -33,11 +33,6 @@ public class UserController {
 	@Autowired
 	TGUserRepository userepo; 
 	
-	
-	
-	
-	
-	
 	@GetMapping("/users")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<List<TGUser>> getUsers(){
@@ -51,12 +46,20 @@ public class UserController {
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		
 		if (principal instanceof UserDetails) {
-			return new ResponseEntity<>((UserDetails)principal, HttpStatus.OK);
+			UserDetails userDetails = (UserDetails)principal;
+			String username = userDetails.getUsername();
+			TGUser currUser = userepo.findByUserName(username);
+			
+			return new ResponseEntity<>(currUser, HttpStatus.OK);
 		} else {
 			Map<String, String> response = new HashMap<>();
 			response.put("message", "Something went wrong");
+			
 			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 		}
+		
+		
+		
 		
 		//authentication = SecurityContextHolder.getContext().getAuthentication();
 		//String currentPrincipalName = authentication.toString();
@@ -69,7 +72,7 @@ public class UserController {
 	
 	
 	@PostMapping("/users")
-	@PreAuthorize("hasRole('ADMIN')")
+	//@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> makeUser(@Valid @RequestBody UserDto user, BindingResult bindres) {
 		if(bindres.hasErrors()) {
 			return new ResponseEntity<>(user, HttpStatus.BAD_REQUEST); 
