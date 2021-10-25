@@ -72,7 +72,7 @@ public class UserController {
 	
 	
 	@PostMapping("/users")
-	//@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> makeUser(@Valid @RequestBody UserDto user, BindingResult bindres) {
 		if(bindres.hasErrors()) {
 			return new ResponseEntity<>(user, HttpStatus.BAD_REQUEST); 
