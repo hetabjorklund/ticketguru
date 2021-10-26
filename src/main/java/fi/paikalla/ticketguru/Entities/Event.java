@@ -12,6 +12,9 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.FutureOrPresent;
@@ -29,7 +32,11 @@ import java.util.*;
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
 @NoArgsConstructor
-public class Event extends AbstractPersistable<Long> {
+public class Event {
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Long id;
 	
 	@NotEmpty
 	private String name; // tapahtuman nimi, esim. 'Ruisrock' tai 'Savonlinnan Oopperajuhlat'

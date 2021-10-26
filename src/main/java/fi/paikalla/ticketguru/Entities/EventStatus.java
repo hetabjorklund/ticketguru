@@ -1,24 +1,27 @@
 package fi.paikalla.ticketguru.Entities;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import org.springframework.data.jpa.domain.AbstractPersistable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @Entity
-@Data
-@EqualsAndHashCode(callSuper=false)
-public class EventStatus extends AbstractPersistable<Long> {	
+public class EventStatus {	
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Long id;
 	
 	@NotBlank
 	private String statusName; // tapahtuman tilanne: 'järjestetään', 'peruttu' tai 'siirretty'		
@@ -36,4 +39,30 @@ public class EventStatus extends AbstractPersistable<Long> {
 		this.statusName = statusName;
 		this.events = new ArrayList<Event>();
 	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getStatusName() {
+		return statusName;
+	}
+
+	public void setStatusName(String statusName) {
+		this.statusName = statusName;
+	}
+
+	public List<Event> getEvents() {
+		return events;
+	}
+
+	public void setEvents(List<Event> events) {
+		this.events = events;
+	}
+	
+	
 }
