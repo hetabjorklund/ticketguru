@@ -92,10 +92,7 @@ TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja poi
 ![Kayttoliittymakaavio](./images/UI/kayttoliittymakaavio.png)
 
 ## Luokkakaavio
-![Luokkakaavio](./images/ClassDiagram/TGluokkakaavio.png)
-
-## Tietokantakaavio
-![Tietokantakaavio](./images/DB/db_simplified_db_diagram.png)
+![Luokkakaavio](./images/ClassDiagram/TGluokkakaavio.jpg)
 
 ## Tietohakemisto
 
