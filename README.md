@@ -100,72 +100,70 @@ TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja poi
 
 ### Tietohakemisto
 
-> ### _Ticket_
-> _Ticket-taulu sisältää lipun tiedot._
->
-> Kenttä | Tyyppi | Kuvaus
-> ------ | ------ | ------
-> id | long PK | Ticket id
-> ticketType_id | long FK | Lipputyypin tunnus, viittaus [TicketType](#TicketType)-tauluun
-> invoice | long FK | Laskun tunnus, viittais [InVoice](#InVoice)-tauluun
-> price | double | Lipun hinta 
-> used | boolean | Lipun status, onko lippu käytetty vai ei
-
-
 > ### _Event_
 > _Event-taulu sisältää tapahtuman tiedot._
 >
 > Kenttä | Tyyppi | Kuvaus
 > ------ | ------ | ------
-> id | long PK | Event id
-> eventStatus_id | long | Tapahtuman status, viittaus [EventStatus](#EventStatus)-tauluun
-> name | varchar | Tapahtuman nimi
+> id | bigint PK | Tapahtuman id
 > address | varchar | Tapahtumapaikan osoite
-> maxCapacity | int | Tapahtuman maksimipaikkamäärä
-> startTime | DateTime | Tapahtuman alkuaika (pvm ja kellonaika)
-> endTime | DateTime | Tapahtuman loppuaika (pvm ja kellonaika)
-> endOfPresale | DateTime | Tapahtuman ennakkomyynnin loppu (pvm ja kellonaika)
-> description | varchar | Lyhyt kuvaus tapahtumasta ja sen esiintyjistä
+> description | text | Lyhyt kuvaus tapahtumasta ja sen esiintyjistä
+> end_of_presale | timestamp | Tapahtuman ennakkomyynnin loppu (pvm ja kellonaika)
+> end_time | timestamp | Tapahtuman loppuaika (pvm ja kellonaika)
+> max_capacity | int | Tapahtuman maksimipaikkamäärä
+> name | varchar | Tapahtuman nimi
+> start_time | timestamp | Tapahtuman alkuaika (pvm ja kellonaika)
+> status_id | bigint | Tapahtuman status, viittaus [EventStatus](#EventStatus)-tauluun
 
 > ### _EventStatus_
 > _EventStatus-taulu sisältää tapahtuman statuksen: onko se toteutuva, peruttu tai siirretty._
 >
 > Kenttä | Tyyppi | Kuvaus
 > ------ | ------ | ------
-> id | long PK | EventStatus id
-> statusName | varchar | Tapahtuman status
+> id | bigint PK | Tapahtuman statuksen id
+> status_name | varchar | Tapahtuman status
 
 >### _Invoice_
 >_Invoice-taulu käsittää yksittäisen myyntitapahtuman. Jokaisella myyntitapahtumalla (invoice) on aina vain yksi myyjä (TGUser). Jokaisella myyntitapahtumalla voi olla useampi lippu (ticket)._
 >
 >Kenttä | Tyyppi | Kuvaus
 >------ | ------ | ------
->id | long PK | Laskun id
->timeOfSale | DateTime | Myyntitapahtuman aikamerkintä
->TGUser_id | long FK | Laskun kirjoittanut myyjä, viittaus käyttäjään [TGUser](#TGUser)-taulussa
->ticket_id | long FK | Laskun sisältämät liput, viittaus lippuun [Tickets](#Ticket)-tauluun
+>id | bigint PK | Laskun id
+>invoice_timestamp | timestamp | Laskun luomisen aikamerkintä
+>tguser_id | bigint FK | Laskun luonut myyjä, viittaus käyttäjään [TGUser](#TGUser)-taulussa
 
 >### _TGUser_
 >_TGUser-taulu kuvaa yksittäistä myyjää. Myyjä liittyy useampaan myyntitapahtumaan (invoice)._
 >
 >Kenttä | Tyyppi | Kuvaus
 >------ | ------ | ------
->TGUser_id | long PK | Käyttäjän id
->firstName | varchar | Etunimi
->lastnName | varchar | Sukunimi
->userName | varchar | Käyttäjänimi
->password | varchar | Suolattu salasana
+>id | bigint PK | Käyttäjän id
 >auth | varchar | Käyttöoikeustaso
+>first_name | varchar | Etunimi
+>last_name | varchar | Sukunimi
+>password | varchar | Suolattu salasana
+>user_name | varchar | Käyttäjänimi
+
+> ### _Ticket_
+> _Ticket-taulu sisältää lipun tiedot._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> id | bigint PK | Lipun id
+> price | real | Lipun hinta
+> used | boolean | Lipun status, onko lippu käytetty vai ei
+> invoice_id | bigint FK | Laskun tunnus jolla lippu on myyty, viittaus [Invoice](#Invoice)-tauluun
+> ticket_type_id | bigint FK | Lipputyypin tunnus, viittaus [TicketType](#TicketType)-tauluun
 
 >### _TicketType_
 >_TicketType-taulu kuvastaa lipun tyyppiä. Lipputyypit määritetään kullekkin tapahtumalle erikseen, ja kullekkin lipputyypille määritetään oma hinta._
 >
 >Kenttä | Tyyppi | Kuvaus
 >------ | ------ | ------
->tickettype_id | long PK | Lipputyypin id
->event_id | long FK | tapahtuman tunnus, viittaus tapahtumaan [Event](#Event)-taulussa
->type | varchar | tarkempi kuvaus lipun tyypistä
->ticket_price | double | lipun hinta
+>id | bigint PK | Lipputyypin id
+>price | real | Lipputyypin hinta
+>type | varchar | Tarkempi kuvaus lipun tyypistä (esim. opiskelija, eläkeläinen, lapsi)
+>event_id | bigint FK | Tapahtuman tunnus johon lipputyyppi liittyy, viittaus tapahtumaan [Event](#Event)-taulussa
 
 ### Luokkakaavio
 ![Luokkakaavio](./images/ClassDiagram/TGluokkakaavio.png)
