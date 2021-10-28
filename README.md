@@ -88,17 +88,16 @@ TK9 Tapahtumakoordinaattorina haluan voida muuttaa tapahtuman lippujen hintoja l
 
 TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja pois myynnistä, voidakseni toimia mm. koronasäädösten tai tapahtuman ylläpitäjän toiveiden mukaan.
 
-## Käyttöliittymä
-
-### Käyttöliittymäkaavio
+## Käyttöliittymäkaavio
 ![Kayttoliittymakaavio](./images/UI/kayttoliittymakaavio.png)
 
-## Tietokanta
+## Luokkakaavio
+![Luokkakaavio](./images/ClassDiagram/TGluokkakaavio.png)
 
-### Tietokantakaavio
+## Tietokantakaavio
 ![Tietokantakaavio](./images/DB/db_simplified_db_diagram.png)
 
-### Tietohakemisto
+## Tietohakemisto
 
 > ### _Event_
 > _Event-taulu sisältää tapahtuman tiedot._
@@ -165,9 +164,6 @@ TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja poi
 >type | varchar | Tarkempi kuvaus lipun tyypistä (esim. opiskelija, eläkeläinen, lapsi)
 >event_id | bigint FK | Tapahtuman tunnus johon lipputyyppi liittyy, viittaus tapahtumaan [Event](#Event)-taulussa
 
-### Luokkakaavio
-![Luokkakaavio](./images/ClassDiagram/TGluokkakaavio.png)
-
 ## Tekninen kuvaus
 
 Teknisessä kuvauksessa esitetään järjestelmän toteutuksen suunnittelussa tehdyt tekniset
@@ -180,14 +176,6 @@ ratkaisut, esim.
 -   Keskeisten rajapintojen kuvaukset, esimerkit REST-rajapinta. Tarvittaessa voidaan rajapinnan käyttöä täsmentää
     UML-sekvenssikaavioilla.
 -   Toteutuksen yleisiä ratkaisuja, esim. turvallisuus.
-
-Tämän lisäksi
-
--   ohjelmakoodin tulee olla kommentoitua
--   luokkien, metodien ja muuttujien tulee olla kuvaavasti nimettyjä ja noudattaa
-    johdonmukaisia nimeämiskäytäntöjä
--   ohjelmiston pitää olla organisoitu komponentteihin niin, että turhalta toistolta
-    vältytään
 
 ## Testaus
 
