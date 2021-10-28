@@ -28,22 +28,22 @@ Järjestelmällä on tässä kehitysvaiheessa kaksi roolia: myyjä sekä tapahtu
 * Hallinnoi tapahtumia ja lipputyyppejä 
 * Lisää uusia tapahtumia ja muuttaa tapahtumien tietoja tarvittaessa
 
-#### Tulevat roolit
+### Tulevat roolit
 
 Siinä vaiheessa, kun TicketGurusta lähdetään kehittämään verkkokauppaa, tarvitsemme luonnollisesti lisää rooleja, jotta toiminta olisi mahdollisimman sujuvaa.
 
-##### Asiakas
+#### Asiakas
 
 * Asiakas tekee ostoksia lippukaupassa
 
-##### Tapahtumajärjestäjä
+#### Tapahtumajärjestäjä
 
 * Muokkaa tapahtuman tietoja tarvittaessa
 * Seuraa tapahtumiensa lipunmyyntitilannetta
 
 ### Käyttäjätarinat
 
-#### Myyjätarinat (M)
+#### **Myyjätarinat (M)**
 M1 Myyjänä haluan kirjautua sisään järjestelmään, jotta voin myydä lippuja.
 
 M2 Myyjänä haluan tietää kuinka monta lippua tapahtumassa on kokonaisuudessaan,
@@ -55,22 +55,17 @@ jotta voin veloittaa asiakasta oikein.
 M4 Myyjänä haluan pystyä kuittaamaan lipun nopeasti ovella käytetyksi (lipuntarkastus), jotta jono 
 etenee. 
 
-M5 Myyjänä haluan pystyä tulostamaan ylimääräiset liput kertaheitolla ovella 
-myytäväksi, jotta aikaa ei huku yksittäiseen tulosteluun. 
+M5 Myyjänä haluan pystyä luomaan loput tapahtuman liput ovella myytäviksi lipuiksi tapahtuman ennakkomyynnin päätyttyä yhdellä kertaa. 
 
 M6 Myyjänä haluan nähdä listauksen tulevista tapahtumista, jotta voin kertoa asiakkaalle millaisia tapahtumia on tulossa.
 
 M7 Myyjänä haluan nähdä, onko tapahtumaan lippuja vielä myytävissä, jotta en myy "ylipaikkoja".
 
-M8 Myyjänä haluan valita järjestelmästä useamman lipun kerralla myytäväksi, jotta jokaista lippua ei tarvitse myydä yksittäin.
+M8 Myyjänä haluan kyetä lisäämään usean tapahtuman lippuja myytäväksi samalla laskulla, jotta otta jokaista lippua ei tarvitse myydä yksittäin ja voin samalla transaktiolla myydä ne asiakkaalle.
 
 M9 Myyjänä haluan saada tulostettua myymäni liput, jotta voin antaa ne asiakkaalle.
 
-M10 Myyjänä haluan nähdä järjestelmässämme mahdolliset muutokset tapahtumista, kuten esiintyjän peruuntumisen tai hintojen muutoksen, jotta voin informoida asiakkaitani.
-
-M11 Myyjänä haluan kyetä lisäämään usean tapahtuman lippuja myytäväksi ostoskoriin, jotta voin samalla transaktiolla myydä ne asiakkaalle. 
-
-#### Tapahtumakoordinaattoritarinat (TK)
+#### **Tapahtumakoordinaattoritarinat (TK)**
 
 TK1 Tapahtumakoordinaattorina haluan kirjautua sisään järjestelmään, jotta voin lisätä tapahtumia ja lippuja.
 
