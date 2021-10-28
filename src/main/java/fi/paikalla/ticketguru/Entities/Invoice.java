@@ -17,9 +17,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 public class Invoice {
 	
-	@Id	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long invoiceId;
-	private LocalDateTime timestamp; // aikaleima myyntitapahtumalle	
+	@Id	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	private LocalDateTime invoiceTimestamp; // aikaleima myyntitapahtumalle	
 	@NotNull @ManyToOne
 	private TGUser tguser; // laskun myyjä
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "invoice")	@JsonIgnore
@@ -37,24 +37,24 @@ public class Invoice {
 	
 	public Invoice(TGUser tguser) { // parametrillisessä konstruktorissa ei tarvita muuta kuin myyjä; id tulee automaattisesti
 		this.tguser = tguser; 
-		this.timestamp = LocalDateTime.now(); // myyntiaika on automaattisesti nykyinen aika
+		this.invoiceTimestamp = LocalDateTime.now(); // myyntiaika on automaattisesti nykyinen aika
 		this.tickets = new ArrayList<Ticket>(); // lippulista on automaattisesti tyhjä lista; liput lisätään laskuun vasta kun ne luodaan/myydään
 	}
 	
 	public Long getInvoiceId() {
-		return this.invoiceId;
+		return this.id;
 	}
 
 	public void setInvoiceId(Long invoiceId) {
-		this.invoiceId = invoiceId;
+		this.id = invoiceId;
 	}
 
 	public LocalDateTime getTimestamp() {
-		return this.timestamp;
+		return this.invoiceTimestamp;
 	}
 
 	public void setTimestamp(LocalDateTime timestamp) {
-		this.timestamp = timestamp;
+		this.invoiceTimestamp = timestamp;
 	}
 
 	public TGUser getTGuser() {
@@ -75,7 +75,7 @@ public class Invoice {
 
 	@Override
 	public String toString() {
-		return "Invoice [invoiceId=" + this.invoiceId + ", timestamp=" + this.timestamp + "]";
+		return "Invoice [invoiceId=" + this.id + ", timestamp=" + this.invoiceTimestamp + "]";
 	}
 
 }

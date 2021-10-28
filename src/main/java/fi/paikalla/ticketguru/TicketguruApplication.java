@@ -1,36 +1,17 @@
 package fi.paikalla.ticketguru;
 
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import fi.paikalla.ticketguru.Entities.Event;
-import fi.paikalla.ticketguru.Entities.EventStatus;
-import fi.paikalla.ticketguru.Entities.Invoice;
-import fi.paikalla.ticketguru.Entities.TGUser;
-import fi.paikalla.ticketguru.Entities.Ticket;
-import fi.paikalla.ticketguru.Entities.TicketType;
-import fi.paikalla.ticketguru.Repositories.EventRepository;
-import fi.paikalla.ticketguru.Repositories.EventStatusRepository;
-import fi.paikalla.ticketguru.Repositories.InvoiceRepository;
-import fi.paikalla.ticketguru.Repositories.TGUserRepository;
-import fi.paikalla.ticketguru.Repositories.TicketRepository;
-import fi.paikalla.ticketguru.Repositories.TicketTypeRepository;
-import java.time.LocalDateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @SpringBootApplication
 public class TicketguruApplication {
-	
-	private static final Logger log = LoggerFactory.getLogger(TicketguruApplication.class); 
 
 	public static void main(String[] args) {
 		SpringApplication.run(TicketguruApplication.class, args);
 	}
 	
 	// luodaan valmiiksi dataa tietokantaan jotta on jotain millä testata
-	@Bean
+	/*@Bean
 	public CommandLineRunner createStarterData(EventRepository eventRepo, EventStatusRepository statusRepo, 
 			TicketTypeRepository typeRepo, TicketRepository ticketRepo, 
 			InvoiceRepository invoiceRepo, TGUserRepository userRepo){
@@ -93,6 +74,6 @@ public class TicketguruApplication {
 			ticketRepo.save(t2);	
 			ticketRepo.save(t3);
 		}; 	
-	}
+	}*/
 
 }
