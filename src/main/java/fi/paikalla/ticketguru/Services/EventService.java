@@ -123,7 +123,6 @@ public class EventService {
 		} catch (Exception e) { // jos eventin id:llä ei löydy tapahtumaa ja tulee virhe
 			return false; // palautetaan false
 		}			
-	}
-	
+	}	
 	
 }

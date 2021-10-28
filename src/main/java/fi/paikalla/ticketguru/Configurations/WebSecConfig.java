@@ -11,8 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
-
 import fi.paikalla.ticketguru.Components.UserDetailsServiceImplementation;
 import fi.paikalla.ticketguru.Entities.TGUser;
 
@@ -56,16 +54,12 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
         .inMemoryAuthentication() 
         .withUser("admin").password(passCoder().encode("password"))
         .authorities("ROLE_ADMIN").roles("ADMIN");
-
 		
     }    
-
 	
 	@Bean
 	public PasswordEncoder passCoder() {
 		return new BCryptPasswordEncoder(); 
 	}
 	
-	
-
 }

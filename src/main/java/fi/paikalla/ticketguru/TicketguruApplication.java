@@ -73,15 +73,13 @@ public class TicketguruApplication {
 			typeRepo.save(tt1);
 			typeRepo.save(tt2);
 			typeRepo.save(tt3);
-			typeRepo.save(tt4);
-			
+			typeRepo.save(tt4);			
 
 			TGUser user = new TGUser("Maikki", "Menevä", "MaiMe", "salasana", "ROLE_USER");
 			TGUser admin = new TGUser("Anna", "Admin", "AnnAd", "salasana", "ROLE_ADMIN");
 			
 			userRepo.save(user); 
 			userRepo.save(admin);
-
 			
 			Invoice invoice1 = new Invoice(user); 
 			

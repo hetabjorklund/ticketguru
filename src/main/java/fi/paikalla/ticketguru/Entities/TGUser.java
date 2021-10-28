@@ -65,8 +65,6 @@ public class TGUser extends AbstractPersistable<Long> {
 		this.invoices = new ArrayList<Invoice>(); 
 	}
 	
-	
-	
 	private void setPassword(String password) {
         this.password = PASSWORD_ENCODER.encode(password);
     }
@@ -74,7 +72,6 @@ public class TGUser extends AbstractPersistable<Long> {
 	public void updatePassword(String password) {
 		this.password = PASSWORD_ENCODER.encode(password);
 	}
-
 
 }
 

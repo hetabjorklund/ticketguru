@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
@@ -21,7 +20,7 @@ public class Invoice {
 	@Id	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long invoiceId;
 	private LocalDateTime timestamp; // aikaleima myyntitapahtumalle	
-	@NotNull @ManyToOne //@JoinColumn(name = "TGUserId")
+	@NotNull @ManyToOne
 	private TGUser tguser; // laskun myyjä
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "invoice")	@JsonIgnore
 	private List<Ticket> tickets; // lista samalla laskulla olevista lipuista

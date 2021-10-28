@@ -17,7 +17,7 @@ public class ExceptionControllerAdvice {
     @ResponseBody
     public ResponseEntity<?> exception(AccessDeniedException e) {
 		Map<String, String> response = new HashMap<String, String>(); 
-		response.put("message", "you do not have access to this resource");
+		response.put("message", "You do not have access to this resource");
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     } 
 
