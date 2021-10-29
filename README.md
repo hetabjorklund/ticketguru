@@ -8,7 +8,7 @@ Projektin aihe on TicketGuru-nimisen lipunmyyntijärjestelmän backend.
 
 Asiakas on lipputoimisto, joka tarvitsee lipunmyyntijärjestelmän lippujen myymiseen myyntipisteessään. Lipputoimisto määrittelee tapahtumat, joihin lippuja myydään, ja montako lippua tapahtumaan voidaan myydä. Tapahtumakoordinaattori lisää tapahtumat järjestelmään ja myyjä myy lipunmyyntipisteessä lippuja asiakkaalle. Jokaisessa lipussa on yksilöllinen koodi lipuntarkastamista varten. Myöhemmässä vaiheessa järjestelmään lisätään verkkokauppa, josta asiakkaat voivat itse ostaa lippuja.
 
-Projektin päättyessä valmiina tulee olemaan REST-rajapinta, tietokanta ja yksinkertainen käyttöliittymä. Kehittämisvaiheessa käytettävä tietokantajärjestelmä on H2, mutta lopullisessa projektissa PostgreSQL. Projekti voidaan julkaista esimerkiksi Herokussa. Lipunmyyntijärjestelmä toimii web-sovelluksena selaimella.
+Projektin päättyessä valmiina tulee olemaan REST-rajapinta, tietokanta ja yksinkertainen käyttöliittymä. Kehittämisvaiheessa käytettävä tietokantajärjestelmä on H2 ja lopullisessa projektissa PostgreSQL. Projekti julkaistaan Herokussa. Lipunmyyntijärjestelmä toimii web-sovelluksena selaimella.
 
 ## Järjestelmän määrittely
 
@@ -163,16 +163,26 @@ TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja poi
 
 ## Tekninen kuvaus
 
-Teknisessä kuvauksessa esitetään järjestelmän toteutuksen suunnittelussa tehdyt tekniset
-ratkaisut, esim.
+Projektissa on kolme haaraa: master, postgreSQL_local ja postgreSQL_heroku.
 
--   Missä mikäkin järjestelmän komponentti ajetaan (tietokone, palvelinohjelma)
-    ja komponenttien väliset yhteydet (vaikkapa tähän tyyliin:
-    https://security.ufl.edu/it-workers/risk-assessment/creating-an-information-systemdata-flow-diagram/)
--   Palvelintoteutuksen yleiskuvaus: teknologiat, deployment-ratkaisut yms.
--   Keskeisten rajapintojen kuvaukset, esimerkit REST-rajapinta. Tarvittaessa voidaan rajapinnan käyttöä täsmentää
-    UML-sekvenssikaavioilla.
--   Toteutuksen yleisiä ratkaisuja, esim. turvallisuus.
+### Master
+- master-haara on kehityshaara.
+- Tietokanta on H2. Tietokanta ei ole persistentti, vaan tiedot häviävät kun sovellus sammutetaan.
+- Sovelluksen paikallinen osoite on localhost:8080/
+- Endpointit ovat muotoa localhost:8080/events
+
+### PostgreSQL_local
+- postgreSQL_local-haara on testaushaara.
+- Tietokanta on PostgreSQL. Tietokanta on persistentti, mutta sinne pääsee käsiksi vain paikallisesti.
+- Sovelluksen paikallinen osoite on localhost:5432/
+- Endpointit ovat muotoa localhost:5432/events
+
+### PostgreSQL_heroku
+- postgreSQL_heroku-haara on projektin tuotantohaara ja julkaistu versio Herokussa.
+- Tietokanta on PostgreSQL. Tietokanta on persistentti ja sinne pääsee käsiksi internetin kautta.
+- Sovelluksen osoite on https://ticketguru-2021.herokuapp.com/
+- Herokun etärepositorio löytyy osoitteesta https://git.heroku.com/ticketguru-2021.git
+- Endpointit ovat muotoa https://ticketguru-2021.herokuapp.com/events
 
 ## Testaus
 
