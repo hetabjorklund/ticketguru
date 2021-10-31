@@ -168,14 +168,12 @@ Projektissa on kolme haaraa: master, postgreSQL_local ja postgreSQL_heroku.
 ### Master
 - master-haara on kehityshaara.
 - Tietokanta on H2. Tietokanta ei ole persistentti, vaan tiedot häviävät kun sovellus sammutetaan.
-- Sovelluksen paikallinen osoite on localhost:8080/
-- Endpointit ovat muotoa localhost:8080/events
+- Endpointit ovat muotoa localhost:[portti]/events
 
 ### PostgreSQL_local
 - postgreSQL_local-haara on testaushaara.
 - Tietokanta on PostgreSQL. Tietokanta on persistentti, mutta sinne pääsee käsiksi vain paikallisesti.
-- Sovelluksen paikallinen osoite on localhost:5432/
-- Endpointit ovat muotoa localhost:5432/events
+- Endpointit ovat muotoa localhost:[portti]/events
 
 ### PostgreSQL_heroku
 - postgreSQL_heroku-haara on projektin tuotantohaara ja julkaistu versio Herokussa.
