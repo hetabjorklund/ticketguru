@@ -8,8 +8,10 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 
+import fi.paikalla.ticketguru.Repositories.TicketRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,6 +25,9 @@ import net.bytebuddy.utility.RandomString;
 @NoArgsConstructor
 @Validated
 public class Ticket {
+	
+	//@Autowired
+	//private TicketRepository ticketrepo;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -82,6 +87,15 @@ public class Ticket {
 		this.used = false;
 		this.ticketType = ticketType;
 		this.invoice = invoice; 
+	}*/
+	
+	/*private String createRandomCode(int length) {
+		String random = RandomString.make(length);
+		
+		if (ticketrepo.findByCode(random).isPresent()) { // jos samalla koodilla löytyy jo lippu, koodi ei ole uniikki
+			random = RandomString.make(length);
+		}
+		return random;
 	}*/
 		
 }

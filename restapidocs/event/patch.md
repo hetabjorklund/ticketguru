@@ -30,8 +30,6 @@ Toimita kentät, joita haluat muokata.
 
 ## Onnistumisvastaus
 
-**Ehto** : Mikäli pyynnön mukana toimitetaan statuksen nimi 
-
 **HTTP-vastauskoodi** : `200 OK`
 
 **Esimerkkivastaus**
@@ -65,7 +63,7 @@ Toimita kentät, joita haluat muokata.
 
 ## Virhevastaus
 
-**Ehto** : Mikäli annettua statusta ei löydy tietokannasta
+**Ehto** : Mikäli haettua tapahtuman id:tä ei löydy tietokannasta
 
 **HTTP-vastauskoodi** : `404 NOT FOUND`
 
