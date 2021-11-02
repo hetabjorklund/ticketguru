@@ -34,6 +34,11 @@ Poista tapahtuma, jonka id on 2: lähetä DELETE-tyypin pyyntö polkuun "/events
 
 **Ehto** : Tapahtumaan liittyy myytyjä lippuja.
 
-**Vastaus** : Event has associated tickets, deletion forbidden
-
 **HTTP-vastauskoodi** : `403 FORBIDDEN`
+
+**Vastaus** : 
+```json
+{
+    "message": "Event has associated tickets, deletion forbidden"
+}
+```

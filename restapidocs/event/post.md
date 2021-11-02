@@ -59,20 +59,10 @@ Tapahtumalla on oltava nimi, eli name-attribuutti ei saa puuttua. Kunhan name-at
 
 **HTTP-vastauskoodi** : `409 CONFLICT`
 
-**Esimerkkivastaus** : Palautetaan jo olemassaolevan tapahtuman tiedot.
-
+**Esimerkkivastaus** :  
 ```json
 {
-    "id": 12,
-    "name": "Muumirock",
-    "address": "Muumimaailma",
-    "maxCapacity": 20,
-    "startTime": "2021-12-31T21:00:00",
-    "endTime": "2022-01-01T12:00:00",
-    "endOfPresale": "2021-12-30T00:00:00",
-    "status": null,
-    "description": "Pihoo!",
-    "new": false
+    "message": "Event already exists"
 }
 ```
 
@@ -82,41 +72,25 @@ Tapahtumalla on oltava nimi, eli name-attribuutti ei saa puuttua. Kunhan name-at
 
 **HTTP-vastauskoodi** : `400 BAD REQUEST`
 
-**Esimerkkivastaus**
-
+**Esimerkkivastaus** : 
 ```json
 {
-    "id": null,
-    "name": null,
-    "address": "Muumimaailma",
-    "maxCapacity": 20,
-    "startTime": "2021-12-31T21:00:00",
-    "endTime": "2022-01-01T12:00:00",
-    "endOfPresale": "2021-12-30T00:00:00",
-    "status": null,
-    "description": "Pihoo!",
-    "new": true
+    "message": "must not be empty.",
+    "status": "400"
 }
 ```
 
 ### 3
+
 **Ehto** : Tapahtuman alkuaika, loppuaika tai lippujen ennakkomyynnin loppuaika on menneisyydessä.
 
 **HTTP-vastauskoodi** : `400 BAD REQUEST`
 
-**Esimerkkivastaus**
+**Esimerkkivastaus** :
 ```json
 {
-    "id": null,
-    "name": "Mörkörock",
-    "address": "Yksinäiset vuoret",
-    "maxCapacity": 1,
-    "startTime": "2000-12-31T21:00:00",
-    "endTime": "2022-01-01T12:00:00",
-    "endOfPresale": "2021-12-30T00:00:00",
-    "status": null,
-    "description": "Hngngnggggg",
-    "new": true
+    "message": "must be a date in the present or in the future.",
+    "status": "400"
 }
 ```
 

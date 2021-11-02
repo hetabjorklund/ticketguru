@@ -2,6 +2,7 @@ package fi.paikalla.ticketguru.Services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.json.JsonPatch;
 import javax.json.JsonStructure;
@@ -18,6 +19,7 @@ import fi.paikalla.ticketguru.Entities.TicketType;
 import fi.paikalla.ticketguru.Repositories.EventStatusRepository;
 import fi.paikalla.ticketguru.Repositories.TicketRepository;
 import fi.paikalla.ticketguru.Repositories.TicketTypeRepository;
+import net.bytebuddy.utility.RandomString;
 
 @Service
 public class TicketService {
@@ -94,6 +96,30 @@ public class TicketService {
 			return cancelledTickets; // palautetaan tyhjä lista
 		}
 		
+	}
+	
+	// Luodaan uusi koodi lipulle
+	public String generateNewTicketCode(Ticket ticket) {
+		String code = ticket.getCode();
+		boolean isCodeAvailable = checkTicketCodeAvailability(code); // Tarkastetaan, onko lipun koodi jo käytössä
+		
+		while(!isCodeAvailable) { // Luodaan satunnaisia lippukoodeja niin kauan, että saadaan aikaan käyttämätön koodi
+			code = RandomString.make(12);
+			isCodeAvailable = checkTicketCodeAvailability(code);
+		}
+		
+		return code;
+	}
+	
+	// Tarkastetaan, onko parametrina annettu koodi jo käytössä tietokannassa
+	public boolean checkTicketCodeAvailability(String code) {
+		Optional<Ticket> ticket = ticketrepo.findByCode(code);
+		
+		if(ticket.isPresent()) {
+			return false;
+		}
+		
+		return true;
 	}
 	
 }

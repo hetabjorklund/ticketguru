@@ -185,6 +185,14 @@ public class TicketController {
 				ticket.getPrice(),
 				invoice.get()
 			);
+		
+		boolean isCodeAvailable = ticketservice.checkTicketCodeAvailability(newTicket.getCode()); // Tarkistetaan, onko lipun satunnaisesti luotu koodi käytettävissä
+		
+		// Mikäli koodi ei ole käytettävissä, luodaan uusi käyttämätön koodi
+		if(!isCodeAvailable) {
+			String code = ticketservice.generateNewTicketCode(newTicket);
+			newTicket.setCode(code);
+		}
 				
 		long eventId = ticketservice.getEventIdFromTicket(newTicket); // TicketServicen metodi, joka ottaa syötteenä ticketin ja palauttaa eventin Id:n
 		boolean hasAvailableTickets;
