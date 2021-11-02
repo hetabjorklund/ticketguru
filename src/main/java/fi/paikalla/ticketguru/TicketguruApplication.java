@@ -45,7 +45,7 @@ public class TicketguruApplication {
 			LocalDateTime presaleend = LocalDateTime.of(2021,11,27,16,00); 
 			LocalDateTime next = LocalDateTime.of(2021,11,3,21,00); 
 			LocalDateTime one = LocalDateTime.of(2021,11,4,2,00);
-			LocalDateTime test = LocalDateTime.of(2021,10,31,12,00);
+			LocalDateTime test = LocalDateTime.of(2021,11,30,12,00);
 			
 			
 			Event event1 = new Event("Ruisrock", "Savonlinnankatu 50", 600, 
