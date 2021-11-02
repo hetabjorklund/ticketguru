@@ -41,6 +41,7 @@ public class EventController {
 	@Autowired
 	private EventService eventservice; 
 
+	// DELETE
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/events/{id}") // poista yksittäinen tapahtuma id:n perusteella. Endpointia /events joka poistaisi kaikki tapahtumat, ei tarvita
 	public ResponseEntity<String> deleteEvent(@PathVariable Long id) {
@@ -64,6 +65,7 @@ public class EventController {
 		}
 	}	
 	
+	// GET
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/events") //hae kaikki tapahtumat parametreilla ja ilman 
 	public ResponseEntity<?> getEvents(@RequestParam(required = false) String start, @RequestParam(required = false) String end) {
