@@ -103,7 +103,7 @@ public class TicketController {
 	}*/
 	
 	// tarkista, onko lippu käytetty koodin perusteella
-	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	/*@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/tickets/{code}/used")
 	public @ResponseBody ResponseEntity<?> getTicketUsed(@PathVariable("code") String ticketCode){
 		Optional<Ticket> ticket = ticketrepo.findByCode(ticketCode);
@@ -116,7 +116,7 @@ public class TicketController {
 		}		
 		responseMap.put("used", ticket.get().isUsed() + "");
 		return new ResponseEntity<>(responseMap, HttpStatus.OK);
-	}
+	}*/
 	
 	// PATCH
 	
@@ -139,13 +139,12 @@ public class TicketController {
 		return new ResponseEntity<>(ticket, HttpStatus.NOT_FOUND);
 	}*/
 	
-	// merkitse lippu käytetyksi koodin perusteella
+	// lipuntarkistus: tarkista koodin perusteella, onko lippu jo käytetty ja jos ei, merkitse lippu käytetyksi 
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
-	@PatchMapping (path="/tickets/{code}", consumes = "application/json-patch+json")
-	public ResponseEntity<?> markTicketUsed(@PathVariable String code, @RequestBody JsonPatch patchDocument) {
-		
-		Map<String, String> response = new HashMap<String, String>(); // alustetaan uusi vastaus
-		
+	@PatchMapping (path="/tickets/{code}/used", consumes = "application/json-patch+json")
+	public ResponseEntity<?> checkTicket(@PathVariable String code, @RequestBody JsonPatch patchDocument) {
+			
+		Map<String, String> response = new HashMap<String, String>(); // alustetaan uusi vastaus		
 		Optional<Ticket> target = ticketrepo.findByCode(code); // haetaan ticketreposta mahdollinen lippu annetulla koodilla
 		
 		if (target.isEmpty()) { // jos lippua ei löydy
@@ -153,8 +152,17 @@ public class TicketController {
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); // palautetaan viesti ja 404
 		}
 		else { // jos lippu löytyy annetulla koodilla
-			Ticket patchedTicket = ticketservice.patchTicket(patchDocument, code); // käytetään lippu ticketservicen patchTicket-metodin kautta
-			return new ResponseEntity<>(patchedTicket, HttpStatus.OK);
+			
+			Ticket currentTicket = target.get(); // otetaan lippuolio talteen käsittelyä varten
+			
+			if (currentTicket.isUsed()) { // jos lippu on jo käytetty
+				response.put("message", "Ticket has already been used. Ticket is not valid");
+				return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // palautetaan viesti ja 400		
+			}
+			else { // jos lippu ei ole käytetty
+				Ticket patchedTicket = ticketservice.patchTicket(patchDocument, code); // käytetään lippu ticketservicen patchTicket-metodin kautta
+				return new ResponseEntity<>(patchedTicket, HttpStatus.OK);
+			}				
 		}
 	}
 	
