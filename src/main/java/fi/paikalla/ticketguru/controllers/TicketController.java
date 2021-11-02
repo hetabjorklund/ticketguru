@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.json.JsonPatch;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import fi.paikalla.ticketguru.Components.ErrorResponseGenerator;
+import fi.paikalla.ticketguru.Entities.Event;
 import fi.paikalla.ticketguru.Entities.Invoice;
 import fi.paikalla.ticketguru.Entities.Ticket;
 import fi.paikalla.ticketguru.Entities.TicketType;
@@ -50,13 +52,17 @@ public class TicketController {
 	@Autowired
 	private ErrorResponseGenerator errResGenerator;
 	
+	// GET
+	
+	// hae kaikki liput
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
-	@GetMapping("/tickets") // kaikki liput, vähän kustomointia vois tehdä, koska tulee aika paljon tietoa. 
+	@GetMapping("/tickets")  
 	public List<Ticket> getTickets() {
 		return ticketservice.getAllTickets();
 	}	
 	
-	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	// hae lippu id:n perusteella
+	/*@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/tickets/{id}")
 	public @ResponseBody ResponseEntity<Optional<Ticket>> getTicketById(@PathVariable("id") Long ticketId){
 		Optional<Ticket> ticket = ticketrepo.findById(ticketId);
@@ -66,23 +72,95 @@ public class TicketController {
 		} else {
 			return new ResponseEntity<>(ticket, HttpStatus.OK);
 		}
+	}*/
+	
+	// hae lippu koodin perusteella
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	@GetMapping("/tickets/{code}")
+	public @ResponseBody ResponseEntity<Optional<Ticket>> getTicketByCode(@PathVariable("code") String ticketCode){
+		Optional<Ticket> ticket = ticketrepo.findByCode(ticketCode);
+		
+		if(ticket.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} else {
+			return new ResponseEntity<>(ticket, HttpStatus.OK);
+		}
 	}
 	
-	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	// tarkista, onko lippu käytetty id:n perusteella
+	/*@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/tickets/{id}/used")
 	public @ResponseBody ResponseEntity<?> getTicketUsed(@PathVariable("id") Long ticketId){
 		Optional<Ticket> ticket = ticketrepo.findById(ticketId);
 		Map<String, String> responseMap = new HashMap<>();
 		
 		if(ticket.isEmpty()) {
-			responseMap.put("message", "Ticket with the given Id was not found");
+			responseMap.put("message", "Ticket with the given id was not found");
 			return new ResponseEntity<>(responseMap, HttpStatus.NOT_FOUND); // status 404
-		}
+		}		
+		responseMap.put("used", ticket.get().isUsed() + "");
+		return new ResponseEntity<>(responseMap, HttpStatus.OK);
+	}*/
+	
+	// tarkista, onko lippu käytetty koodin perusteella
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	@GetMapping("/tickets/{code}/used")
+	public @ResponseBody ResponseEntity<?> getTicketUsed(@PathVariable("code") String ticketCode){
+		Optional<Ticket> ticket = ticketrepo.findByCode(ticketCode);
 		
+		Map<String, String> responseMap = new HashMap<>();
+		
+		if(ticket.isEmpty()) {
+			responseMap.put("message", "Ticket with the given code was not found");
+			return new ResponseEntity<>(responseMap, HttpStatus.NOT_FOUND); // status 404
+		}		
 		responseMap.put("used", ticket.get().isUsed() + "");
 		return new ResponseEntity<>(responseMap, HttpStatus.OK);
 	}
 	
+	// PATCH
+	
+	// merkitse lippu käytetyksi
+	/*@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	@PatchMapping("/tickets/{id}")
+	public @ResponseBody ResponseEntity<Optional<Ticket>> markTicketAsUsed(@PathVariable("id") Long ticketId){
+		Optional<Ticket> ticket = ticketrepo.findById(ticketId);
+		
+		if(!ticket.isEmpty()) {
+			Ticket usedTicket = ticket.get();
+			if(usedTicket.isUsed()) {
+				return new ResponseEntity<>(ticket, HttpStatus.BAD_REQUEST);
+			}
+			usedTicket.setUsed(true);
+			ticketrepo.save(usedTicket);
+			return new ResponseEntity<>(ticket, HttpStatus.OK);
+		}
+			
+		return new ResponseEntity<>(ticket, HttpStatus.NOT_FOUND);
+	}*/
+	
+	// merkitse lippu käytetyksi koodin perusteella
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	@PatchMapping (path="/tickets/{code}", consumes = "application/json-patch+json")
+	public ResponseEntity<?> markTicketUsed(@PathVariable String ticketCode, @RequestBody JsonPatch patchDocument) {
+		
+		Map<String, String> response = new HashMap<String, String>(); // alustetaan uusi vastaus
+		
+		Optional<Ticket> target = ticketrepo.findByCode(ticketCode); // haetaan ticketreposta mahdollinen lippu annetulla koodilla
+		
+		if (target.isEmpty()) { // jos lippua ei löydy
+			response.put("message", "Event not found");
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); // palautetaan viesti ja 404
+		}
+		else { // jos lippu löytyy annetulla koodilla
+			Ticket patchedTicket = ticketservice.patchTicket(patchDocument, ticketCode); // käytetään lippu ticketservicen patchTicket-metodin kautta
+			return new ResponseEntity<>(patchedTicket, HttpStatus.OK);
+		}
+	}
+	
+	// POST
+	
+	// luo uusi lippu
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PostMapping("/tickets")
 	public @ResponseBody ResponseEntity<?> createTicket(@Valid @RequestBody TicketDto ticket, BindingResult bindingResult){
@@ -131,24 +209,9 @@ public class TicketController {
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
 	
-	@PreAuthorize("hasAnyRole('ADMIN','USER')")
-	@PatchMapping("/tickets/{id}")
-	public @ResponseBody ResponseEntity<Optional<Ticket>> markTicketAsUsed(@PathVariable("id") Long ticketId){
-		Optional<Ticket> ticket = ticketrepo.findById(ticketId);
-		
-		if(!ticket.isEmpty()) {
-			Ticket usedTicket = ticket.get();
-			if(usedTicket.isUsed()) {
-				return new ResponseEntity<>(ticket, HttpStatus.BAD_REQUEST);
-			}
-			usedTicket.setUsed(true);
-			ticketrepo.save(usedTicket);
-			return new ResponseEntity<>(ticket, HttpStatus.OK);
-		}
-		
-		return new ResponseEntity<>(ticket, HttpStatus.NOT_FOUND);
-	}
+	// PUT
 	
+	// muokkaa olemassaolevaa lippua
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PutMapping("/tickets/{id}")
 	public @ResponseBody ResponseEntity<?> modifyTicket(@Valid @RequestBody TicketDto ticketDto, @PathVariable("id") Long ticketId, BindingResult bindingResult){
