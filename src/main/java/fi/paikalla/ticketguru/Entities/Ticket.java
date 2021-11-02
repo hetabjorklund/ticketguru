@@ -44,7 +44,7 @@ public class Ticket {
 	@ManyToOne
 	private Invoice invoice;
 	
-	private String code;
+	private String code; // yksilöllinen koodi lipun tarkistamista varten (12 merkkiä pitkä random string)
 	
 	// konstruktori pelkän lipun luomiseen ilman laskua
 	public Ticket(TicketType ticketType, Double price) {

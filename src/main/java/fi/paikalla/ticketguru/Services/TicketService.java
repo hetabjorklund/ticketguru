@@ -51,8 +51,7 @@ public class TicketService {
 
 	    // Palautetaan muokattu lippu
 	    return modifiedTicket;
-	}
-		
+	}		
 		
 	// hae kaikki liput
 	public List<Ticket> getAllTickets() {
@@ -96,4 +95,5 @@ public class TicketService {
 		}
 		
 	}
+	
 }

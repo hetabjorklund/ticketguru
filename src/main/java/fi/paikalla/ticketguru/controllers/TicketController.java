@@ -120,7 +120,7 @@ public class TicketController {
 	
 	// PATCH
 	
-	// merkitse lippu käytetyksi
+	// merkitse lippu käytetyksi id:n perusteella
 	/*@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PatchMapping("/tickets/{id}")
 	public @ResponseBody ResponseEntity<Optional<Ticket>> markTicketAsUsed(@PathVariable("id") Long ticketId){
@@ -142,18 +142,18 @@ public class TicketController {
 	// merkitse lippu käytetyksi koodin perusteella
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PatchMapping (path="/tickets/{code}", consumes = "application/json-patch+json")
-	public ResponseEntity<?> markTicketUsed(@PathVariable String ticketCode, @RequestBody JsonPatch patchDocument) {
+	public ResponseEntity<?> markTicketUsed(@PathVariable String code, @RequestBody JsonPatch patchDocument) {
 		
 		Map<String, String> response = new HashMap<String, String>(); // alustetaan uusi vastaus
 		
-		Optional<Ticket> target = ticketrepo.findByCode(ticketCode); // haetaan ticketreposta mahdollinen lippu annetulla koodilla
+		Optional<Ticket> target = ticketrepo.findByCode(code); // haetaan ticketreposta mahdollinen lippu annetulla koodilla
 		
 		if (target.isEmpty()) { // jos lippua ei löydy
-			response.put("message", "Event not found");
+			response.put("message", "Ticket not found");
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); // palautetaan viesti ja 404
 		}
 		else { // jos lippu löytyy annetulla koodilla
-			Ticket patchedTicket = ticketservice.patchTicket(patchDocument, ticketCode); // käytetään lippu ticketservicen patchTicket-metodin kautta
+			Ticket patchedTicket = ticketservice.patchTicket(patchDocument, code); // käytetään lippu ticketservicen patchTicket-metodin kautta
 			return new ResponseEntity<>(patchedTicket, HttpStatus.OK);
 		}
 	}
@@ -251,6 +251,7 @@ public class TicketController {
 		return new ResponseEntity<>(newTicket, HttpStatus.OK);
 	}
 	
+	// DELETE
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@DeleteMapping("/tickets/{id}")
 	public @ResponseBody ResponseEntity<Optional<Ticket>> deleteTicket(@PathVariable("id") Long ticketId){
