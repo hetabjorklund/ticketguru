@@ -150,6 +150,7 @@ TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja poi
 > used | boolean | Lipun status, onko lippu käytetty vai ei
 > invoice_id | bigint FK | Laskun tunnus jolla lippu on myyty, viittaus [Invoice](#Invoice)-tauluun
 > ticket_type_id | bigint FK | Lipputyypin tunnus, viittaus [TicketType](#TicketType)-tauluun
+> code | varchar | Lipun yksilöllinen koodi lipun hakemista ja tarkistamista varten
 
 >### _TicketType_
 >_TicketType-taulu kuvastaa lipun tyyppiä. Lipputyypit määritetään kullekkin tapahtumalle erikseen, ja kullekkin lipputyypille määritetään oma hinta._
