@@ -34,7 +34,7 @@ public class TicketService {
 	private ObjectMapper objectmapper;
 	
 	// lipun PATCH-toiminto
-	public Ticket patchTicket(JsonPatch patchDocument, String code) {
+	public void patchTicket(JsonPatch patchDocument, String code) {
 		
 		// Haetaan lippu ticketreposta (TicketControllerissa tarkistettu jo että lippu löytyy eikä tule virheilmoitusta)
         Ticket originalTicket = ticketrepo.findByCode(code).get();        
@@ -50,9 +50,6 @@ public class TicketService {
 
 	    // Tallennetaan muokattu lippu ticketrepoon
 	    ticketrepo.save(modifiedTicket);         
-
-	    // Palautetaan muokattu lippu
-	    return modifiedTicket;
 	}		
 		
 	// hae kaikki liput

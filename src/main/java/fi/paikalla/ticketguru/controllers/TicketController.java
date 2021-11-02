@@ -160,8 +160,9 @@ public class TicketController {
 				return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // palautetaan viesti ja 400		
 			}
 			else { // jos lippu ei ole käytetty
-				Ticket patchedTicket = ticketservice.patchTicket(patchDocument, code); // käytetään lippu ticketservicen patchTicket-metodin kautta
-				return new ResponseEntity<>(patchedTicket, HttpStatus.OK);
+				/*Ticket patchedTicket =*/ ticketservice.patchTicket(patchDocument, code); // viedään lippu ticketservicen patchTicket-metodille (joka merkitsee sen käytetyksi ja tallentaa ticketrepoon)
+				response.put("message", "Ticket is valid");
+				return new ResponseEntity<>(response, HttpStatus.OK);
 			}				
 		}
 	}
