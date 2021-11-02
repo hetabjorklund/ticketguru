@@ -185,7 +185,7 @@ public class TicketController {
 				ticket.getPrice(),
 				invoice.get()
 			);
-		
+				
 		long eventId = ticketservice.getEventIdFromTicket(newTicket); // TicketServicen metodi, joka ottaa syötteenä ticketin ja palauttaa eventin Id:n
 		boolean hasAvailableTickets;
 		
