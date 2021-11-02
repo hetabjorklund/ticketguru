@@ -79,23 +79,5 @@ public class Ticket {
 		this.used = false;
 		this.code = RandomString.make(12);
 	}
-	
-	/*public Ticket(TicketType ticketType, Double price, Event event, Invoice invoice) {
-		super();
-		this.price = price;
-		//this.event = event; 
-		this.used = false;
-		this.ticketType = ticketType;
-		this.invoice = invoice; 
-	}*/
-	
-	/*private String createRandomCode(int length) {
-		String random = RandomString.make(length);
-		
-		if (ticketrepo.findByCode(random).isPresent()) { // jos samalla koodilla löytyy jo lippu, koodi ei ole uniikki
-			random = RandomString.make(length);
-		}
-		return random;
-	}*/
-		
+			
 }
