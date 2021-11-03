@@ -271,11 +271,16 @@ public class TicketController {
 	// DELETE
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@DeleteMapping("/tickets/{id}")
-	public @ResponseBody ResponseEntity<Optional<Ticket>> deleteTicket(@PathVariable("id") Long ticketId){
+	public @ResponseBody ResponseEntity<?> deleteTicket(@PathVariable("id") Long ticketId){
 		Optional<Ticket> ticket = ticketrepo.findById(ticketId);
 		
 		if(ticket.isEmpty()) {
-			return new ResponseEntity<>(ticket, HttpStatus.NOT_FOUND);
+			Map<String, String> response = new HashMap<>();
+			String message = "Ticket with the given Id was not found";
+			String status = "404";
+			response.put("message", message);
+			response.put("status", status);
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		}
 		
 		ticketrepo.delete(ticket.get());
