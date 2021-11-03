@@ -231,13 +231,13 @@ public class TicketController {
 	// muokkaa olemassaolevaa lippua
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PutMapping("/tickets/{id}")
-	public @ResponseBody ResponseEntity<?> modifyTicket(@Valid @RequestBody TicketDto ticketDto, @PathVariable("id") Long ticketId, BindingResult bindingResult){
+	public @ResponseBody ResponseEntity<?> modifyTicket(@Valid @RequestBody TicketDto ticketDto, BindingResult bindingResult, @PathVariable("id") Long ticketId){
 		Map<String, String> response = new HashMap<>();
 		String message;
 		
-		if(bindingResult.hasErrors()) {
-			response = errResGenerator.generateErrorResponseFromBindingResult(bindingResult);
-			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // Messagena bindingresultin virheviestit ja statuksena 400
+		if(bindingResult.hasErrors()) { // Mikäli validoinnissa on virheitä
+			response = errResGenerator.generateErrorResponseFromBindingResult(bindingResult); // components-kansiosta luokan ErrorResponseGenerator metodi, joka ottaa syötteenä BindingResult-olion ja luo siitä responsen
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // messagena bindingresultin virheet, statuksena 400
 		}
 		
 		Optional<TicketType> ticketType = typerepo.findById(ticketDto.getTicketType());
@@ -265,7 +265,11 @@ public class TicketController {
 		newTicket.setInvoice(invoice.get());
 		ticketrepo.save(newTicket);
 		
-		return new ResponseEntity<>(newTicket, HttpStatus.OK);
+		message = "Ticket modified succesfully";
+		response.put("message", message);
+		response.put("status", "200");
+		
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
 	// DELETE
