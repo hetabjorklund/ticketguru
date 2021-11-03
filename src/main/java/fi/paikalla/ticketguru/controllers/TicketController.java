@@ -185,7 +185,7 @@ public class TicketController {
 		
 		if(ticketType.isEmpty() || invoice.isEmpty()) { // Mikäli TicketDto:ssa annettua ticketTypeä tai invoicea ei löytynyt tietokannasta
 			response.put("status", "400");
-			response.put("message", "Bad Request");
+			response.put("message", "Either ticket type or invoice was not found");
 			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 		}
 		
