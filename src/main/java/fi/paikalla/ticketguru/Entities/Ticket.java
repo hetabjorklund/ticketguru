@@ -23,7 +23,7 @@ import net.bytebuddy.utility.RandomString;
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
 @NoArgsConstructor
-@Validated
+//@Validated
 public class Ticket {
 	
 	//@Autowired
