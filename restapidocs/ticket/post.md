@@ -13,10 +13,10 @@ Tietorajoitteet: Pyynnössä on oltava sekä lipputyypin(TicketType) että lasku
 Esimerkkipyyntö:
 ```json
 {
-    "price": 20.85,
+    "price": 20.45,
     "used": false,
-    "ticketType": 5,
-    "invoice": 9
+    "ticketType": 1,
+    "invoice": 2
 }
 ```
 
@@ -29,25 +29,49 @@ Koodi : 201 CREATED
 Esimerkki vastauksen sisällöstä:
 ```json
 {
-    "price": 20.85,
-    "used": false,
-    "ticketType": 5,
-    "invoice": 9
+    "message": "Ticket succesfully created",
+    "status": "201"
 }
 ```
 
 ### Virheellisen pyynnön vastaus
 
-Ehto: Luotua lippua ei saada sidottua tietokannassa olevaan lipputyyppiin tai tilaukseen.
+Ehto: Lipputyypiksi ja/tai laskun numeroksi on merkitty pienempi kuin 1.
 
 Koodi: 400 BAD REQUEST
 
 Sisältö:
 ```json
 {
-    "price": 20.85,
-    "used": false,
-    "ticketType": 500,
-    "invoice": 9
+    "message": "invoice should be at least 1. ticketType must be at least 1.",
+    "status": "400"
+}
+```
+
+TAI
+
+Ehto:  Lipputyyppiä tai laskua ei löytynyt kannasta.
+
+Koodi: 400 BAD REQUEST
+
+Sisältö:
+```json
+{
+    "message": "Either ticket type or invoice was not found",
+    "status": "400"
+}
+```
+
+TAI
+
+Ehto: Tapahtuma on jo myyty loppuun
+
+Koodi: 400 BAD REQUEST
+
+Sisältö:
+```json
+{
+    "message": "The event is already sold out",
+    "status": "400"
 }
 ```

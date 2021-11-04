@@ -1,24 +1,24 @@
 # Tickets-dokumentaatio
 
-## Hae lippu yksilöivän tunnisteen perusteella
+## Hae lippu lippukoodin perusteella
 
-URL : /tickets/{id}
+URL : /tickets/{code}
 
 Metodi : GET
 
-Vaatii valtuutuksen : Kyllä
+Vaatii valtuutuksen : Kyllä, USER tai ADMIN
 
 ### Onnistuneen pyynnön vastaus
 
-Ehto : Syötetyllä tunnisteella ei löydy lippua tietokannasta.
+Ehto : Syötetyllä koodilla ei löydy lippua tietokannasta.
 
 Koodi : 404 NOT FOUND
 
-Sisältö : null
+Sisältö :
 
 TAI
 
-Ehto: Syötetyllä tunnisteella löytyy lippu tietokannasta.
+Ehto: Syötetyllä koodilla löytyy lippu tietokannasta.
 
 Koodi : 200 OK
 
@@ -26,70 +26,205 @@ Sisältö :
 
 ```json
 {
-    "id": 10,
-    "price": 20.9,
+    "id": 3,
+    "price": 120.45,
     "used": false,
     "ticketType": {
-        "id": 5,
+        "id": 1,
         "event": {
-            "id": 2,
-            "name": "Ruisrock",
-            "address": "Savonlinnankatu 50",
-            "maxCapacity": 600,
-            "startTime": "2021-12-03T09:00:00",
-            "endTime": "2021-12-03T16:00:00",
-            "endOfPresale": "2021-11-27T16:00:00",
-            "status": null,
-            "description": "murderdeathkill",
-            "new": false
+            "id": 4,
+            "name": "testitapahtuma2",
+            "address": "osoitekatu 1",
+            "maxCapacity": 1000,
+            "startTime": [
+                2024,
+                6,
+                22,
+                19,
+                0
+            ],
+            "endTime": [
+                2023,
+                6,
+                22,
+                19,
+                0
+            ],
+            "endOfPresale": [
+                2022,
+                6,
+                22,
+                19,
+                0
+            ],
+            "status": {
+                "id": 3,
+                "statusName": "järjestetään"
+            },
+            "description": "tapahtumakuvaus"
         },
         "type": "aikuinen",
-        "price": 20.9,
-        "new": false
+        "price": 20.45
     },
     "invoice": {
-        "invoiceId": 9,
-        "timestamp": "2021-09-29T21:51:43.561781",
         "tguser": {
-            "id": 8,
-            "userName": "MaiMe",
-            "new": false
-        }
+            "id": 1,
+            "firstName": "etunimi",
+            "lastName": "sukunimi",
+            "userName": "user"
+        },
+        "timestamp": [
+            2021,
+            10,
+            26,
+            22,
+            21,
+            52,
+            185369000
+        ],
+        "invoiceId": 2
     },
-    "new": false
+    "code": "QqnCXNYNlMBu"
 }
 ```
 
-## Tarkasta lipun tunnisteen perusteella, onko se käytetty
+## Hae kaikkien lippujen tiedot
 
-URL : /tickets/{id}/used
+URL: /tickets
 
-Metodi : GET
+Metodi: GET
 
-Vaatii valtuutuksen : Kyllä
+Vaatii valtuutuksen: Kyllä, USER tai ADMIN
 
-### Onnistuneen pyynnön vastaus
-
-Ehto : Syötetyllä tunnisteella ei löydy lippua tietokannasta.
-
-Koodi : 404 NOT FOUND
-
-Sisältö :
-
-```json
-{
-    "ticketIdFound": false
-}
-```
-TAI
-
-Ehto : Syötetyllä tunnisteella löytyy lippu tietokannasta.
+### Vastaus
 
 Koodi : 200 OK
 
 Sisältö :
+
 ```json
-{
-    "used": false
-}
+[
+    {
+        "id": 1,
+        "price": 120.45,
+        "used": false,
+        "ticketType": {
+            "id": 1,
+            "event": {
+                "id": 4,
+                "name": "testitapahtuma2",
+                "address": "osoitekatu 1",
+                "maxCapacity": 1000,
+                "startTime": [
+                    2024,
+                    6,
+                    22,
+                    19,
+                    0
+                ],
+                "endTime": [
+                    2023,
+                    6,
+                    22,
+                    19,
+                    0
+                ],
+                "endOfPresale": [
+                    2022,
+                    6,
+                    22,
+                    19,
+                    0
+                ],
+                "status": {
+                    "id": 3,
+                    "statusName": "järjestetään"
+                },
+                "description": "tapahtumakuvaus"
+            },
+            "type": "aikuinen",
+            "price": 20.45
+        },
+        "invoice": {
+            "tguser": {
+                "id": 1,
+                "firstName": "etunimi",
+                "lastName": "sukunimi",
+                "userName": "user"
+            },
+            "timestamp": [
+                2021,
+                10,
+                26,
+                22,
+                21,
+                52,
+                185369000
+            ],
+            "invoiceId": 2
+        },
+        "code": null
+    },
+    {
+        "id": 2,
+        "price": 120.45,
+        "used": false,
+        "ticketType": {
+            "id": 1,
+            "event": {
+                "id": 4,
+                "name": "testitapahtuma2",
+                "address": "osoitekatu 1",
+                "maxCapacity": 1000,
+                "startTime": [
+                    2024,
+                    6,
+                    22,
+                    19,
+                    0
+                ],
+                "endTime": [
+                    2023,
+                    6,
+                    22,
+                    19,
+                    0
+                ],
+                "endOfPresale": [
+                    2022,
+                    6,
+                    22,
+                    19,
+                    0
+                ],
+                "status": {
+                    "id": 3,
+                    "statusName": "järjestetään"
+                },
+                "description": "tapahtumakuvaus"
+            },
+            "type": "aikuinen",
+            "price": 20.45
+        },
+        "invoice": {
+            "tguser": {
+                "id": 1,
+                "firstName": "etunimi",
+                "lastName": "sukunimi",
+                "userName": "user"
+            },
+            "timestamp": [
+                2021,
+                10,
+                26,
+                22,
+                21,
+                52,
+                185369000
+            ],
+            "invoiceId": 2
+        },
+        "code": "WUvMVNd9ZI7P"
+    }
+]
 ```
