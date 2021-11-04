@@ -77,3 +77,67 @@ Vastauksen sisältö:
     "status": "400"
 }
 ```
+
+# Lipun used-statuksen tarkastaminen ja käytetyksi merkitseminen
+
+Tarkastaa, onko lippu käytetty. Mikäli lippua ei ole vielä käytetty, asetetaan se käytetyksi.
+
+URL: /tickets/{code}/used
+
+Metodi : PUT
+
+Vaatiiko autorisoinnin : Kyllä
+
+Tietorajoitteet: URLissa esitetty koodi on löydyttävä tietokannasta
+
+Esimerkki pyynnöstä: URLissa oltava lipun koodi, erillistä RequestBodya ei tarvitse
+
+## Onnistuneen pyynnön vastaus
+
+Ehto: URLissa esitetty koodi löytyy tietokannasta, eikä lippua ole vielä käytetty
+
+Koodi: 200 OK
+
+Vastauksen sisältö:
+
+```json
+{
+    "message": "Ticket is valid"
+}
+```
+
+TAI
+
+Ehto: URLiin syötetty koodi löytyy tietokannasta, mutta lippu on jo käytetty
+
+Koodi: 400 BAD REQUEST
+
+Vastauksen sisältö
+
+```json
+{
+    "message": "Ticket has already been used. Ticket is not valid"
+}
+```
+
+## Epäonnistuneen pyynnön vastaus
+
+Ehto: URLissa syötettyä koodia ei löydy tietokannasta
+
+Koodi: 400 BAD REQUEST
+
+Vastauksen sisältö:
+
+```json
+{
+    "message": "Ticket not found"
+}
+```
+
+TAI
+
+Ehto: Pyynnön lähettäjä ei ole auktorisoitu
+
+Koodi: 401 Unauthorized
+
+Vastauksen sisältö: ei sisältöä
