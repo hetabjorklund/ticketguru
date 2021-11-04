@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import fi.paikalla.ticketguru.Components.ErrorResponseGenerator;
 import fi.paikalla.ticketguru.Entities.*;
 import fi.paikalla.ticketguru.Repositories.*;
 import fi.paikalla.ticketguru.Services.EventService;
@@ -39,11 +41,16 @@ public class EventController {
 	@Autowired
 	private TicketService ticketservice;
 	@Autowired
-	private EventService eventservice; 
+	private EventService eventservice;
+	@Autowired
+	private ErrorResponseGenerator responsegenerator;
 
+	// DELETE
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/events/{id}") // poista yksittäinen tapahtuma id:n perusteella. Endpointia /events joka poistaisi kaikki tapahtumat, ei tarvita
-	public ResponseEntity<String> deleteEvent(@PathVariable Long id) {
+	public ResponseEntity<?> deleteEvent(@PathVariable Long id) {
+		
+		Map<String, String> response = new HashMap<>(); // alustetaan uusi vastaus
 		
 		if (this.eventrepo.findById(id).isPresent()) { // jos haetulla id:llä löytyy tapahtuma
 			
@@ -51,19 +58,21 @@ public class EventController {
 			
 			if (ticketservice.getTicketsByEvent(id).size() == 0) { // tarkistetaan onko tapahtumalla lippuja	
 				this.eventrepo.delete(event); // jos ei, poistetaan tapahtuma
-				return new ResponseEntity<String>("Event deleted", HttpStatus.NO_CONTENT); // palautetaan viesti ja 204
+				response.put("message", "Event deleted");
+				return new ResponseEntity<>(response, HttpStatus.NO_CONTENT); // palautetaan viesti ja 204. HUOM! Jostain syystä vastaukseen ei tule mukaan responsea, vain tyhjä body ja 204
 			}
 			
 			else { // jos tapahtumalla on lippuja
-				return new ResponseEntity<String>("Event has associated tickets, deletion forbidden", HttpStatus.FORBIDDEN); // palautetaan viesti ja 403
+				response.put("message", "Event has associated tickets, deletion forbidden");
+				return new ResponseEntity<>(response, HttpStatus.FORBIDDEN); // palautetaan viesti ja 403
 			}
-		}
-		
+		}		
 		else { // eli jos haetulla id:llä ei löydy tapahtumaa
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // palautetaan 404
 		}
 	}	
 	
+	// GET
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/events") //hae kaikki tapahtumat parametreilla ja ilman 
 	public ResponseEntity<?> getEvents(@RequestParam(required = false) String start, @RequestParam(required = false) String end) {
@@ -112,14 +121,19 @@ public class EventController {
 	// POST
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/events") // lisää uuden tapahtuman
-	public ResponseEntity<Event> addEvent(@Valid @RequestBody Event event, BindingResult bindingresult) {
-		if (bindingresult.hasErrors()) { // tarkistetaan tuleeko pyynnössä mukana tapahtuman nimi
-			return new ResponseEntity<>(event, HttpStatus.BAD_REQUEST); // jos uudella tapahtumalla ei ole nimeä, sitä ei luoda vaan palautetaan 400
+	public ResponseEntity<?> addEvent(@Valid @RequestBody Event event, BindingResult bindingresult) {
+		
+		Map<String, String> response = new HashMap<>(); // alustetaan uusi vastaus
+				
+		if (bindingresult.hasErrors()) { // tarkistetaan onko pyynnössä validointivirheitä
+			response = responsegenerator.generateErrorResponseFromBindingResult(bindingresult);
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // jos on, ei luoda uutta tapahtumaa vaan palautetaan viesti ja 400
 		}		
-		else { // jos tapahtumalla on nimi				
+		else { // jos validointivirheitä ei ole				
 			// tarkista onko tapahtuma jo olemassa; jotta tapahtumaa pidetään samana, sekä sen nimi että aloitusaika pitää olla sama
-			if (eventrepo.findByName(event.getName()) != null && eventrepo.findByName(event.getName()).getStartTime().equals(event.getStartTime())) { 
-				return new ResponseEntity<>(eventrepo.findByName(event.getName()), HttpStatus.CONFLICT); // jos on, älä luo uutta samannimistä vaan palauta olemassaoleva ja 409
+			if (eventrepo.findByName(event.getName()) != null && eventrepo.findByName(event.getName()).getStartTime().equals(event.getStartTime())) {								
+				response.put("message", "Event already exists");				
+				return new ResponseEntity<>(response, HttpStatus.CONFLICT); // jos on, älä luo uutta samannimistä vaan palauta viesti ja 409
 			}		
 			else {
 				return new ResponseEntity<>(eventrepo.save(event), HttpStatus.CREATED); // jos samannimistä tapahtumaa ei ole, luo uusi ja palauta se

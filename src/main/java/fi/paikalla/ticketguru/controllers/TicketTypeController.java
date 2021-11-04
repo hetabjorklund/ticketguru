@@ -48,8 +48,8 @@ public class TicketTypeController {
 			return new ResponseEntity<>(list, HttpStatus.OK);
 		}
 	}
-	// or hasAuthority('USER')
-	//@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/types") //kaikki lipputyypit
 	public ResponseEntity<List<TicketType>> getAllTypes() {
 		List<TicketType> list = (List<TicketType>) typerepo.findAll();  
@@ -104,12 +104,11 @@ public class TicketTypeController {
 			return new ResponseEntity<>(setting, HttpStatus.OK); //palauta varsinainen entitettii ja ok. 
 			} catch (Exception e) {
 				return new ResponseEntity<>(type, HttpStatus.BAD_REQUEST); //virheet kiinni
-			}
-			
-			
+			}			
 		}
 		return new ResponseEntity<>(type, HttpStatus.BAD_REQUEST);	//muut virheet kiinni.
 	}
+	
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/types/{id}")// poistetaan idn perusteella
 	public ResponseEntity<?> deleteTypeById(@PathVariable(value = "id") Long typeid) {
@@ -130,8 +129,4 @@ public class TicketTypeController {
 		}
 	}
 	
-	
-	
-	
-
 }
