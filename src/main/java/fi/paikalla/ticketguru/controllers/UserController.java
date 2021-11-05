@@ -33,6 +33,8 @@ public class UserController {
 	@Autowired
 	TGUserRepository userepo; 
 	
+	// GET
+	
 	@GetMapping("/users")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<List<TGUser>> getUsers(){
@@ -58,9 +60,6 @@ public class UserController {
 			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 		}
 		
-		
-		
-		
 		//authentication = SecurityContextHolder.getContext().getAuthentication();
 		//String currentPrincipalName = authentication.toString();
 		//return currentPrincipalName;
@@ -70,7 +69,8 @@ public class UserController {
 		//return authentication.toString(); 
 	}
 	
-	
+	// POST
+		
 	@PostMapping("/users")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> makeUser(@Valid @RequestBody UserDto user, BindingResult bindres) {
@@ -98,7 +98,10 @@ public class UserController {
 		}
 		
 	}
-	//TGUserin settereiden privaattiasetus estää täyden päivityksen,
+	
+	// PUT
+	
+	//TGUserin settereiden privaattiasetus estää täyden päivityksen
 	@PutMapping("/users/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> alterPassword(@PathVariable(value = "id") long userId, 
@@ -125,6 +128,8 @@ public class UserController {
 		}		
 	}
 	
+	// DELETE
+	
 	@DeleteMapping("/users")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> deleteUser(@PathVariable(value = "id") long userId) {
@@ -146,8 +151,4 @@ public class UserController {
 		
 	}
 	
-	
-	
-	
-
 }

@@ -138,7 +138,7 @@ public class TicketController {
 	}*/
 	
 	// lipuntarkistus: tarkista koodin perusteella, onko lippu jo käytetty ja jos ei, merkitse lippu käytetyksi 
-	/*@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PatchMapping (path="/tickets/{code}/used", consumes = "application/json-patch+json")
 	public ResponseEntity<?> checkTicket(@PathVariable String code, @RequestBody JsonPatch patchDocument) {
 			
@@ -158,15 +158,15 @@ public class TicketController {
 				return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // palautetaan viesti ja 400		
 			}
 			else { // jos lippu ei ole käytetty
-				Ticket patchedTicket = ticketservice.patchTicket(patchDocument, code); // viedään lippu ticketservicen patchTicket-metodille (joka merkitsee sen käytetyksi ja tallentaa ticketrepoon)
+				ticketservice.patchTicket(patchDocument, code); // viedään lippu ticketservicen patchTicket-metodille (joka merkitsee sen käytetyksi ja tallentaa ticketrepoon)
 				response.put("message", "Ticket is valid");
 				return new ResponseEntity<>(response, HttpStatus.OK);
 			}				
 		}
-	}*/
+	}
 	
 	// Lipun Patchin kierto
-	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	/*@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PutMapping("/tickets/{code}/used")
 	public ResponseEntity<?> checkTicket(@PathVariable String code){
 		Map<String, String> response = new HashMap<String, String>(); // alustetaan uusi vastaus
@@ -189,7 +189,7 @@ public class TicketController {
 		response.put("message", "Ticket is valid");
 		
 		return new ResponseEntity<>(response, HttpStatus.OK);
-	}
+	}*/
 	
 	
 	// POST
@@ -298,6 +298,8 @@ public class TicketController {
 	}
 	
 	// DELETE
+	
+	// poista yksi lippu id:n perusteella
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@DeleteMapping("/tickets/{id}")
 	public @ResponseBody ResponseEntity<?> deleteTicket(@PathVariable("id") Long ticketId){

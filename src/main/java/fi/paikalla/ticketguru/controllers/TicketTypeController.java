@@ -27,12 +27,15 @@ import fi.paikalla.ticketguru.dto.TicketTypeDto;
 
 @RestController
 public class TicketTypeController {
+	
 	@Autowired
 	private TicketTypeRepository typerepo; 
 	@Autowired
 	private EventRepository eventrepo; 
 	@Autowired
 	private TicketRepository tickrepo; 
+	
+	// GET
 	
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/events/{id}/types") //lipputyypit per eventId
@@ -60,6 +63,8 @@ public class TicketTypeController {
 		}
 	}
 	
+	// POST
+	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/types") //luo uusi tyyppi
 	public ResponseEntity<?> makeNewType(@RequestBody TicketTypeDto type) {
@@ -80,6 +85,8 @@ public class TicketTypeController {
 		}
 		return new ResponseEntity<>(type, HttpStatus.BAD_REQUEST); //ei tapahtumaa, palauta objekti ja bad request. 
 	}
+	
+	// PUT
 	
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PutMapping("/types/{id}") //päivitä idn perusteella
@@ -108,6 +115,8 @@ public class TicketTypeController {
 		}
 		return new ResponseEntity<>(type, HttpStatus.BAD_REQUEST);	//muut virheet kiinni.
 	}
+	
+	// DELETE
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/types/{id}")// poistetaan idn perusteella

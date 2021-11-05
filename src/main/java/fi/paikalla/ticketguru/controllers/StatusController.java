@@ -30,6 +30,8 @@ public class StatusController {
 	@Autowired
 	private EventStatusRepository statusrepo;
 	
+	// GET
+	
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/status") // hakee kaikki statukset
 	public ResponseEntity<List<EventStatus>> getAllStatuses() {
@@ -72,6 +74,8 @@ public class StatusController {
 		}
 	}
 	
+	// POST
+	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping ("/status")// luo uuden statuksen, VALIDOINTI HEITTÄÄ AUTOMAATTIRESPONSEN
 	public ResponseEntity<?> createEventStatus (@Valid @RequestBody EventStatus status, BindingResult bindingresult) {
@@ -89,6 +93,9 @@ public class StatusController {
 		}
 	}
 	
+	// PATCH
+
+	// Tämän voisi muokata jossain vaiheessa ns. oikeaoppiseksi patchiksi
 	@PreAuthorize("hasRole('ADMIN')")
 	@PatchMapping("/status/{id}")// muokkaa statuksen nimeä, VALIDOINTI HEITTÄÄ AUTOMAATTIRESPONSEN
 	public ResponseEntity<?> updateName(@PathVariable(value = "id") Long statusId, 
@@ -111,6 +118,8 @@ public class StatusController {
 			}
 		}
 	}
+	
+	// DELETE
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/status/{id}") // poistaa statuksen id:n perusteella, mikäli siihen ei ole liitetty tapahtumia
