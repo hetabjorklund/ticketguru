@@ -197,58 +197,62 @@ public class TicketController {
 	// luo uusi lippu
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PostMapping("/tickets")
-	public @ResponseBody ResponseEntity<?> createTicket(@Valid @RequestBody TicketDto ticket, BindingResult bindingResult){
+	public @ResponseBody ResponseEntity<?> createTicket(@Valid @RequestBody List<TicketDto> tickets, BindingResult bindingResult){
 		Map<String, String> response = new HashMap<>();
+		String message = "";
+		HttpStatus status = HttpStatus.CREATED;
 		
 		if(bindingResult.hasErrors()) { // Mikäli validoinnissa on virheitä
 			response = errResGenerator.generateErrorResponseFromBindingResult(bindingResult); // components-kansiosta luokan ErrorResponseGenerator metodi, joka ottaa syötteenä BindingResult-olion ja luo siitä responsen
 			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // messagena bindingresultin virheet, statuksena 400
 		}
 		
-		Optional<TicketType> ticketType = typerepo.findById(ticket.getTicketType());
-		Optional<Invoice> invoice = invoicerepo.findById(ticket.getInvoice());
-		
-		if(ticketType.isEmpty() || invoice.isEmpty()) { // Mikäli TicketDto:ssa annettua ticketTypeä tai invoicea ei löytynyt tietokannasta
-			response.put("status", "400");
-			response.put("message", "Either ticket type or invoice was not found");
-			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-		}
-		
-		Ticket newTicket = new Ticket( // luodaan uusi ticketti
-				ticketType.get(),
-				ticket.getPrice(),
-				invoice.get()
-			);
-		
-		boolean isCodeAvailable = ticketservice.checkTicketCodeAvailability(newTicket.getCode()); // Tarkistetaan, onko lipun satunnaisesti luotu koodi käytettävissä
-		
-		// Mikäli koodi ei ole käytettävissä, luodaan uusi käyttämätön koodi
-		if(!isCodeAvailable) {
-			String code = ticketservice.generateNewTicketCode(newTicket);
-			newTicket.setCode(code);
-		}
-				
-		long eventId = ticketservice.getEventIdFromTicket(newTicket); // TicketServicen metodi, joka ottaa syötteenä ticketin ja palauttaa eventin Id:n
-		boolean hasAvailableTickets;
-		
-		try {
-			hasAvailableTickets = eventservice.hasAvailableTickets(eventId); // EventServicen metodi, joka tarkastaa, onko tapahtumaan lippuja jäljellä
-		} catch(Exception e) {
-			hasAvailableTickets = false;
-		}
-		
-		//Mikäli lippuja on jäljellä, luodaan uusi lippu. Mikäli lippuja ei ole jäljellä, palautetaan BAD_REQUEST
-		if(hasAvailableTickets) {
+		for(TicketDto ticket: tickets) { // Käydään lippulista läpi lippu kerrallaan
+			Optional<TicketType> ticketType = typerepo.findById(ticket.getTicketType());
+			Optional<Invoice> invoice = invoicerepo.findById(ticket.getInvoice());
+			
+			if(ticketType.isEmpty() || invoice.isEmpty()) { // Mikäli TicketDto:ssa annettua ticketTypeä tai invoicea ei löytynyt tietokannasta
+				status = HttpStatus.BAD_REQUEST;
+				message = "Either ticket type or invoice was not found; tickettype_id=" + ticket.getTicketType() + ", invoice_id=" + ticket.getInvoice();
+				break;
+			}
+			
+			Ticket newTicket = new Ticket( // luodaan uusi ticketti
+					ticketType.get(),
+					ticket.getPrice(),
+					invoice.get()
+				);
+			
+			boolean isCodeAvailable = ticketservice.checkTicketCodeAvailability(newTicket.getCode()); // Tarkistetaan, onko lipun satunnaisesti luotu koodi käytettävissä
+			
+			// Mikäli koodi ei ole käytettävissä, luodaan uusi käyttämätön koodi
+			if(!isCodeAvailable) {
+				String code = ticketservice.generateNewTicketCode(newTicket);
+				newTicket.setCode(code);
+			}
+			
+			long eventId = ticketservice.getEventIdFromTicket(newTicket); // TicketServicen metodi, joka ottaa syötteenä ticketin ja palauttaa eventin Id:n
+			boolean hasAvailableTickets;
+			
+			try {
+				hasAvailableTickets = eventservice.hasAvailableTickets(eventId); // EventServicen metodi, joka tarkastaa, onko tapahtumaan lippuja jäljellä
+			} catch(Exception e) {
+				hasAvailableTickets = false;
+			}
+			
+			//Mikäli lippuja on jäljellä, luodaan uusi lippu. Mikäli lippuja ei ole jäljellä, palautetaan BAD_REQUEST
+			if(!hasAvailableTickets) {
+				status = HttpStatus.BAD_REQUEST;
+				message = "The event is already sold out; event_id=" + newTicket.getTicketType().getEvent().getId() + ", event_name='" + newTicket.getTicketType().getEvent() + "'";
+			}
+			
 			ticketrepo.save(newTicket);
-			response = new HashMap<>();
-			response.put("status", "201");
-			response.put("message", "Ticket succesfully created");
-			return new ResponseEntity<>(response, HttpStatus.CREATED);
+			status = HttpStatus.CREATED;
+			message = "Ticket succesfully created";
 		}
 		
-		response.put("status", "400");
-		response.put("message", "The event is already sold out");
-		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+		response.put("message", message);
+		return new ResponseEntity<>(response, status);
 	}
 	
 	// PUT
