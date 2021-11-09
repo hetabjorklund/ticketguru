@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,7 @@ import fi.paikalla.ticketguru.Entities.Ticket;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-class TicketServiceTest {
+class TicketServiceUnitTest {
 	
 	@Autowired
 	TicketService ticketservicetester;
