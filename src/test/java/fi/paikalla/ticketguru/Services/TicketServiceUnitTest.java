@@ -20,6 +20,7 @@ class TicketServiceUnitTest {
 	@Autowired
 	TicketService ticketservicetester;
 	
+	// testaa löytyvätkö kaikki liput
 	@Test
 	void testGetAllTickets() {
 		
@@ -37,6 +38,7 @@ class TicketServiceUnitTest {
 
 	}
 
+	// testaa, toimiiko random-koodin arvonta ja duplikaatin tarkistus
 	@Test
 	void testCheckTicketCodeAvailability() {
 		
@@ -47,6 +49,12 @@ class TicketServiceUnitTest {
 			() -> assertTrue(ticketservicetester.checkTicketCodeAvailability("000000000000"), "Should return true since the code doesn't yet exist")		
 		);
 		
+	}
+	
+	// testi, jonka on tarkoitus feilata
+	@Test
+	void testCodeAvailabilityShouldFail() {		
+		assertFalse(ticketservicetester.checkTicketCodeAvailability("000000000000"), "This is supposed to fail");		
 	}
 
 }
