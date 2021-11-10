@@ -5,17 +5,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.json.JsonPatch;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -34,6 +36,7 @@ import fi.paikalla.ticketguru.Services.EventService;
 import fi.paikalla.ticketguru.Services.TicketService;
 import fi.paikalla.ticketguru.dto.TicketDto;
 
+@Validated
 @RestController
 public class TicketController {
 	
@@ -197,15 +200,16 @@ public class TicketController {
 	// luo uusi lippu
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PostMapping("/tickets")
-	public @ResponseBody ResponseEntity<?> createTicket(@Valid @RequestBody List<TicketDto> tickets, BindingResult bindingResult){
+	public @ResponseBody ResponseEntity<?> createTicket(@RequestBody @NotEmpty(message = "List of tickets cannot be empty.") List<@Valid TicketDto> tickets, BindingResult bindingResult){
 		Map<String, String> response = new HashMap<>();
-		String message = "";
-		HttpStatus status = HttpStatus.CREATED;
 		
 		if(bindingResult.hasErrors()) { // Mikäli validoinnissa on virheitä
 			response = errResGenerator.generateErrorResponseFromBindingResult(bindingResult); // components-kansiosta luokan ErrorResponseGenerator metodi, joka ottaa syötteenä BindingResult-olion ja luo siitä responsen
 			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // messagena bindingresultin virheet, statuksena 400
 		}
+		
+		String message = "";
+		HttpStatus status = HttpStatus.CREATED;
 		
 		for(TicketDto ticket: tickets) { // Käydään lippulista läpi lippu kerrallaan
 			Optional<TicketType> ticketType = typerepo.findById(ticket.getTicketType());
@@ -243,12 +247,13 @@ public class TicketController {
 			//Mikäli lippuja on jäljellä, luodaan uusi lippu. Mikäli lippuja ei ole jäljellä, palautetaan BAD_REQUEST
 			if(!hasAvailableTickets) {
 				status = HttpStatus.BAD_REQUEST;
-				message = "The event is already sold out; event_id=" + newTicket.getTicketType().getEvent().getId() + ", event_name='" + newTicket.getTicketType().getEvent() + "'";
+				message = "The event is already sold out; event_id=" + newTicket.getTicketType().getEvent().getId() + ", event_name='" + newTicket.getTicketType().getEvent().getName() + "'";
+				break;
 			}
 			
 			ticketrepo.save(newTicket);
 			status = HttpStatus.CREATED;
-			message = "Ticket succesfully created";
+			message = "Tickets succesfully created";
 		}
 		
 		response.put("message", message);
@@ -319,4 +324,12 @@ public class TicketController {
 		ticketrepo.delete(ticket.get());
 		return new ResponseEntity<>(ticket, HttpStatus.NO_CONTENT);
 	}
+	
+
+
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<?> handle(ConstraintViolationException constraintViolationException) {
+	   Map<String, String> response = errResGenerator.handleConstraintViolationException(constraintViolationException);
+	   return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+	 }
 }
