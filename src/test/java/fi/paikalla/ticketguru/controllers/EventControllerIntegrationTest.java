@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +53,8 @@ class EventControllerIntegrationTest {
 		Event testevent = new Event(randomEventName, "Testimaailma", 10,  start, end, presaleend, "Tapahtuma testausta varten");
 		eventrepositorytester.save(testevent);
 		
-		int size = eventrepositorytester.findAll().size();
-		String jsonlocation = "$[" + (size-1) + "].name";
+		// tulostetaan varmuuden vuoksi jotta näkee missä indeksissä mennään
+		String jsonlocation = "$[" + (eventrepositorytester.findAll().size()-1) + "].name";
 		
 		System.out.println(jsonlocation);
 					
@@ -79,8 +80,8 @@ class EventControllerIntegrationTest {
 		Event testevent = new Event(randomEventName, "Testimaailma", 10,  start, end, presaleend, "Tapahtuma testausta varten");
 		eventrepositorytester.save(testevent);
 		
-		int size = eventrepositorytester.findAll().size();
-		String jsonlocation = "$[" + (size-1) + "].name";
+		// tulostetaan varmuuden vuoksi jotta näkee missä indeksissä mennään
+		String jsonlocation = "$[" + (eventrepositorytester.findAll().size()-1) + "].name";
 		
 		System.out.println(jsonlocation);
 					
