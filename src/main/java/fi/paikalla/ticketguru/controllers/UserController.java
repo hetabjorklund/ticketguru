@@ -40,9 +40,8 @@ public class UserController {
 		return new ResponseEntity<>(list, HttpStatus.OK); 
 	}
 	
-	@GetMapping("/users/me") //yritys hakea omia tietoja. ei onnistu
-	//@PreAuthorize("#username == authentication.principal.username")
-	public ResponseEntity<?> getOwnUser (/*Authentication authentication*/){
+	@GetMapping("/users/me") //hae omia tietoja
+	public ResponseEntity<?> getOwnUser (){
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		
 		if (principal instanceof UserDetails) {
@@ -56,18 +55,7 @@ public class UserController {
 			response.put("message", "Something went wrong");
 			
 			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-		}
-		
-		
-		
-		
-		//authentication = SecurityContextHolder.getContext().getAuthentication();
-		//String currentPrincipalName = authentication.toString();
-		//return currentPrincipalName;
-		//TGUser res = userepo.findByUserName(username); 
-		//return new ResponseEntity<>(authentication, HttpStatus.OK); 
-		//todo 
-		//return authentication.toString(); 
+		} 
 	}
 	
 	

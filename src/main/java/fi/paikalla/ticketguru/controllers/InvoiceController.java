@@ -13,6 +13,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import fi.paikalla.ticketguru.Repositories.InvoiceRepository;
+import fi.paikalla.ticketguru.Repositories.TGUserRepository;
 import fi.paikalla.ticketguru.Services.InvoiceService;
 import fi.paikalla.ticketguru.Entities.*;
 
@@ -36,6 +39,9 @@ public class InvoiceController {
 	
 	@Autowired
 	private InvoiceService invoiceservice;
+	
+	@Autowired 
+	private TGUserRepository userepo; 
 	
 	// GET	
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
@@ -76,7 +82,7 @@ public class InvoiceController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // jos tapahtuu jokin virhe, etsittyä laskua ei ole löytynyt ja palautetaan 404			
 		}
 	}	
-	
+	/*
 	// POST
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PostMapping("/invoices")
@@ -102,6 +108,33 @@ public class InvoiceController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // joten palautetaan 400
 		}
 	}		
+	*/
+	
+	
+	//uusi POST
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	@PostMapping("/invoices")
+	public ResponseEntity<?> addInvoiceNoUser() throws Exception {
+		//Map<String, String> response = new HashMap<String, String>();
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		try {
+			if (principal instanceof UserDetails) {
+				UserDetails userDetails = (UserDetails)principal;
+				String username = userDetails.getUsername();
+				TGUser currUser = userepo.findByUserName(username);
+				Invoice newInvoice = new Invoice(currUser); 
+				invoicerepo.save(newInvoice); 
+				return new ResponseEntity<>(newInvoice, HttpStatus.CREATED);
+			} else {
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	
 	
 	// PUT
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
