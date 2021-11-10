@@ -1,5 +1,6 @@
 package fi.paikalla.ticketguru.controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -202,7 +203,7 @@ public class TicketController {
 	// luo uusi lippu
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PostMapping("/tickets")
-	public @ResponseBody ResponseEntity<?> createTicket(@RequestBody @NotEmpty(message = "List of tickets cannot be empty.") List<@Valid TicketDto> tickets, BindingResult bindingResult){
+	public @ResponseBody ResponseEntity<?> createTicket(@RequestBody @NotEmpty(message = "List of tickets cannot be empty.") List<@Valid TicketDto> ticketDtos, BindingResult bindingResult){
 		Map<String, String> response = new HashMap<>();
 		
 		if(bindingResult.hasErrors()) { // Mikäli validoinnissa on virheitä
@@ -213,7 +214,9 @@ public class TicketController {
 		String message = "";
 		HttpStatus status = HttpStatus.CREATED;
 		
-		for(TicketDto ticket: tickets) { // Käydään lippulista läpi lippu kerrallaan
+		List<Ticket> tickets = new ArrayList<>();
+		
+		for(TicketDto ticket: ticketDtos) { // Käydään lippulista läpi lippu kerrallaan
 			Optional<TicketType> ticketType = typerepo.findById(ticket.getTicketType());
 			Optional<Invoice> invoice = invoicerepo.findById(ticket.getInvoice());
 			
@@ -247,17 +250,33 @@ public class TicketController {
 			}
 			
 			//Mikäli lippuja on jäljellä, luodaan uusi lippu. Mikäli lippuja ei ole jäljellä, palautetaan BAD_REQUEST
-			if(!hasAvailableTickets) {
+			/*if(!hasAvailableTickets) {
 				status = HttpStatus.BAD_REQUEST;
 				message = "The event is already sold out; event_id=" + newTicket.getTicketType().getEvent().getId() + ", event_name='" + newTicket.getTicketType().getEvent().getName() + "'";
 				break;
-			}
+			}*/
 			
-			ticketrepo.save(newTicket);
+			tickets.add(newTicket);
+			
+			/*ticketrepo.save(newTicket);
 			status = HttpStatus.CREATED;
-			message = "Tickets succesfully created";
+			message = "Tickets succesfully created";*/
 		}
 		
+		boolean hasTicketsAvailable = eventservice.checkTicketAvailability(tickets); // Käydään lippulista läpi ja katsotaan, onko eventeissä tarpeeksi lippuja jäljellä
+		
+		if(!hasTicketsAvailable) {
+			message = "Some of the events do not have enough tickets available";
+			status = HttpStatus.BAD_REQUEST;
+			response.put("message", message);
+			return new ResponseEntity<>(response, status);
+		}
+		
+		for(Ticket ticket: tickets) {
+			ticketrepo.save(ticket);
+		}
+		
+		message = "Tickets created succesfully";
 		response.put("message", message);
 		return new ResponseEntity<>(response, status);
 	}
@@ -299,6 +318,25 @@ public class TicketController {
 		newTicket.setUsed(ticketDto.isUsed());
 		newTicket.setTicketType(ticketType.get());
 		newTicket.setInvoice(invoice.get());
+		
+		Long eventId = ticketservice.getEventIdFromTicket(newTicket);
+		
+		boolean hasAvailableTickets;
+		
+		try {
+			hasAvailableTickets = eventservice.hasAvailableTickets(eventId);
+		}catch(Exception e) {
+			hasAvailableTickets = false;
+		}
+		
+		if(!hasAvailableTickets) {
+			message = "Event is already sold out";
+			response.put("message", message);
+			response.put("status", "400");
+			
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+		}
+		
 		ticketrepo.save(newTicket);
 		
 		message = "Ticket modified succesfully";
