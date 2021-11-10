@@ -3,7 +3,13 @@ package fi.paikalla.ticketguru.Components;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -26,4 +32,20 @@ public class ErrorResponseGenerator {
 		
 		return response;
 	}
+	
+	public Map<String, String> handleConstraintViolationException(ConstraintViolationException constraintViolationException) {
+	    Set<ConstraintViolation<?>> violations = constraintViolationException.getConstraintViolations();
+	    Map<String, String> response = new HashMap<>();
+	    String errorMessage = "";
+	    if (!violations.isEmpty()) {
+	        StringBuilder builder = new StringBuilder();
+	        violations.forEach(violation -> builder.append(violation.getMessage() + ". "));
+	        errorMessage = builder.toString().trim();
+	    } else {
+	        errorMessage = "ConstraintViolationException occured.";
+	    }
+	    
+	    response.put("message", errorMessage);
+	    return response;
+	 }
 }
