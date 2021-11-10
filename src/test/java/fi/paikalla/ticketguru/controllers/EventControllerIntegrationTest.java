@@ -3,6 +3,7 @@ package fi.paikalla.ticketguru.controllers;
 import java.time.LocalDateTime;
 
 import org.assertj.core.api.Assertions;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,8 +32,9 @@ class EventControllerIntegrationTest {
 	@Autowired
 	private EventRepository eventrepositorytester;
 	
-	private String local = "/events"; // paikallista testaamista varten
-	private String heroku = "https://ticketguru-2021.herokuapp.com/events"; // herokun testaamista varten		
+	// helposti vaihdettavat osoitteet muuttujina paikallista ja herokun testaamista varten
+	private String local = "/events";
+	private String heroku = "https://ticketguru-2021.herokuapp.com/events";		
 	
 	// testaa, onko testirepository olemassa
 	@Test
@@ -43,19 +45,30 @@ class EventControllerIntegrationTest {
 	// testaa, löytyykö luotu testitapahtuma tietokannasta GETillä haettaessa
 	@Test
 	void testEventIsCreatedAndExists() throws Exception {
-		 
-		LocalDateTime start = LocalDateTime.of(2022,12,01,00,00);
-		LocalDateTime end = LocalDateTime.of(2022,12,01,00,00); 
-		LocalDateTime presaleend = LocalDateTime.of(2022,12,01,00,00);
+		 	
+		String randomEventName = RandomString.make(15);	
+
+		JSONObject testevent = new JSONObject();		 
+		testevent.put("name", randomEventName);
+		testevent.put("address", "Testimaailma");
+		testevent.put("maxCapacity", 10);
+		testevent.put("startTime", "2022-12-01T00:00:00");
+		testevent.put("endTime", "2022-12-01T00:00:00");
+		testevent.put("endOfPresale", "2022-12-01T00:00:00");
+		testevent.put("status", null);
+		testevent.put("description", "Testin luoma tapahtuma");
+		testevent.put("ticketTypes", null);
 		
-		String randomEventName = RandomString.make(15);
+		mvc.perform(post(local)
+				.contentType(MediaType.APPLICATION_JSON)
+		        .content(testevent.toString()) 
+		        .accept(MediaType.APPLICATION_JSON))
+		        .andExpect(status().isCreated())
+		        .andExpect(content().contentType(MediaType.APPLICATION_JSON)); 			
 		
-		Event testevent = new Event(randomEventName, "Testimaailma", 10,  start, end, presaleend, "Tapahtuma testausta varten");
-		eventrepositorytester.save(testevent);
-		
-		// tulostetaan varmuuden vuoksi jotta näkee missä indeksissä mennään
 		String jsonlocation = "$[" + (eventrepositorytester.findAll().size()-1) + "].name";
-		
+
+		// tulostetaan varmuuden vuoksi jotta näkee missä indeksissä mennään
 		System.out.println(jsonlocation);
 					
 		mvc.perform(get(local)
@@ -63,26 +76,37 @@ class EventControllerIntegrationTest {
 			      .andExpect(status().isOk())
 			      .andExpect(content()
 			      .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			      .andExpect(jsonPath(jsonlocation).value(testevent.getName()));	
+			      .andExpect(jsonPath(jsonlocation).value(testevent.get("name")));	
 		
 	}
 	
 	// testi, jonka on tarkoitus feilata
 	@Test
 	void testShouldFail() throws Exception {
-		 
-		LocalDateTime start = LocalDateTime.of(2022,12,01,00,00);
-		LocalDateTime end = LocalDateTime.of(2022,12,01,00,00); 
-		LocalDateTime presaleend = LocalDateTime.of(2022,12,01,00,00);
-		
+		 	
 		String randomEventName = RandomString.make(15);
 		
-		Event testevent = new Event(randomEventName, "Testimaailma", 10,  start, end, presaleend, "Tapahtuma testausta varten");
-		eventrepositorytester.save(testevent);
+		JSONObject testevent = new JSONObject();		 
+		testevent.put("name", randomEventName);
+		testevent.put("address", "Testimaailma");
+		testevent.put("maxCapacity", 10);
+		testevent.put("startTime", "2022-12-01T00:00:00");
+		testevent.put("endTime", "2022-12-01T00:00:00");
+		testevent.put("endOfPresale", "2022-12-01T00:00:00");
+		testevent.put("status", null);
+		testevent.put("description", "Testin luoma tapahtuma");
+		testevent.put("ticketTypes", null);
 		
-		// tulostetaan varmuuden vuoksi jotta näkee missä indeksissä mennään
+		mvc.perform(post(local)
+				.contentType(MediaType.APPLICATION_JSON)
+		        .content(testevent.toString()) 
+		        .accept(MediaType.APPLICATION_JSON))
+		        .andExpect(status().isCreated())
+		        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+				
 		String jsonlocation = "$[" + (eventrepositorytester.findAll().size()-1) + "].name";
 		
+		// tulostetaan varmuuden vuoksi jotta näkee missä indeksissä mennään
 		System.out.println(jsonlocation);
 					
 		mvc.perform(get(local)
