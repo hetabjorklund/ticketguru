@@ -38,7 +38,9 @@ public class TGUser {
 	private Long id;
 	
 	public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
+	@ToString.Exclude @JsonIgnore
 	private String firstName;
+	@ToString.Exclude @JsonIgnore
 	private String lastName; 
 	private String userName;
 	@ToString.Exclude 
