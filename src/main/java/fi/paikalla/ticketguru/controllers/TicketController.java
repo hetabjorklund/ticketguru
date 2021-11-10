@@ -265,14 +265,14 @@ public class TicketController {
 		
 		boolean hasTicketsAvailable = eventservice.checkTicketAvailability(tickets); // Käydään lippulista läpi ja katsotaan, onko eventeissä tarpeeksi lippuja jäljellä
 		
-		if(!hasTicketsAvailable) {
+		if(!hasTicketsAvailable) { // Mikäli lippuja ei ole jäljellä, lippujen luontia ei suoriteta
 			message = "Some of the events do not have enough tickets available";
 			status = HttpStatus.BAD_REQUEST;
 			response.put("message", message);
 			return new ResponseEntity<>(response, status);
 		}
 		
-		for(Ticket ticket: tickets) {
+		for(Ticket ticket: tickets) { // Mikäli kaikki ok, liput luodaan
 			ticketrepo.save(ticket);
 		}
 		
