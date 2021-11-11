@@ -15,7 +15,7 @@ import fi.paikalla.ticketguru.Entities.Ticket;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-class TicketServiceUnitTest {
+class TicketServiceTest {
 	
 	@Autowired
 	TicketService ticketservicetester;
