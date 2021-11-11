@@ -35,7 +35,6 @@ Tapahtumalla on oltava nimi, eli name-attribuutti ei saa puuttua. Kunhan name-at
 **HTTP-vastauskoodi** : `201 CREATED`
 
 **Esimerkkivastaus** : Palautetaan luodun tapahtuman tiedot.
-
 ```json
 {
     "id": 12,
@@ -101,7 +100,6 @@ Tapahtumalla on oltava nimi, eli name-attribuutti ei saa puuttua. Kunhan name-at
 **HTTP-vastauskoodi** : `400 BAD REQUEST`
 
 **Esimerkkivastaus**
-
 ```json
 {
     "timestamp": "2021-09-24T09:34:56.617+00:00",
@@ -110,5 +108,73 @@ Tapahtumalla on oltava nimi, eli name-attribuutti ei saa puuttua. Kunhan name-at
     "trace": [stacktrace],    
     "message": "JSON parse error: Expected array or string.; nested exception is com.fasterxml.jackson.databind.exc.MismatchedInputException: Expected array or string.\n at [Source: (PushbackInputStream); line: 7, column: 21] (through reference chain: fi.paikalla.ticketguru.Entities.Event[\"endOfPresale\"])",
     "path": "/events"
+}
+```
+
+# Luo tapahtumalle oviliput ennakkomyynnin päätyttyä
+
+Tarkistaa, onko tapahtuman ennakkomyynti päättynyt ja jos on, luo ennakkomyynnistä ylijääneet liput ovilipuiksi myytäväksi tapahtuman ovella.
+
+**URL** : `/events/{id}/tickets`
+
+**Pyynnön tyyppi** : `POST` (tyhjä pyyntö ilman bodya)
+
+**Autentikaatio vaadittu** : Kyllä, ADMIN tai USER
+
+**Reunaehdot** : Tapahtuman id:n on oltava olemassa. Lipun hinta täytyy antaa pyynnön parametrina (avain 'price', arvo double-tyyppinen).
+
+**Esimerkkipyyntö** : Tyhjä POST-pyyntö (ilman bodya) polkuun /events/{id}/tickets?price=25.0
+
+## Onnistumisvastaus
+
+**Ehto** : Ovilippujen luominen onnistui.
+
+**HTTP-vastauskoodi** : `201 CREATED`
+
+**Esimerkkivastaus** : 
+```json
+{
+    "message": "10 door tickets created"
+}
+```
+
+## Virhevastaus
+
+### 1
+
+**Ehto** : Tapahtuman id:llä ei löydy tapahtumaa.
+
+**HTTP-vastauskoodi** : `404 NOT FOUND`
+
+**Esimerkkivastaus** :  
+```json
+{
+    "message": "Event not found"
+}
+```
+
+### 2
+
+**Ehto** : Tapahtumaan ei ole lippuja jäljellä, vaan tapahtuma on loppuunmyyty jo ennakkomyynnissä.
+
+**HTTP-vastauskoodi** : `400 BAD REQUEST`
+
+**Esimerkkivastaus** :  
+```json
+{
+    "message": "The event is already sold out. There are no tickets left"
+}
+```
+
+### 3
+
+**Ehto** : Tapahtuman ennakkomyynti ei ole vielä loppunut.
+
+**HTTP-vastauskoodi** : `400 BAD REQUEST`
+
+**Esimerkkivastaus** :  
+```json
+{
+    "message": "The presale has not yet ended"
 }
 ```
