@@ -1,7 +1,5 @@
 package fi.paikalla.ticketguru.controllers;
 
-import java.time.LocalDateTime;
-
 import org.assertj.core.api.Assertions;
 import org.json.JSONException;
 import org.json.JSONObject;
