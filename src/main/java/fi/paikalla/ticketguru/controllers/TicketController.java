@@ -216,6 +216,8 @@ public class TicketController {
 		
 		List<Ticket> tickets = new ArrayList<>();
 		
+		boolean areTicketsValid = true;
+		
 		for(TicketDto ticket: ticketDtos) { // Käydään lippulista läpi lippu kerrallaan
 			Optional<TicketType> ticketType = typerepo.findById(ticket.getTicketType());
 			Optional<Invoice> invoice = invoicerepo.findById(ticket.getInvoice());
@@ -223,6 +225,7 @@ public class TicketController {
 			if(ticketType.isEmpty() || invoice.isEmpty()) { // Mikäli TicketDto:ssa annettua ticketTypeä tai invoicea ei löytynyt tietokannasta
 				status = HttpStatus.BAD_REQUEST;
 				message = "Either ticket type or invoice was not found; tickettype_id=" + ticket.getTicketType() + ", invoice_id=" + ticket.getInvoice();
+				areTicketsValid = false;
 				break;
 			}
 			
@@ -240,14 +243,14 @@ public class TicketController {
 				newTicket.setCode(code);
 			}
 			
-			long eventId = ticketservice.getEventIdFromTicket(newTicket); // TicketServicen metodi, joka ottaa syötteenä ticketin ja palauttaa eventin Id:n
+			/*long eventId = ticketservice.getEventIdFromTicket(newTicket); // TicketServicen metodi, joka ottaa syötteenä ticketin ja palauttaa eventin Id:n
 			boolean hasAvailableTickets;
 			
 			try {
 				hasAvailableTickets = eventservice.hasAvailableTickets(eventId); // EventServicen metodi, joka tarkastaa, onko tapahtumaan lippuja jäljellä
 			} catch(Exception e) {
 				hasAvailableTickets = false;
-			}
+			}*/
 			
 			//Mikäli lippuja on jäljellä, luodaan uusi lippu. Mikäli lippuja ei ole jäljellä, palautetaan BAD_REQUEST
 			/*if(!hasAvailableTickets) {
@@ -263,20 +266,23 @@ public class TicketController {
 			message = "Tickets succesfully created";*/
 		}
 		
-		boolean hasTicketsAvailable = eventservice.checkTicketAvailability(tickets); // Käydään lippulista läpi ja katsotaan, onko eventeissä tarpeeksi lippuja jäljellä
+		if(areTicketsValid) {
+			boolean hasTicketsAvailable = eventservice.checkTicketAvailability(tickets); // Käydään lippulista läpi ja katsotaan, onko eventeissä tarpeeksi lippuja jäljellä
 		
-		if(!hasTicketsAvailable) { // Mikäli lippuja ei ole jäljellä, lippujen luontia ei suoriteta
-			message = "Some of the events do not have enough tickets available";
-			status = HttpStatus.BAD_REQUEST;
-			response.put("message", message);
-			return new ResponseEntity<>(response, status);
+			if(!hasTicketsAvailable) { // Mikäli lippuja ei ole jäljellä, lippujen luontia ei suoriteta
+				message = "Some of the events do not have enough tickets available";
+				status = HttpStatus.BAD_REQUEST;
+				response.put("message", message);
+			}else {
+				message = "Tickets created succesfully";
+				
+				for(Ticket ticket: tickets) { // Mikäli kaikki ok, liput luodaan
+					ticketrepo.save(ticket);
+				}
+			}
 		}
 		
-		for(Ticket ticket: tickets) { // Mikäli kaikki ok, liput luodaan
-			ticketrepo.save(ticket);
-		}
 		
-		message = "Tickets created succesfully";
 		response.put("message", message);
 		return new ResponseEntity<>(response, status);
 	}
