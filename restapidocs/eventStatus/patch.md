@@ -10,25 +10,19 @@ Muokkaa tietokannasta löytyvän statuksen nimeä.
 
 **Reunaehdot**
 
-Toimita statukselle muokattu nimi.
-
-```json
-{
-    "statusName": "string"
-}
-```
+Toimita operaation tyyppi ja kenttä jota haluat muokata.
 
 **Esimerkkipyyntö** 
 
 ```json
-{
-    "statusName": "EDITcanceled"
-}
+[
+    {"op": "replace", "path": "/statusName", "value": "EDITcanceled"}
+]
 ```
 
 ## Onnistumisvastaus
 
-**Ehto** : Mikäli pyynnön mukana toimitetaan statuksen nimi 
+**Ehto** : Statuksen muokkaus onnistui
 
 **HTTP-vastauskoodi** : `200 OK`
 
@@ -37,8 +31,7 @@ Toimita statukselle muokattu nimi.
 ```json
 {
     "id": 1,
-    "statusName": "EDITEDupcoming",
-    "new": false
+    "statusName": "EDITcanceled"
 }
 ```
 
@@ -51,7 +44,9 @@ Toimita statukselle muokattu nimi.
 **Esimerkkivastaus** :
 
 ```json
-Status not found
+{
+    "message" : "Status not found"
+}
 ```
 
 ### tai
