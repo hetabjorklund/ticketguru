@@ -10,7 +10,7 @@ Muokkaa tietokannasta löytyvän tapahtumasta annetut tiedot.
 
 **Reunaehdot**
 
-Toimita kentät, joita haluat muokata.
+Toimita operaatioiden tyyppi ja kenttä jota haluat muokata.
 
 ```json
 [
@@ -56,8 +56,7 @@ Toimita kentät, joita haluat muokata.
         0
     ],
     "status": null,
-    "description": "Artistikattauksessa mm. X, Y ja Z",
-    "new": false
+    "description": "Artistikattauksessa mm. X, Y ja Z"
 }
 ```
 
