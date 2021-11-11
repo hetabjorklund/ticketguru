@@ -68,3 +68,17 @@ Vastauksen sisältö:
     "invoice": 9
 }
 ```
+
+TAI
+
+Ehto: Lipputyyppi, johon lipun tietoja yritetään muuttaa, kuuluu tapahtumalle, joka on jo loppuunmyyty
+
+Koodi: 400 BAD REQUEST
+
+Vastauksen sisältö:
+```json
+{
+    "message": "Event is already sold out",
+    "status": "400"
+}
+```
