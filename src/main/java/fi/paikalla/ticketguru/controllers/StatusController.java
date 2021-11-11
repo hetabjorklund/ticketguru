@@ -5,11 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.json.JsonPatch;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,12 +25,15 @@ import org.springframework.web.bind.annotation.RestController;
 import fi.paikalla.ticketguru.Entities.Event;
 import fi.paikalla.ticketguru.Entities.EventStatus;
 import fi.paikalla.ticketguru.Repositories.EventStatusRepository;
+import fi.paikalla.ticketguru.Services.StatusService;
 
 @RestController
 public class StatusController {
 	
 	@Autowired
 	private EventStatusRepository statusrepo;
+	@Autowired
+	private StatusService statusservice;
 	
 	// GET
 	
@@ -86,7 +91,8 @@ public class StatusController {
 			return new ResponseEntity<> (response, HttpStatus.BAD_REQUEST); // jos ei statukselle ole annettu nimeä, sitä ei luoda ja palautetaan 400-koodi
 		} else { // jos pyynnössä on statukselle nimi
 			if (statusrepo.findByStatusName(status.getStatusName()) != null) { // tarkistetaan onko kyseinen status jo olemassa kannassa
-				return new ResponseEntity<> (statusrepo.findByStatusName(status.getStatusName()), HttpStatus.CONFLICT); //palauttaa olemassa olevan statuksen, jos sellainen löytyy sekä 409-koodin
+				response.put("message", "Status already exists");
+				return new ResponseEntity<> (response, HttpStatus.CONFLICT); //palauttaa olemassa olevan statuksen, jos sellainen löytyy sekä 409-koodin
 			} else {
 				return new ResponseEntity<> (statusrepo.save(status), HttpStatus.CREATED); // luodaan uusi status, palautetaan sen tiedot ja 201-koodi
 			}
@@ -95,8 +101,8 @@ public class StatusController {
 	
 	// PATCH
 
-	// Tämän voisi muokata jossain vaiheessa ns. oikeaoppiseksi patchiksi
-	@PreAuthorize("hasRole('ADMIN')")
+	// vanha, ei ns. oikeaoppinen patch
+	/*@PreAuthorize("hasRole('ADMIN')")
 	@PatchMapping("/status/{id}")// muokkaa statuksen nimeä, VALIDOINTI HEITTÄÄ AUTOMAATTIRESPONSEN
 	public ResponseEntity<?> updateName(@PathVariable(value = "id") Long statusId, 
 			@Valid @RequestBody EventStatus status, BindingResult bindingresult) {
@@ -116,6 +122,26 @@ public class StatusController {
 				statusrepo.save(newStatus); // tallennetaan status uudella nimellä kantaan
 				return new ResponseEntity<>(newStatus, HttpStatus.OK); // palautetaan korjatut statuksen tiedot ja 200-koodi
 			}
+		}
+	}*/
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@PatchMapping (path="/status/{id}", consumes = "application/json-patch+json") // muokkaa statusta osittain id:n perusteella
+	public ResponseEntity<?> updateStatus(@PathVariable long id, @RequestBody JsonPatch patchDocument) throws HttpMessageNotReadableException {
+		Map<String, String> response = new HashMap<String, String>(); // alustetaan uusi response
+		
+		try {
+			Optional<EventStatus> target = statusrepo.findById(id); // haetaan statusreposta mahdollinen status annetulla id:llä
+			if (target.isEmpty()) { //tarkistetaan löytyykö statusta, ellei löydy
+				response.put("message", "Status not found");
+				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); // palautetaan viesti ja 404-koodi
+			} else { // jos status löytyy annetulla id:llä
+				EventStatus patchedStatus = statusservice.patchStatus(patchDocument, id); // käytetään status patchStatus-metodin kautta
+				return new ResponseEntity<>(patchedStatus, HttpStatus.OK);
+			}
+		} catch (HttpMessageNotReadableException e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 	
