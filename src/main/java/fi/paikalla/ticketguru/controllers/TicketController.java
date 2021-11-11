@@ -367,8 +367,6 @@ public class TicketController {
 		return new ResponseEntity<>(ticket, HttpStatus.NO_CONTENT);
 	}
 	
-
-
 	@ExceptionHandler(ConstraintViolationException.class)
 	public ResponseEntity<?> handle(ConstraintViolationException constraintViolationException) {
 	   Map<String, String> response = errResGenerator.handleConstraintViolationException(constraintViolationException);
