@@ -235,8 +235,7 @@ public class InvoiceController {
 				
 			if (invoice.getTickets().size() == 0) { // tarkistetaan onko laskulla lippuja
 				this.invoicerepo.delete(invoice); // jos ei, poistetaan lasku
-				response.put("message", "Invoice deleted");
-				return new ResponseEntity<>(response, HttpStatus.NO_CONTENT); // palautetaan viesti ja 204
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT); // palautetaan 204
 			}
 				
 			else { // jos laskulla on lippuja

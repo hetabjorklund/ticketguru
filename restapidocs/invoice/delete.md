@@ -23,14 +23,24 @@
 
 **HTTP-vastauskoodi** : `404 NOT FOUND`
 
-**Vastaus** : There are no invoices to delete
+**Vastaus** :
+```json
+{
+    "message": "There are no invoices to delete"
+}
+```
 
 ### 2
 **Ehto** : Yhdessä tai useammassa laskussa on lippuja.
 
 **HTTP-vastauskoodi** : `403 FORBIDDEN`
 
-**Vastaus** : One or more invoices have associated tickets, deletion forbidden
+**Vastaus** : 
+```json
+{
+    "message": "One or more invoices have associated tickets, deletion forbidden"
+}
+```
 
 ## Poista tietty lasku
 
@@ -48,8 +58,6 @@
 
 **HTTP-vastauskoodi** : `204 NO CONTENT`
 
-**Vastaus** : Invoice deleted
-
 ### Virhevastaus
 
 ### 1
@@ -62,4 +70,9 @@
 
 **HTTP-vastauskoodi** : `403 FORBIDDEN`
 
-**Vastaus** : Invoice has associated tickets, deletion forbidden
+**Vastaus** : 
+```json
+{
+    "message": "Invoice has associated tickets, deletion forbidden"
+}
+```
