@@ -43,7 +43,8 @@ public class InvoiceController {
 	@Autowired 
 	private TGUserRepository userepo; 
 	
-	// GET	
+	// GET
+	
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/invoices") // hae kaikki laskut
 	public ResponseEntity<List<Invoice>> getAllInvoices() {
@@ -82,9 +83,10 @@ public class InvoiceController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // jos tapahtuu jokin virhe, etsittyä laskua ei ole löytynyt ja palautetaan 404			
 		}
 	}	
-	/*
+	
 	// POST
-	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	
+	/*@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PostMapping("/invoices")
 	public ResponseEntity<?> addInvoice(@Valid @RequestBody Invoice invoice, BindingResult bindingresult) throws Exception { // luodaan uusi lasku
 
@@ -107,13 +109,12 @@ public class InvoiceController {
 		} catch (Exception e) { // kaikki muut mahdolliset virheet paitsi DataIntegrityViolationException, esim. jokin attibuutti on väärää tyyppiä
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // joten palautetaan 400
 		}
-	}	
-	*/
-	//new POST
+	}		
+	*/	
+	
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PostMapping("/invoices")
 	public ResponseEntity<?> addInvoiceNoUser() throws Exception {
-		//Map<String, String> response = new HashMap<String, String>();
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		
 		try {
@@ -130,9 +131,7 @@ public class InvoiceController {
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-	}
-	
-	
+	}	
 	
 	// PUT
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
@@ -191,6 +190,7 @@ public class InvoiceController {
 	}
 				
 	// DELETE
+	
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@DeleteMapping("/invoices")
 	public @ResponseBody ResponseEntity<Map<String, String>> deleteAll() { // poistetaan kaikki laskut
@@ -235,21 +235,18 @@ public class InvoiceController {
 				
 			if (invoice.getTickets().size() == 0) { // tarkistetaan onko laskulla lippuja
 				this.invoicerepo.delete(invoice); // jos ei, poistetaan lasku
-				response.put("message", "Invoice deleted");
-				return new ResponseEntity<>(response, HttpStatus.NO_CONTENT); // palautetaan viesti ja 204
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT); // palautetaan 204
 			}
 				
 			else { // jos laskulla on lippuja
 				response.put("message", "Invoice has associated tickets, deletion forbidden");
 				return new ResponseEntity<>(response, HttpStatus.FORBIDDEN); // palautetaan viesti ja 403
-			}
-				
+			}				
 		}			
 		
 		else { // eli jos haetulla id:llä ei löydy laskua
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // palautetaan 404
-		}
-		
+		}		
 	}
 
 }

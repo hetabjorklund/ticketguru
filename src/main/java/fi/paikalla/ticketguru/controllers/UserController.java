@@ -33,6 +33,8 @@ public class UserController {
 	@Autowired
 	TGUserRepository userepo; 
 	
+	// GET
+	
 	@GetMapping("/users")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<List<TGUser>> getUsers(){
@@ -40,9 +42,8 @@ public class UserController {
 		return new ResponseEntity<>(list, HttpStatus.OK); 
 	}
 	
-	@GetMapping("/users/me") //yritys hakea omia tietoja. ei onnistu
-	//@PreAuthorize("#username == authentication.principal.username")
-	public ResponseEntity<?> getOwnUser (/*Authentication authentication*/){
+	@GetMapping("/users/me") //hae omia tietoja
+	public ResponseEntity<?> getOwnUser (){
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		
 		if (principal instanceof UserDetails) {
@@ -56,21 +57,11 @@ public class UserController {
 			response.put("message", "Something went wrong");
 			
 			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-		}
-		
-		
-		
-		
-		//authentication = SecurityContextHolder.getContext().getAuthentication();
-		//String currentPrincipalName = authentication.toString();
-		//return currentPrincipalName;
-		//TGUser res = userepo.findByUserName(username); 
-		//return new ResponseEntity<>(authentication, HttpStatus.OK); 
-		//todo 
-		//return authentication.toString(); 
+		} 
 	}
 	
-	
+	// POST
+		
 	@PostMapping("/users")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> makeUser(@Valid @RequestBody UserDto user, BindingResult bindres) {
@@ -98,7 +89,10 @@ public class UserController {
 		}
 		
 	}
-	//TGUserin settereiden privaattiasetus estää täyden päivityksen,
+	
+	// PUT
+	
+	//TGUserin settereiden privaattiasetus estää täyden päivityksen
 	@PutMapping("/users/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> alterPassword(@PathVariable(value = "id") long userId, 
@@ -125,6 +119,8 @@ public class UserController {
 		}		
 	}
 	
+	// DELETE
+	
 	@DeleteMapping("/users")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> deleteUser(@PathVariable(value = "id") long userId) {
@@ -146,8 +142,4 @@ public class UserController {
 		
 	}
 	
-	
-	
-	
-
 }

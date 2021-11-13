@@ -1,6 +1,7 @@
 package fi.paikalla.ticketguru.controllers;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -14,8 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -44,7 +46,15 @@ public class EventController {
 	private EventService eventservice;
 	@Autowired
 	private ErrorResponseGenerator responsegenerator;
-
+	@Autowired
+	private TicketTypeRepository tickettyperepo;
+	@Autowired
+	private InvoiceRepository invoicerepo;
+	@Autowired
+	private TicketRepository ticketrepo;
+	@Autowired
+	private TGUserRepository userrepo;
+	
 	// DELETE
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/events/{id}") // poista yksittäinen tapahtuma id:n perusteella. Endpointia /events joka poistaisi kaikki tapahtumat, ei tarvita
@@ -141,6 +151,77 @@ public class EventController {
 		}
 	}
 	
+	// luo tapahtumaan oviliput ennakkomyynnin loputtua
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	@PostMapping("/events/{id}/tickets")
+	public ResponseEntity<?> createDoorTickets(@PathVariable Long id, @RequestParam double price) throws Exception {
+		
+		Map<String, String> response = new HashMap<>(); // alustetaan uusi vastaus
+		
+		try {					
+			// hae tapahtuma
+			Optional<Event> target = eventrepo.findById(id);
+			if (target.isEmpty()) {
+				response.put("message", "Event not found");
+				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); // jos tapahtumaa ei ole, palautetaan 404			
+			}
+			else {
+				
+				Event event = target.get();
+				LocalDateTime today = LocalDateTime.now();
+				
+				// testaamista varten today, joka on tulevaisuudessa
+				//LocalDateTime today = LocalDateTime.parse("2030-12-01T00:00:00");
+				
+				if (event.getEndOfPresale().isBefore(today)) { // tarkista onko ennakkomyynti jo loppunut
+					
+					TicketType doorticket = new TicketType(event, "ovilippu", price); // luo uusi tickettype "ovilippu"
+					tickettyperepo.save(doorticket);					
+					
+					int ticketsLeft = eventservice.getAvailableCapacityOfEvent(id); // laske vapaiden lippujen määrä
+					
+					if (ticketsLeft > 0) { // jos lippuja on jäljellä				
+						
+						// luodaan dummy-lasku johon oviliput voi liittää
+						Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+											
+						if (principal instanceof UserDetails) {
+							UserDetails userDetails = (UserDetails)principal;
+							String username = userDetails.getUsername();
+							TGUser currUser = userrepo.findByUserName(username);
+							Invoice dummyInvoice = new Invoice(currUser); 
+							invoicerepo.save(dummyInvoice);
+							
+							// luo jäljelläoleva määrä lippuja tyyppiä "ovilippu"
+							for (int i = 0; i < ticketsLeft; i++) {
+								Ticket ticket = new Ticket(doorticket, dummyInvoice); 
+								ticketrepo.save(ticket);
+								dummyInvoice.getTickets().add(ticket); // liitetään oviliput dummy-invoicen lippulistaan
+							}							
+							invoicerepo.save(dummyInvoice);							
+						}							
+						
+						String content = ticketsLeft + " door tickets created";
+						response.put("message", content);
+						return new ResponseEntity<>(response, HttpStatus.CREATED); // palautetaan vastaus ja 201						
+					}
+					else { // jos lippuja ei ole jäljellä
+						response.put("message", "The event is already sold out. There are no tickets left");
+						return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // palautetaan viesti ja 400					
+					}					
+				} else { // jos ennakkomyynti ei ole vielä loppunut
+					response.put("message", "The presale has not yet ended");
+					return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // palautetaan viesti ja 400					
+				}							
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("message", e.getMessage());
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+		}
+		
+	}
+		
 	// PUT
 	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping(path = "/events/{id}") // muokkaa haluttua eventtiä id:n perusteella

@@ -27,6 +27,7 @@ import fi.paikalla.ticketguru.dto.TicketTypeDto;
 
 @RestController
 public class TicketTypeController {
+	
 	@Autowired
 	private TicketTypeRepository typerepo; 
 	@Autowired
@@ -34,13 +35,15 @@ public class TicketTypeController {
 	@Autowired
 	private TicketRepository tickrepo; 
 	
+	// GET
+	
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/events/{id}/types") //lipputyypit per eventId
 	public ResponseEntity<List<TicketType>> getByEvent(@PathVariable(value = "id") Long eventId) {
 		Optional<Event> ev = eventrepo.findById(eventId); 
 		List<TicketType> list = typerepo.findByEventId(eventId);
 		if (ev.isEmpty()) {
-			return new ResponseEntity<>(list, HttpStatus.NOT_FOUND); 
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
 		}
 		if (list.isEmpty()) {
 			return new ResponseEntity<>(list, HttpStatus.OK); 
@@ -59,6 +62,8 @@ public class TicketTypeController {
 			return new ResponseEntity<>(list, HttpStatus.OK);
 		}
 	}
+	
+	// POST
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/types") //luo uusi tyyppi
@@ -80,6 +85,8 @@ public class TicketTypeController {
 		}
 		return new ResponseEntity<>(type, HttpStatus.BAD_REQUEST); //ei tapahtumaa, palauta objekti ja bad request. 
 	}
+	
+	// PUT
 	
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PutMapping("/types/{id}") //päivitä idn perusteella
@@ -109,6 +116,8 @@ public class TicketTypeController {
 		return new ResponseEntity<>(type, HttpStatus.BAD_REQUEST);	//muut virheet kiinni.
 	}
 	
+	// DELETE
+	
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/types/{id}")// poistetaan idn perusteella
 	public ResponseEntity<?> deleteTypeById(@PathVariable(value = "id") Long typeid) {
@@ -117,11 +126,11 @@ public class TicketTypeController {
 		if (type.isPresent()) { //jos löytyy, onko lippuja?
 			List<Ticket> tickets = tickrepo.findByTicketType(type.get());
 			if (tickets.size() > 0) { //jos on lippuja, palauttaa kiellon. 
-				response.put("message", "There are tickets associated with this type");
+				response.put("message", "There are tickets associated with this ticket type");
 				return new ResponseEntity<>(response, HttpStatus.FORBIDDEN); 
 			} else { //ei lippuja, poistetaan tyyppi
 				typerepo.delete(type.get());
-				response.put("message", "Ticket Type deleted");
+				response.put("message", "Ticket type deleted");
 				return new ResponseEntity<Map<String, String>>(response, HttpStatus.NO_CONTENT); //palauta no content. 
 			}
 		} else {//tyyppiä ei ole olemassa, palauta not found. 

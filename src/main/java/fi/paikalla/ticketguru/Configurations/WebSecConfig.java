@@ -1,5 +1,6 @@
 package fi.paikalla.ticketguru.Configurations;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import fi.paikalla.ticketguru.Components.UserDetailsServiceImplementation;
-
+import fi.paikalla.ticketguru.Entities.TGUser;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled= true 
@@ -73,5 +76,20 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
 	public PasswordEncoder passCoder() {
 		return new BCryptPasswordEncoder(); 
 	}
+	
+	/*
+	@Bean
+	CorsConfigurationSource corsConfigurationSource() 
+    {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
+    }
+    */
 	
 }

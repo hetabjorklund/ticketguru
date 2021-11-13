@@ -1,20 +1,23 @@
 package fi.paikalla.ticketguru.Services;
 
-import javax.json.JsonPatch;
-import javax.json.JsonStructure;
-import javax.json.JsonValue;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import javax.json.JsonPatch;
+import javax.json.JsonStructure;
+import javax.json.JsonValue;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fi.paikalla.ticketguru.Components.TicketListOrganizer;
 import fi.paikalla.ticketguru.Entities.Event;
+import fi.paikalla.ticketguru.Entities.Ticket;
 import fi.paikalla.ticketguru.Repositories.EventRepository;
 
 @Service
@@ -28,6 +31,9 @@ public class EventService {
 	
 	@Autowired
 	private TicketService ticketservice;
+	
+	@Autowired
+	private TicketListOrganizer ticketlistorganizer;
 	
 	// eventin PATCH-toiminto
 	public Event patchEvent(JsonPatch patchDocument, Long id) {		
@@ -123,6 +129,30 @@ public class EventService {
 		} catch (Exception e) { // jos eventin id:llä ei löydy tapahtumaa ja tulee virhe
 			return false; // palautetaan false
 		}			
-	}	
+	}
 	
+	public boolean checkTicketAvailability(List<Ticket> tickets) { // Tarkastetaan lippulistasta, onko kussakin eventissä tarpeeksi lippuja myytävänä
+		boolean hasAvailableTickets = true;
+		
+		Map<Long, Integer> ticketsPerEvent = ticketlistorganizer.getTicketsPerEvent(tickets); // TicketListOrganizer-komponentin metodi, joka rakentaa lippulistasta mapin, jossa avaimena on eventin id, ja arvona kullekin eventille haluttu lippujen määrä
+		
+		for(Map.Entry<Long, Integer> entry: ticketsPerEvent.entrySet()) { //Käydään mappi läpi avain-arvo-pari kerrallaan
+			Long eventId = entry.getKey();
+			int ticketAmount = entry.getValue();
+			
+			try {
+				int unsoldTickets = this.getAvailableCapacityOfEvent(eventId); // Haetaan eventin perusteella myymättömät liput
+				
+				if(ticketAmount > unsoldTickets) { // Mikäli lippuja ei ole jäljellä tarpeeksi, palautetaan false
+					hasAvailableTickets = false;
+				}
+				
+			}catch(Exception e) {
+				hasAvailableTickets = false;
+			}
+			
+		}
+		
+		return hasAvailableTickets;
+	}
 }

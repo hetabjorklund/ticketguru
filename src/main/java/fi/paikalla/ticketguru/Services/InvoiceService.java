@@ -21,6 +21,7 @@ public class InvoiceService {
 	@Autowired
 	private InvoiceRepository invoicerepo;
 	
+	// invoicen PATCH-toiminto	
 	public Invoice patchInvoice(JsonPatch patchDocument, Long id) {
 			
         // Haetaan lasku invoicereposta (InvoiceControllerin updateInvoice-metodissa on jo tarkistettu että lasku löytyy eikä tule virheilmoitusta)

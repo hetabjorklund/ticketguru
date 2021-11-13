@@ -1,19 +1,24 @@
 package fi.paikalla.ticketguru.controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import javax.json.JsonPatch;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +39,7 @@ import fi.paikalla.ticketguru.Services.EventService;
 import fi.paikalla.ticketguru.Services.TicketService;
 import fi.paikalla.ticketguru.dto.TicketDto;
 
+@Validated
 @RestController
 public class TicketController {
 	
@@ -138,7 +144,7 @@ public class TicketController {
 	}*/
 	
 	// lipuntarkistus: tarkista koodin perusteella, onko lippu jo käytetty ja jos ei, merkitse lippu käytetyksi 
-	/*@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PatchMapping (path="/tickets/{code}/used", consumes = "application/json-patch+json")
 	public ResponseEntity<?> checkTicket(@PathVariable String code, @RequestBody JsonPatch patchDocument) {
 			
@@ -158,15 +164,15 @@ public class TicketController {
 				return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // palautetaan viesti ja 400		
 			}
 			else { // jos lippu ei ole käytetty
-				Ticket patchedTicket = ticketservice.patchTicket(patchDocument, code); // viedään lippu ticketservicen patchTicket-metodille (joka merkitsee sen käytetyksi ja tallentaa ticketrepoon)
+				ticketservice.patchTicket(patchDocument, code); // viedään lippu ticketservicen patchTicket-metodille (joka merkitsee sen käytetyksi ja tallentaa ticketrepoon)
 				response.put("message", "Ticket is valid");
 				return new ResponseEntity<>(response, HttpStatus.OK);
 			}				
 		}
-	}*/
+	}
 	
 	// Lipun Patchin kierto
-	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	/*@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PutMapping("/tickets/{code}/used")
 	public ResponseEntity<?> checkTicket(@PathVariable String code){
 		Map<String, String> response = new HashMap<String, String>(); // alustetaan uusi vastaus
@@ -189,7 +195,7 @@ public class TicketController {
 		response.put("message", "Ticket is valid");
 		
 		return new ResponseEntity<>(response, HttpStatus.OK);
-	}
+	}*/
 	
 	
 	// POST
@@ -197,7 +203,7 @@ public class TicketController {
 	// luo uusi lippu
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PostMapping("/tickets")
-	public @ResponseBody ResponseEntity<?> createTicket(@Valid @RequestBody TicketDto ticket, BindingResult bindingResult){
+	public @ResponseBody ResponseEntity<?> createTicket(@RequestBody @NotEmpty(message = "List of tickets cannot be empty.") List<@Valid TicketDto> ticketDtos, BindingResult bindingResult){
 		Map<String, String> response = new HashMap<>();
 		
 		if(bindingResult.hasErrors()) { // Mikäli validoinnissa on virheitä
@@ -205,50 +211,80 @@ public class TicketController {
 			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // messagena bindingresultin virheet, statuksena 400
 		}
 		
-		Optional<TicketType> ticketType = typerepo.findById(ticket.getTicketType());
-		Optional<Invoice> invoice = invoicerepo.findById(ticket.getInvoice());
+		String message = "";
+		HttpStatus status = HttpStatus.CREATED;
 		
-		if(ticketType.isEmpty() || invoice.isEmpty()) { // Mikäli TicketDto:ssa annettua ticketTypeä tai invoicea ei löytynyt tietokannasta
-			response.put("status", "400");
-			response.put("message", "Either ticket type or invoice was not found");
-			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+		List<Ticket> tickets = new ArrayList<>();
+		
+		boolean areTicketsValid = true;
+		
+		for(TicketDto ticket: ticketDtos) { // Käydään lippulista läpi lippu kerrallaan
+			Optional<TicketType> ticketType = typerepo.findById(ticket.getTicketType());
+			Optional<Invoice> invoice = invoicerepo.findById(ticket.getInvoice());
+			
+			if(ticketType.isEmpty() || invoice.isEmpty()) { // Mikäli TicketDto:ssa annettua ticketTypeä tai invoicea ei löytynyt tietokannasta
+				status = HttpStatus.BAD_REQUEST;
+				message = "Either ticket type or invoice was not found; tickettype_id=" + ticket.getTicketType() + ", invoice_id=" + ticket.getInvoice();
+				areTicketsValid = false;
+				break;
+			}
+			
+			Ticket newTicket = new Ticket( // luodaan uusi ticketti
+					ticketType.get(),
+					ticket.getPrice(),
+					invoice.get()
+				);
+			
+			boolean isCodeAvailable = ticketservice.checkTicketCodeAvailability(newTicket.getCode()); // Tarkistetaan, onko lipun satunnaisesti luotu koodi käytettävissä
+			
+			// Mikäli koodi ei ole käytettävissä, luodaan uusi käyttämätön koodi
+			if(!isCodeAvailable) {
+				String code = ticketservice.generateNewTicketCode(newTicket);
+				newTicket.setCode(code);
+			}
+			
+			/*long eventId = ticketservice.getEventIdFromTicket(newTicket); // TicketServicen metodi, joka ottaa syötteenä ticketin ja palauttaa eventin Id:n
+			boolean hasAvailableTickets;
+			
+			try {
+				hasAvailableTickets = eventservice.hasAvailableTickets(eventId); // EventServicen metodi, joka tarkastaa, onko tapahtumaan lippuja jäljellä
+			} catch(Exception e) {
+				hasAvailableTickets = false;
+			}*/
+			
+			//Mikäli lippuja on jäljellä, luodaan uusi lippu. Mikäli lippuja ei ole jäljellä, palautetaan BAD_REQUEST
+			/*if(!hasAvailableTickets) {
+				status = HttpStatus.BAD_REQUEST;
+				message = "The event is already sold out; event_id=" + newTicket.getTicketType().getEvent().getId() + ", event_name='" + newTicket.getTicketType().getEvent().getName() + "'";
+				break;
+			}*/
+			
+			tickets.add(newTicket);
+			
+			/*ticketrepo.save(newTicket);
+			status = HttpStatus.CREATED;
+			message = "Tickets succesfully created";*/
 		}
 		
-		Ticket newTicket = new Ticket( // luodaan uusi ticketti
-				ticketType.get(),
-				ticket.getPrice(),
-				invoice.get()
-			);
+		if(areTicketsValid) {
+			boolean hasTicketsAvailable = eventservice.checkTicketAvailability(tickets); // Käydään lippulista läpi ja katsotaan, onko eventeissä tarpeeksi lippuja jäljellä
 		
-		boolean isCodeAvailable = ticketservice.checkTicketCodeAvailability(newTicket.getCode()); // Tarkistetaan, onko lipun satunnaisesti luotu koodi käytettävissä
-		
-		// Mikäli koodi ei ole käytettävissä, luodaan uusi käyttämätön koodi
-		if(!isCodeAvailable) {
-			String code = ticketservice.generateNewTicketCode(newTicket);
-			newTicket.setCode(code);
-		}
+			if(!hasTicketsAvailable) { // Mikäli lippuja ei ole jäljellä, lippujen luontia ei suoriteta
+				message = "Some of the events do not have enough tickets available";
+				status = HttpStatus.BAD_REQUEST;
+				response.put("message", message);
+			}else {
+				message = "Tickets created succesfully";
 				
-		long eventId = ticketservice.getEventIdFromTicket(newTicket); // TicketServicen metodi, joka ottaa syötteenä ticketin ja palauttaa eventin Id:n
-		boolean hasAvailableTickets;
-		
-		try {
-			hasAvailableTickets = eventservice.hasAvailableTickets(eventId); // EventServicen metodi, joka tarkastaa, onko tapahtumaan lippuja jäljellä
-		} catch(Exception e) {
-			hasAvailableTickets = false;
+				for(Ticket ticket: tickets) { // Mikäli kaikki ok, liput luodaan
+					ticketrepo.save(ticket);
+				}
+			}
 		}
 		
-		//Mikäli lippuja on jäljellä, luodaan uusi lippu. Mikäli lippuja ei ole jäljellä, palautetaan BAD_REQUEST
-		if(hasAvailableTickets) {
-			ticketrepo.save(newTicket);
-			response = new HashMap<>();
-			response.put("status", "201");
-			response.put("message", "Ticket succesfully created");
-			return new ResponseEntity<>(response, HttpStatus.CREATED);
-		}
 		
-		response.put("status", "400");
-		response.put("message", "The event is already sold out");
-		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+		response.put("message", message);
+		return new ResponseEntity<>(response, status);
 	}
 	
 	// PUT
@@ -288,6 +324,25 @@ public class TicketController {
 		newTicket.setUsed(ticketDto.isUsed());
 		newTicket.setTicketType(ticketType.get());
 		newTicket.setInvoice(invoice.get());
+		
+		Long eventId = ticketservice.getEventIdFromTicket(newTicket);
+		
+		boolean hasAvailableTickets;
+		
+		try {
+			hasAvailableTickets = eventservice.hasAvailableTickets(eventId);
+		}catch(Exception e) {
+			hasAvailableTickets = false;
+		}
+		
+		if(!hasAvailableTickets) {
+			message = "Event is already sold out";
+			response.put("message", message);
+			response.put("status", "400");
+			
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+		}
+		
 		ticketrepo.save(newTicket);
 		
 		message = "Ticket modified succesfully";
@@ -298,6 +353,8 @@ public class TicketController {
 	}
 	
 	// DELETE
+	
+	// poista yksi lippu id:n perusteella
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@DeleteMapping("/tickets/{id}")
 	public @ResponseBody ResponseEntity<?> deleteTicket(@PathVariable("id") Long ticketId){
@@ -315,4 +372,10 @@ public class TicketController {
 		ticketrepo.delete(ticket.get());
 		return new ResponseEntity<>(ticket, HttpStatus.NO_CONTENT);
 	}
+	
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<?> handle(ConstraintViolationException constraintViolationException) {
+	   Map<String, String> response = errResGenerator.handleConstraintViolationException(constraintViolationException);
+	   return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+	 }
 }
