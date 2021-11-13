@@ -1,4 +1,4 @@
-# TicketType: GET
+# TicketTypes-GET
 
 ## Näytä kaikki lipputyypit
 Näytä kaikki tietokantaan lisätyt lipputyypit
@@ -7,7 +7,7 @@ URL: `/types`
 
 Metodi: `GET`
 
-Vaaditaanko autorisointi : Kyllä
+Vaaditaanko autorisointi : kyllä
 
 Onnistuneen pyynnön vastaukset:
 
@@ -86,6 +86,7 @@ Sisältö : Tässä esimerkissä käyttäjä näkee kolme lipputyyppiä tapahtum
     "new": false
   }
 ]
+
 ```
 
 ## Näytä tapahtuman lipputyypit
@@ -96,9 +97,9 @@ URL: `/events/{id}/types`
 
 Metodi: `GET` 
 
-Vaatiiko autorisoinnin : Kyllä
+Vaatiiko autorisoinnin : kyllä
 
-Tietorajoitteet: Pyynnössä oltava olemassaoleva tapahtuman tunnus.
+Tietorajoitteet: Pyyntö ohjattava validiin tapahtumatunnukseen.
 
 ### Onnistuneen pyynnön vastaus
 
@@ -115,6 +116,7 @@ Ehto: Annetulla tunnisteella on tapahtuma ja lipputyyppejä.
 Koodi: `200 OK`
 
 Sisältö:
+
 ```json
 [
   {
@@ -148,7 +150,10 @@ Ehto: Annetulla tunnisteella ei ole tapahtumaa.
 
 Koodi: `404 NOT FOUND`
 
-# TicketType: POST
+Sisältö: []
+
+
+# TicketTypes-POST
 
 ## Lisää uusi lipputyyppi
 
@@ -164,6 +169,7 @@ Tietorajoitteet: Pyynnössä on oltava validi tapahtumatunnus sekä kuvaus (type
 Hinnan puuttuessa se asettuu automattisesti arvoon `0.0`. 
 
 Esimerkkipyyntö:
+
 ```json
 {
 	"event": 3,
@@ -178,7 +184,8 @@ Ehto: Annetulla tunnisteella on tapahtuma ja pyynnössa annettiin myös kuvaus.
 
 Koodi: `201 CREATED`
 
-Sisältö:
+Esimerkkivastaus:
+
 ```json
 {
     "id": 5,
@@ -203,7 +210,6 @@ Sisältö:
     "new": false
   }
 ```
-
 ### Virheellisen pyynnön vastaus
 
 Ehto: Annetulla tunnisteella ei ole tapahtumaa.
@@ -211,6 +217,7 @@ Ehto: Annetulla tunnisteella ei ole tapahtumaa.
 Koodi: `400 BAD REQUEST`
 
 Sisältö: 
+
 ```json
 {
 	"event": 8,
@@ -224,6 +231,7 @@ Ehto: Tapahtumatunnistetta ei ole annettu.
 Koodi: `400 BAD REQUEST`
 
 Sisältö: 
+
 ```json
 {
 	"event": 0,
@@ -237,6 +245,7 @@ Ehto: Pyynnössä ei ole annetty tyyppiä.
 Koodi: `400 BAD REQUEST`
 
 Sisältö: 
+
 ```json
 {
 	"event": 8,
@@ -244,11 +253,11 @@ Sisältö:
 	"price": 23.6
 }
 ```
-# TicketType: PUT
+# TicketTypes-PUT
 
 ## Olemassaolevan lipputyypin päivitys
  
-Päivittää tyypin tunnisteen perusteella
+ Päivittää tyypin tunnisteen perusteella
  
 URL: `/types/{id}`
  
@@ -260,6 +269,7 @@ Tietorajoitteet: Pyynnössä on oltava validi tapahtumatunnus ja lipputyypin kuv
 Hinta on mahdollista jättää pois, jolloin se ei myöskään päivity. 
 
 Esimerkkipyyntö:
+
 ```json
 {
 	"event": 3,
@@ -267,14 +277,14 @@ Esimerkkipyyntö:
 	"price": 23.6
 }
 ```
-
 ### Onnistuneen pyynnön vastaus
  
 Ehto: Tietojen päivitys onnistui
  
 Koodi: `200 OK`
 
-Sisältö:
+Vastauksen sisältö:
+
 ```json
 {
     "id": 5,
@@ -306,7 +316,8 @@ Ehto: Lipputyypin tunnistetta ei löydy
 
 Koodi: `404 NOT FOUND`
 
-Sisältö:
+Vastauksen sisältö:
+
 ```json
 {
 	"event": 3,
@@ -321,7 +332,8 @@ Ehto: Tapahtumatunnistetta ei löydy
 
 Koodi: `400 BAD REQUEST`
 
-Sisältö:
+Vastauksen sisältö:
+
 ```json
 {
 	"event": 3,
@@ -336,7 +348,8 @@ Ehto: Kuvausta ei ole annettu
 
 Koodi: `400 BAD REQUEST`
 
-Sisältö:
+Vastauksen sisältö:
+
 ```json
 {
 	"event": 3,
@@ -345,7 +358,7 @@ Sisältö:
 }
 ```
 
-# TicketType: DELETE
+# TicketTypes-DELETE
 
 ## Lipputyypin poistaminen
 
@@ -365,12 +378,8 @@ Ehto: Tyyppi-id on olemassa
 
 Koodi `204 NO CONTENT`
 
-Sisältö: 
-```json
-{
-  "message" : "Ticket type deleted"
-}
-```
+Vastaus: tyhjä.
+
 
 ### Virheellisen pyynnön vastaus
 
@@ -378,15 +387,13 @@ Ehto: Tunnistetta ei ole olemassa
 
 Koodi: `404 NOT FOUND`
 
+Vastaus: tyhjä
+
 TAI
 
 Ehto: Tyyppiin liittyy lippuja
 
 Koodi: `403 FORBIDDEN`
 
-Sisältö: 
-```json
-{
-  "message" : "There are tickets associated with this ticket type"
-}
-```
+Vastaus: `There are tickets associated with this type`
+
