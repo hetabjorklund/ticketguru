@@ -9,6 +9,7 @@ Luo uuden laskun.
 **Autentikaatio vaadittu** : Kyllä, ADMIN tai USER
 
 **Reunaehdot**
+
 Käyttäjän tulee olla tunnistettu
 
 **Esimerkkipyyntö** 
@@ -43,4 +44,3 @@ Pyyntö ei vaadi lähetettävää bodyä.
 **HTTP-vastauskoodi** : `401 UNAUTHORIZED`
 
 **Vastaus** : tyhjä vastaus
-

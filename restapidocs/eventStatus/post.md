@@ -49,12 +49,9 @@ Toimita statukselle nimi.
 **HTTP-vastauskoodi** : `409 CONFLICT`
 
 **Esimerkkivastaus** :
-
 ```json
 {
-    "id": 12,
-    "statusName": "canceled",
-    "new": false
+    "message": "Status already exists"
 }
 ```
 ### tai

@@ -43,7 +43,7 @@ Listaa yhden tapahtumastatuksen tietyn id:n perusteella
 
 **Pyynnön tyyppi** : `GET`
 
-**Autentikaatio vaadittu** : kyllä, `ADMIN`tai `USER`
+**Autentikaatio vaadittu** : kyllä, `ADMIN` tai `USER`
 
 ## Onnistumisvastaus
 

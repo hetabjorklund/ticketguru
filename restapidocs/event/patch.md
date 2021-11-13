@@ -10,7 +10,7 @@ Muokkaa tietokannasta löytyvän tapahtumasta annetut tiedot.
 
 **Reunaehdot**
 
-Toimita kentät, joita haluat muokata.
+Toimita operaatioiden tyyppi ja kenttä jota haluat muokata.
 
 ```json
 [
@@ -29,8 +29,6 @@ Toimita kentät, joita haluat muokata.
 ```
 
 ## Onnistumisvastaus
-
-**Ehto** : Mikäli pyynnön mukana toimitetaan statuksen nimi 
 
 **HTTP-vastauskoodi** : `200 OK`
 
@@ -58,14 +56,13 @@ Toimita kentät, joita haluat muokata.
         0
     ],
     "status": null,
-    "description": "Artistikattauksessa mm. X, Y ja Z",
-    "new": false
+    "description": "Artistikattauksessa mm. X, Y ja Z"
 }
 ```
 
 ## Virhevastaus
 
-**Ehto** : Mikäli annettua statusta ei löydy tietokannasta
+**Ehto** : Mikäli haettua tapahtuman id:tä ei löydy tietokannasta
 
 **HTTP-vastauskoodi** : `404 NOT FOUND`
 
