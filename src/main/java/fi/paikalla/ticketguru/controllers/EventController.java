@@ -133,7 +133,7 @@ public class EventController {
 	@PostMapping("/events") // lisää uuden tapahtuman
 	public ResponseEntity<?> addEvent(@Valid @RequestBody Event event, BindingResult bindingresult) {
 		
-		Map<String, String> response = new HashMap<>(); // alustetaan uusi vastaus
+		Map<String, Object> response = new HashMap<>(); // alustetaan uusi vastaus
 				
 		if (bindingresult.hasErrors()) { // tarkistetaan onko pyynnössä validointivirheitä
 			response = responsegenerator.generateErrorResponseFromBindingResult(bindingresult);

@@ -16,8 +16,8 @@ import org.springframework.validation.ObjectError;
 
 @Component
 public class ErrorResponseGenerator {
-	public Map<String, String> generateErrorResponseFromBindingResult(BindingResult bindingResult){
-		Map<String, String> response = new HashMap<>();
+	public Map<String, Object> generateErrorResponseFromBindingResult(BindingResult bindingResult){
+		Map<String, Object> response = new HashMap<>();
 		
 		List<ObjectError> errors = bindingResult.getAllErrors(); // Haetaan kaikki virheet listaan
 		StringBuilder strBuilder = new StringBuilder(errors.size()); // Alustetaan vastausviestiä
