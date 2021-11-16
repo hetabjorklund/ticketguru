@@ -1,9 +1,16 @@
 package fi.paikalla.ticketguru.dto;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 public class TicketTypeDto {
+	@NotNull(message = "Event must be present")
+	@Min(value = 1, message = "Event must be larger than 0")
 	private long event; 
+	@NotBlank(message = "Type must be present")
 	private String type; 
+	@NotNull
 	private double price;
 	
 	public TicketTypeDto(long event, String type, double price) {
