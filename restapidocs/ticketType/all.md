@@ -7,7 +7,7 @@ URL: `/types`
 
 Metodi: `GET`
 
-Vaaditaanko autorisointi : kyllä
+Vaaditaanko autorisointi : ADMIN, USER
 
 Onnistuneen pyynnön vastaukset:
 
@@ -97,7 +97,7 @@ URL: `/events/{id}/types`
 
 Metodi: `GET` 
 
-Vaatiiko autorisoinnin : kyllä
+Vaatiiko autorisoinnin : ADMIN, USER
 
 Tietorajoitteet: Pyyntö ohjattava validiin tapahtumatunnukseen.
 
@@ -163,7 +163,7 @@ URL: `/types`
 
 Metodi: `POST`
 
-Vaatiiko autorisoinnin : Kyllä
+Vaatiiko autorisoinnin : ADMIN
 
 Tietorajoitteet: Pyynnössä on oltava validi tapahtumatunnus sekä kuvaus (type).
 Hinnan puuttuessa se asettuu automattisesti arvoon `0.0`. 
@@ -220,50 +220,72 @@ Sisältö:
 
 ```json
 {
-	"event": 8,
-	"type": "lapsi 6-14",
-	"price": 23.6
-}
+	"message": "Invalid event"
+}}
 ```
+
+TAI
 
 Ehto: Tapahtumatunnistetta ei ole annettu.
 
-Koodi: `400 BAD REQUEST`
+Koodi: `400 BAD REQUEST``
 
 Sisältö: 
 
 ```json
-{
-	"event": 0,
-	"type": "lapsi 6-14",
-	"price": 23.6
-}
-```
+
+	{
+    "message": "Event must be valid.",
+    "status": "400"
+	}
+
+````
+
+TAI
 
 Ehto: Pyynnössä ei ole annetty tyyppiä. 
 
-Koodi: `400 BAD REQUEST`
+Koodi: `400 BAD REQUEST``
 
 Sisältö: 
 
-```json
-{
-	"event": 8,
-	"type": null,
-	"price": 23.6
+```jsonn
+
+	{
+    "message": "Type must be present",
+    "status": "400"
+	}6
 }
 ```
-# TicketTypes-PUT
+TAI
 
-## Olemassaolevan lipputyypin päivitys
+Ehto: Pyynnössä oleva tyyppinimike on sama kuin olemassa oleva tyyppinimike
+
+
+Koodi: `400 BAD REQUEST`
+
+
+Sisältö:
+
+
+```json
+
+	{
+    "message": "This ticket type already exists"
+	}
+
+````
+# TicketTypes-PUTT
+
+## Olemassaolevan lipputyypin päivityss
  
- Päivittää tyypin tunnisteen perusteella
+ Päivittää tyypin tunnisteen perusteellaa
  
-URL: `/types/{id}`
+URL: `/types/{id}``
  
-Metodi: `PUT`
+Metodi: `PUT``
  
-Vaatiiko autorisoinnin : Kyllä
+Vaatiiko autorisoinnin : ADMIN, USERä
 
 Tietorajoitteet: Pyynnössä on oltava validi tapahtumatunnus ja lipputyypin kuvaus. 
 Hinta on mahdollista jättää pois, jolloin se ei myöskään päivity. 
@@ -277,9 +299,9 @@ Esimerkkipyyntö:
 	"price": 23.6
 }
 ```
-### Onnistuneen pyynnön vastaus
+### Onnistuneen pyynnön vastauss
  
-Ehto: Tietojen päivitys onnistui
+Ehto: Tietojen päivitys onnistuii
  
 Koodi: `200 OK`
 
@@ -310,15 +332,31 @@ Vastauksen sisältö:
   }
 ```
 
-### Virheellisen pyynnön vastaus
+### Virheellisen pyynnön vastauss
 
-Ehto: Lipputyypin tunnistetta ei löydy
+Ehto: Lipputyypin tunnistetta ei löydyy
 
 Koodi: `404 NOT FOUND`
 
 Vastauksen sisältö:
 
-```json
+```jsonn
+{
+	"event": 3,
+	"type": "lapsi 6-14",
+	"price": 23.6
+}
+````
+
+TAII
+
+Ehto: Tapahtumatunnistetta ei löydyy
+
+Koodi: `400 BAD REQUEST`
+
+Vastauksen sisältö:
+
+```jsonn
 {
 	"event": 3,
 	"type": "lapsi 6-14",
@@ -326,41 +364,25 @@ Vastauksen sisältö:
 }
 ```
 
-TAI
+TAII
 
-Ehto: Tapahtumatunnistetta ei löydy
+Ehto: Kuvausta ei ole annettuu
 
-Koodi: `400 BAD REQUEST`
-
-Vastauksen sisältö:
-
-```json
-{
-	"event": 3,
-	"type": "lapsi 6-14",
-	"price": 23.6
-}
-```
-
-TAI
-
-Ehto: Kuvausta ei ole annettu
-
-Koodi: `400 BAD REQUEST`
+Koodi: `400 BAD REQUEST``
 
 Vastauksen sisältö:
 
-```json
+```jsonn
 {
 	"event": 3,
 	"type": null,
 	"price": 23.6
 }
-```
+````
 
-# TicketTypes-DELETE
+# TicketTypes-DELETEE
 
-## Lipputyypin poistaminen
+## Lipputyypin poistaminenn
 
 Poistaa lipputyypin tunnisteen perusteella
 
@@ -368,32 +390,32 @@ URL: `/types/{id}`
 
 Metodi: `DELETE`
 
-Vaatiiko autorisoinnin : Kyllä
+Vaatiiko autorisoinnin : ADMINä
 
 Tietorajoitteet: Pyynnössä on oltava validi lipputyypin tunnus, eikä tyyppiin voi liittyä lippuja.
 
-### Onnistuneen pyynön vastaus
+### Onnistuneen pyynön vastauss
 
-Ehto: Tyyppi-id on olemassa
+Ehto: Tyyppi-id on olemassaa
 
-Koodi `204 NO CONTENT`
+Koodi `204 NO CONTENT``
 
 Vastaus: tyhjä.
 
 
-### Virheellisen pyynnön vastaus
+### Virheellisen pyynnön vastauss
 
-Ehto: Tunnistetta ei ole olemassa
+Ehto: Tunnistetta ei ole olemassaa
 
-Koodi: `404 NOT FOUND`
+Koodi: `404 NOT FOUND``
 
-Vastaus: tyhjä
+Vastaus: tyhjää
 
-TAI
+TAII
 
-Ehto: Tyyppiin liittyy lippuja
+Ehto: Tyyppiin liittyy lippujaa
 
-Koodi: `403 FORBIDDEN`
+Koodi: `403 FORBIDDEN``
 
-Vastaus: `There are tickets associated with this type`
+Vastaus: `There are tickets associated with this type``
 

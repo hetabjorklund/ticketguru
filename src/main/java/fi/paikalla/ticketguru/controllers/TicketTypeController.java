@@ -5,10 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import fi.paikalla.ticketguru.Components.ErrorResponseGenerator;
 import fi.paikalla.ticketguru.Entities.Event;
 import fi.paikalla.ticketguru.Entities.Ticket;
 import fi.paikalla.ticketguru.Entities.TicketType;
@@ -34,6 +38,8 @@ public class TicketTypeController {
 	private EventRepository eventrepo; 
 	@Autowired
 	private TicketRepository tickrepo; 
+	@Autowired
+	private ErrorResponseGenerator responsegenerator;
 	
 	// GET
 	
@@ -67,23 +73,36 @@ public class TicketTypeController {
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/types") //luo uusi tyyppi
-	public ResponseEntity<?> makeNewType(@RequestBody TicketTypeDto type) {
+	public ResponseEntity<?> makeNewType(@Valid @RequestBody TicketTypeDto type, BindingResult bindres) {
+		Map<String, String> response = new HashMap<>(); // alustetaan virhevastaus
+		Map<String, String> response2 = new HashMap<>();
+		if(bindres.hasErrors()) {
+			response = responsegenerator.generateErrorResponseFromBindingResult(bindres); //käytetään samaa generaattoria suosiolla.
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+			
+		}
 		Optional<Event> event = eventrepo.findById(type.getEvent()); //onko tapahtumaa olemassa?
-		if (!event.isEmpty()) { //jos tapahtuma
+		
+		if (event.isPresent()) { //jos tapahtuma
 			try {
-				if(!type.getType().isEmpty()) { //jos lähetetyllä entiteetillä on tyyppi, luo uusi tyyppi.
-					TicketType make = new TicketType(event.get(), 
-					type.getType(), 
-					type.getPrice()); 
-				typerepo.save(make); //tallenna tyyppi
-				return new ResponseEntity<TicketType>(make, HttpStatus.CREATED); //palauta varsinainen luotu objekti
+				TicketType testi = new TicketType(event.get(), type.getType(), type.getPrice()); //luo testilippu
+				List<TicketType> ticketList = typerepo.findByEventId(event.get().getId()); //hae tapahtuman liput
+				for (TicketType typ:ticketList) {
+					if (typ.getType().equalsIgnoreCase(testi.getType())) { //onko samanniminen lipputyyppi jo olemassa?
+						response2.put("message", "This ticket type already exists"); //jos on, palauta viesti ja 400
+						return new ResponseEntity<>(response2, HttpStatus.BAD_REQUEST);
+					}
 				}
+				typerepo.save(testi); //muuten tallenna postattu tyyppi
+				return new ResponseEntity<>(testi, HttpStatus.CREATED);
+				
 					 
 			} catch (Exception e){
 				return new ResponseEntity<>(type, HttpStatus.BAD_REQUEST);//palauta pyyntöobjekti (type:null) ja bad request	
 			}
 		}
-		return new ResponseEntity<>(type, HttpStatus.BAD_REQUEST); //ei tapahtumaa, palauta objekti ja bad request. 
+		response2.put("Message", "Invalid event");
+		return new ResponseEntity<>(response2, HttpStatus.BAD_REQUEST); //ei tapahtumaa, palauta viesti invalid event. 
 	}
 	
 	// PUT
