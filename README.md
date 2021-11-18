@@ -189,25 +189,21 @@ Kaikkia sovelluksen rajapinnan endpointeja on testattu manuaalisesti Postmanilla
 
 Sovelluksen toimintaa on testattu yksikkö- ja integraatiotesteillä, jotka testaavat TGUser-entiteettiä, EventControlleria ja TicketServiceä. Nämä testit löytyvät sovelluksen postgreSQL_local-haarasta \src\test\-kansiosta.
 
-## Asennustiedot
+* [TGUserTest](https://github.com/hetabjorklund/ticketguru/blob/postgreSQL_local/src/test/java/fi/paikalla/ticketguru/Entities/TGUserTest.java) testaa, että kun luodaan uusi user-tasoinen käyttäjä (jonka konstruktorissa ei anneta autentikaatiotasoa), autentikaatiotasoksi tulee automaattisesti USER.
+* [EventControllerTest](https://github.com/hetabjorklund/ticketguru/blob/postgreSQL_local/src/test/java/fi/paikalla/ticketguru/controllers/EventControllerTest.java) testaa EventControllerin endpointeja luomalla testitapahtuman, lähettämällä sen POST-pyynnöllä ja tarkastamalla GET-pyynnöllä, että luotu tapahtuma löytyy tietokannasta. Tämä tehdään sekä admin-käyttäjänä (testi menee läpi jos uuden tapahtuman luominen ja haku onnistuu) sekä user-käyttäjänä (testi menee läpi jos uuden tapahtuman luominen ei onnistu vaan takaisin tulee 403-status).
+* [TicketServiceTest](https://github.com/hetabjorklund/ticketguru/blob/postgreSQL_local/src/test/java/fi/paikalla/ticketguru/Services/TicketServiceTest.java) testaa TicketService-luokan (joka käyttää TicketRepositorya) toimintaa: palauttaako lippujen haku oikeanlaisia ja -kokoisia olioita ja toimiiko lipun koodin arvonta ja uniikkiuden tarkistus (eli ei pysty luomaan lipulle koodia, joka on jo tietokannassa).
 
-Järjestelmän asennus on syytä dokumentoida kahdesta näkökulmasta:
+## Asennustiedot ja käynnistys- ja käyttöohje
 
--   järjestelmän kehitysympäristö: miten järjestelmän kehitysympäristön saisi
-    rakennettua johonkin toiseen koneeseen
+### Kehitysympäristön asentaminen toiselle koneelle
 
--   järjestelmän asentaminen tuotantoympäristöön: miten järjestelmän saisi
-    asennettua johonkin uuteen ympäristöön.
+* Asenna uudelle koneelle Eclipse (tai muu IDE).
+* Kloonaa projektin repositorio Githubista (https://github.com/hetabjorklund/ticketguru).
+* Asenna uudelle koneelle PostgreSQL-tietokanta (https://www.postgresql.org/download/).
+* Luo uudelle koneelle paikallinen PostgreSQL-tietokanta ja yhdistä se sovellukseen (sovelluksen paikallisen tietokannan käyttäjätunnus ja salasana ovat postgreSQL_local-haaran application.properties-tiedostossa - ne toimivat vain paikallisesti, joten niitä ei ole tarvetta salata).
+* Postmanilla pyyntöjä lähetettäessä paikalliselle sovellukselle pyynnöt täytyy autentikoida: user- ja admin-tasoisten käyttäjien käyttäjätunnukset ja salasanat ovat tiimin jäsenten hallussa.
 
-Asennusohjeesta tulisi ainakin käydä ilmi, miten käytettävä tietokanta ja
-käyttäjät tulee ohjelmistoa asentaessa määritellä (käytettävä tietokanta,
-käyttäjätunnus, salasana, tietokannan luonti yms.).
-
-## Käynnistys- ja käyttöohje
-
-Tyypillisesti tässä riittää kertoa ohjelman käynnistykseen tarvittava URL sekä
-mahdolliset kirjautumiseen tarvittavat tunnukset. Jos järjestelmän
-käynnistämiseen tai käyttöön liittyy joitain muita toimenpiteitä tai toimintajärjestykseen liittyviä asioita, nekin kerrotaan tässä yhteydessä.
-
-Usko tai älä, tulet tarvitsemaan tätä itsekin, kun tauon jälkeen palaat
-järjestelmän pariin !
+### Tuotantoympäristöön pääsy
+* Herokuun vietyyn projektiin on pääsy tiimin jäsenillä. Kirjaudu sisään Herokuun omilla tunnuksillasi.
+* Sovelluksen ulkoisen, Herokussa toimivan tietokannan osoite, käyttäjätunnus ja salasana löytyvät projektin Settings-välilehdeltä kohdasta "Config Vars". Näihin viitataan sovelluksen postgreSQL_heroku-haaran application-production.properties-tiedostossa muodossa ${DATABASE_URL}.
+* Postmanilla pyyntöjä lähetettäessä Herokussa pyörivälle sovellukselle pyynnöt täytyy autentikoida: user- ja admin-tasoisten käyttäjien käyttäjätunnukset ja salasanat ovat tiimin jäsenten hallussa. (Samat tunnukset toimivat, jos selaimella mennessä osoitteeseen https://ticketguru-2021.herokuapp.com/ Heroku pyytää sisäänkirjautumista.)
