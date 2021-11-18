@@ -189,25 +189,19 @@ Kaikkia sovelluksen rajapinnan endpointeja on testattu manuaalisesti Postmanilla
 
 Sovelluksen toimintaa on testattu yksikkö- ja integraatiotesteillä, jotka testaavat TGUser-entiteettiä, EventControlleria ja TicketServiceä. Nämä testit löytyvät sovelluksen postgreSQL_local-haarasta \src\test\-kansiosta.
 
-## Asennustiedot
+## Asennustiedot ja käynnistys- ja käyttöohje
 
-Järjestelmän asennus on syytä dokumentoida kahdesta näkökulmasta:
+### Kehitysympäristön asentaminen toiselle koneelle
 
--   järjestelmän kehitysympäristö: miten järjestelmän kehitysympäristön saisi
-    rakennettua johonkin toiseen koneeseen
+* Asenna uudelle koneelle Eclipse (tai muu IDE).
+* Kloonaa projektin repositorio Githubista (https://github.com/hetabjorklund/ticketguru).
+* Asenna uudelle koneelle PostgreSQL-tietokanta (https://www.postgresql.org/download/).
+* Luo uudelle koneelle paikallinen PostgreSQL-tietokanta ja yhdistä se sovellukseen (sovelluksen paikallisen tietokannan käyttäjätunnus ja salasana ovat postgreSQL_local-haaran application.properties-tiedostossa - ne toimivat vain paikallisesti, joten niitä ei ole tarvetta salata).
+* Postmanilla pyyntöjä lähetettäessä paikalliselle sovellukselle pyynnöt täytyy autentikoida: user- ja admin-tasoisten käyttäjien käyttäjätunnukset ja salasanat ovat tiimin jäsenten hallussa.
 
--   järjestelmän asentaminen tuotantoympäristöön: miten järjestelmän saisi
-    asennettua johonkin uuteen ympäristöön.
+### Tuotantoympäristöön pääsy
+* Herokuun vietyyn projektiin on pääsy tiimin jäsenillä. Kirjaudu sisään Herokuun omilla tunnuksillasi.
+* Sovelluksen ulkoisen, Herokussa toimivan tietokannan osoite, käyttäjätunnus ja salasana löytyvät projektin Settings-välilehdeltä kohdasta "Config Vars". Näihin viitataan sovelluksen postgreSQL_heroku-haaran application-production.properties-tiedostossa muodossa ${DATABASE_URL}.
+* Postmanilla pyyntöjä lähetettäessä Herokussa pyörivälle sovellukselle pyynnöt täytyy autentikoida: user- ja admin-tasoisten käyttäjien käyttäjätunnukset ja salasanat ovat tiimin jäsenten hallussa. (Samat tunnukset toimivat, jos selaimella mennessä osoitteeseen https://ticketguru-2021.herokuapp.com/ Heroku pyytää sisäänkirjautumista.)
 
-Asennusohjeesta tulisi ainakin käydä ilmi, miten käytettävä tietokanta ja
-käyttäjät tulee ohjelmistoa asentaessa määritellä (käytettävä tietokanta,
-käyttäjätunnus, salasana, tietokannan luonti yms.).
 
-## Käynnistys- ja käyttöohje
-
-Tyypillisesti tässä riittää kertoa ohjelman käynnistykseen tarvittava URL sekä
-mahdolliset kirjautumiseen tarvittavat tunnukset. Jos järjestelmän
-käynnistämiseen tai käyttöön liittyy joitain muita toimenpiteitä tai toimintajärjestykseen liittyviä asioita, nekin kerrotaan tässä yhteydessä.
-
-Usko tai älä, tulet tarvitsemaan tätä itsekin, kun tauon jälkeen palaat
-järjestelmän pariin !
