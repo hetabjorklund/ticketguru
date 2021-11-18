@@ -185,12 +185,9 @@ Projektissa on kolme haaraa: master, postgreSQL_local ja postgreSQL_heroku.
 
 ## Testaus
 
-Tässä kohdin selvitetään, miten ohjelmiston oikea toiminta varmistetaan
-testaamalla projektin aikana: millaisia testauksia tehdään ja missä vaiheessa.
-Testauksen tarkemmat sisällöt ja testisuoritusten tulosten raportit kirjataan
-erillisiin dokumentteihin.
+Kaikkia sovelluksen rajapinnan endpointeja on testattu manuaalisesti Postmanilla ja niiden toiminta on kirjattu API-dokumentaatioon, joten automaattisten testien kirjoittaminen kaikkien endpointien testaamiseksi ei ole tarpeellista.
 
-Tänne kirjataan myös lopuksi järjestelmän tunnetut ongelmat, joita ei ole korjattu.
+Sovelluksen toimintaa on testattu yksikkö- ja integraatiotesteillä, jotka testaavat TGUser-entiteettiä, EventControlleria ja TicketServiceä. Nämä testit löytyvät sovelluksen postgreSQL_local-haarasta \src\test\-kansiosta.
 
 ## Asennustiedot
 
