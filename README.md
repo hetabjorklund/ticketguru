@@ -203,5 +203,3 @@ Sovelluksen toimintaa on testattu yksikkö- ja integraatiotesteillä, jotka test
 * Herokuun vietyyn projektiin on pääsy tiimin jäsenillä. Kirjaudu sisään Herokuun omilla tunnuksillasi.
 * Sovelluksen ulkoisen, Herokussa toimivan tietokannan osoite, käyttäjätunnus ja salasana löytyvät projektin Settings-välilehdeltä kohdasta "Config Vars". Näihin viitataan sovelluksen postgreSQL_heroku-haaran application-production.properties-tiedostossa muodossa ${DATABASE_URL}.
 * Postmanilla pyyntöjä lähetettäessä Herokussa pyörivälle sovellukselle pyynnöt täytyy autentikoida: user- ja admin-tasoisten käyttäjien käyttäjätunnukset ja salasanat ovat tiimin jäsenten hallussa. (Samat tunnukset toimivat, jos selaimella mennessä osoitteeseen https://ticketguru-2021.herokuapp.com/ Heroku pyytää sisäänkirjautumista.)
-
-
