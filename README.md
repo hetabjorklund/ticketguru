@@ -193,7 +193,7 @@ Sovelluksen toimintaa on testattu yksikkö- ja integraatiotesteillä, jotka test
 
 ### Kehitysympäristön asentaminen toiselle koneelle
 
-* Asenna uudelle koneelle Eclipse.
+* Asenna uudelle koneelle Eclipse (tai muu IDE).
 * Kloonaa projektin repositorio Githubista (https://github.com/hetabjorklund/ticketguru).
 * Asenna uudelle koneelle PostgreSQL-tietokanta (https://www.postgresql.org/download/).
 * Luo uudelle koneelle paikallinen PostgreSQL-tietokanta ja yhdistä se sovellukseen (sovelluksen paikallisen tietokannan käyttäjätunnus ja salasana ovat postgreSQL_local-haaran application.properties-tiedostossa - ne toimivat vain paikallisesti, joten niitä ei ole tarvetta salata).
