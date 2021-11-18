@@ -1,3 +1,5 @@
+// TÄMÄ ON DATASOURCE-KOKEILU; EI KÄYTETÄ EIKÄ VIEDÄ HEROKU-HAARAAN!
+
 package fi.paikalla.ticketguru.Configurations;
 
 import java.sql.Connection;
