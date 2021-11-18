@@ -66,8 +66,8 @@ class EventControllerTest {
 		
 	}
 	
-	// testi, jonka on tarkoitus feilata
-	@Test
+	// testi, jonka on tarkoitus feilata, kirjoitettu harjoituksen vuoksi, käytännön syistä kommentoitu pois
+	/*@Test
 	@WithMockUser(username = "admin", password = "password", roles = "ADMIN")
 	void testShouldFail() throws Exception {
 		 		
@@ -92,7 +92,7 @@ class EventControllerTest {
 			      .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			      .andExpect(jsonPath(jsonlocation).value("Tätä nimeä ei ole olemassa"));	
 		
-	}
+	}*/
 	
 	// testaa, ettei user-tasoinen käyttäjä voi luoda uutta tapahtumaa
 	@Test

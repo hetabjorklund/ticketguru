@@ -51,10 +51,10 @@ class TicketServiceTest {
 		
 	}
 	
-	// testi, jonka on tarkoitus feilata
-	@Test
+	// testi, jonka on tarkoitus feilata, kirjoitettu harjoituksen vuoksi, käytännön syistä kommentoitu pois
+	/*@Test
 	void testCodeAvailabilityShouldFail() {		
 		assertFalse(ticketservicetester.checkTicketCodeAvailability("000000000000"), "This is supposed to fail");		
-	}
+	}*/
 
 }
