@@ -189,6 +189,10 @@ Kaikkia sovelluksen rajapinnan endpointeja on testattu manuaalisesti Postmanilla
 
 Sovelluksen toimintaa on testattu yksikkö- ja integraatiotesteillä, jotka testaavat TGUser-entiteettiä, EventControlleria ja TicketServiceä. Nämä testit löytyvät sovelluksen postgreSQL_local-haarasta \src\test\-kansiosta.
 
+* [TGUserTest](https://github.com/hetabjorklund/ticketguru/blob/postgreSQL_local/src/test/java/fi/paikalla/ticketguru/Entities/TGUserTest.java) testaa, että kun luodaan uusi user-tasoinen käyttäjä (jonka konstruktorissa ei anneta autentikaatiotasoa), autentikaatiotasoksi tulee automaattisesti USER.
+* [EventControllerTest](https://github.com/hetabjorklund/ticketguru/blob/postgreSQL_local/src/test/java/fi/paikalla/ticketguru/controllers/EventControllerTest.java) testaa EventControllerin endpointeja luomalla testitapahtuman, lähettämällä sen POST-pyynnöllä ja tarkastamalla GET-pyynnöllä, että luotu tapahtuma löytyy tietokannasta. Tämä tehdään sekä admin-käyttäjänä (testi menee läpi jos uuden tapahtuman luominen ja haku onnistuu) sekä user-käyttäjänä (testi menee läpi jos uuden tapahtuman luominen ei onnistu vaan takaisin tulee 403-status).
+* [TicketServiceTest](https://github.com/hetabjorklund/ticketguru/blob/postgreSQL_local/src/test/java/fi/paikalla/ticketguru/Services/TicketServiceTest.java) testaa TicketService-luokan (joka käyttää TicketRepositorya) toimintaa: palauttaako lippujen haku oikeanlaisia ja -kokoisia olioita ja toimiiko lipun koodin arvonta ja uniikkiuden tarkistus (eli ei pysty luomaan lipulle koodia, joka on jo tietokannassa).
+
 ## Asennustiedot ja käynnistys- ja käyttöohje
 
 ### Kehitysympäristön asentaminen toiselle koneelle
