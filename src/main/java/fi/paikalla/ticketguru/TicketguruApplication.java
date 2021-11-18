@@ -40,13 +40,12 @@ public class TicketguruApplication {
 			statusRepo.save(new EventStatus("upcoming")); 
 			
 			log.info("Creating event");
-			LocalDateTime start = LocalDateTime.of(2021,12,03,9,00);
-			LocalDateTime end = LocalDateTime.of(2021,12,03,16,00); 
-			LocalDateTime presaleend = LocalDateTime.of(2021,11,27,16,00); 
-			LocalDateTime next = LocalDateTime.of(2021,11,3,21,00); 
-			LocalDateTime one = LocalDateTime.of(2021,11,4,2,00);
-			LocalDateTime test = LocalDateTime.of(2021,11,30,12,00);
-			
+			LocalDateTime start = LocalDateTime.of(2022,12,03,9,00);
+			LocalDateTime end = LocalDateTime.of(2022,12,03,16,00); 
+			LocalDateTime presaleend = LocalDateTime.of(2022,11,27,16,00); 
+			LocalDateTime next = LocalDateTime.of(2022,11,3,21,00); 
+			LocalDateTime one = LocalDateTime.of(2022,11,4,2,00);
+			LocalDateTime test = LocalDateTime.of(2022,10,31,12,00);			
 			
 			Event event1 = new Event("Ruisrock", "Savonlinnankatu 50", 600, 
 					start, end, presaleend, "Ruissalossa rokataan"); 

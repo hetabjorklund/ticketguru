@@ -150,6 +150,7 @@ TK10 Tapahtumakoordinaattorina haluan kyetä ottamaan vapaana olevia lippuja poi
 > used | boolean | Lipun status, onko lippu käytetty vai ei
 > invoice_id | bigint FK | Laskun tunnus jolla lippu on myyty, viittaus [Invoice](#Invoice)-tauluun
 > ticket_type_id | bigint FK | Lipputyypin tunnus, viittaus [TicketType](#TicketType)-tauluun
+> code | varchar | Lipun yksilöllinen koodi lipun hakemista ja tarkistamista varten
 
 >### _TicketType_
 >_TicketType-taulu kuvastaa lipun tyyppiä. Lipputyypit määritetään kullekkin tapahtumalle erikseen, ja kullekkin lipputyypille määritetään oma hinta._
@@ -184,12 +185,9 @@ Projektissa on kolme haaraa: master, postgreSQL_local ja postgreSQL_heroku.
 
 ## Testaus
 
-Tässä kohdin selvitetään, miten ohjelmiston oikea toiminta varmistetaan
-testaamalla projektin aikana: millaisia testauksia tehdään ja missä vaiheessa.
-Testauksen tarkemmat sisällöt ja testisuoritusten tulosten raportit kirjataan
-erillisiin dokumentteihin.
+Kaikkia sovelluksen rajapinnan endpointeja on testattu manuaalisesti Postmanilla ja niiden toiminta on kirjattu API-dokumentaatioon, joten automaattisten testien kirjoittaminen kaikkien endpointien testaamiseksi ei ole tarpeellista.
 
-Tänne kirjataan myös lopuksi järjestelmän tunnetut ongelmat, joita ei ole korjattu.
+Sovelluksen toimintaa on testattu yksikkö- ja integraatiotesteillä, jotka testaavat TGUser-entiteettiä, EventControlleria ja TicketServiceä. Nämä testit löytyvät sovelluksen postgreSQL_local-haarasta \src\test\-kansiosta.
 
 ## Asennustiedot
 
