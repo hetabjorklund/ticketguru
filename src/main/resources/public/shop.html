@@ -1,0 +1,290 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>Ticketguru</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+</head>
+<body>
+    <h1>Lippukauppa</h1>
+  
+    <button id="show">Aloita ostokset</button>
+    </br>
+    </br>   
+    <div>    
+        <form>
+            <label>Valitse tapahtuma:</label>
+            <select id="evdropdown" name="event"></select></br>
+            <label>Valitse lipputyyppi:</label>
+            <select id="ttdropdown" name="tickettype"></select></br>
+            <label>Valitse lippujen määrä:</label>
+            <select id="tiamount" name="tiamount"></select></br>
+            </br>
+            <button id="addticket" disabled>Lisää ostoskoriin</button>
+        </form>
+    </div>
+    </br>   
+    <div>
+        <h3>Ostoskorin sisältö</h3>
+        <p id="tickettxt"></p>
+        <p id="custbasket"></p>
+        <button id="buytickets" disabled>Osta liput</button> 
+        <div id="success"></div>
+    </div>
+    </br>
+    <div> 
+    	<button id="reload">Osta lisää lippuja</button>
+    </div>
+</body>
+<script>
+
+    var url = 'https://ticketguru-2021.herokuapp.com/';
+    var pass = btoa('TestUser:salasana');
+    //var url = 'http://localhost:8080/';
+    //var pass = btoa('admin:password'); 
+    
+    
+    //Create basket array for posting tickets to database
+    var baskettopost = new Array();
+    //Create basket array for showing information on webpage
+    var baskettoshow = new Array();
+    // Create invoice
+    var invoiceid = '';
+    //Create tickettxt to show
+    var tickettxt = 'Ei lippuja ostoskorissa.';
+    document.getElementById("tickettxt").innerHTML = tickettxt;
+    //Create success message
+    var successmsg = '';
+
+    $(document).ready(function(){
+
+        //Hide shopping elements until invoice is created
+        $("div").hide();
+        
+      	//Hide reload button
+        $("#reload").hide();
+
+        //Start shopping: create invoice, show div:s
+        $("#show").click(function(){
+            const invurl = url + 'invoices/';
+  
+            $.ajax({
+                url: invurl,
+                method: 'POST',
+                dataType: 'json',
+                headers: {'Authorization': 'Basic ' + pass},
+                contentType: 'application/json; charset=utf-8',
+                success: function (data){
+                    invoiceid = data.invoiceId;
+                    return invoiceid;
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+
+            //show hidden elements
+            $("div").show();
+        });
+
+
+        //Event dropdown
+        $(function(){
+            let evdropdown = $('#evdropdown');
+            
+            evdropdown.empty();
+
+            evdropdown.append('<option selected="true" disabled>Valitse tapahtuma</option>');
+            evdropdown.prop('selectedIndex', 0);
+
+            const evurl = url + 'events/';
+
+            //Populate event dropdown
+            $.ajax({
+                url: evurl,
+                type: 'GET',
+                dataType: 'json',
+                headers: {'Authorization': 'Basic ' + pass},
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    $.each(data, function (key, event) {
+                        evdropdown.append($('<option></option>').attr('value', event.id).text(event.name));
+                    })
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+
+        });
+
+        //TicketType dropdown
+        $('#evdropdown').change(function(){
+            let ttdropdown = $('#ttdropdown');
+
+            ttdropdown.empty();
+
+            ttdropdown.append('<option selected="true" disabled>Valitse lipputyyppi</option>');
+            ttdropdown.prop('selectedIndex', 0);
+
+            var selevent = $('#evdropdown').val();
+
+            const tiurl = url + 'events/' + selevent + '/types';
+
+            //Populate ticket type dropdown
+            $.ajax({
+                url: tiurl,
+                type: 'GET',
+                dataType: 'json',
+                headers: {'Authorization': 'Basic ' + pass},
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    $.each(data, function (key, ttype) {
+                        ttdropdown.append($('<option></option>').attr('value', ttype.id).text(ttype.type));
+                    })
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        });
+
+        //Enable add ticket button
+        $('#ttdropdown').change(function(){
+            $('#addticket').removeAttr('disabled');
+        })
+
+        //Amount dropdown
+        $(function(){
+            var $amntdropdown = $("#tiamount");
+            for (i=1;i<=10;i++) {
+                $amntdropdown.append($('<option></option>').val(i).html(i))
+            } 
+        });
+
+
+        //Add selection to baskets and show basket content
+        $("#addticket").click(function(e){
+
+            e.preventDefault();
+
+            //Remove text of empty basket
+            tickettxt = "";
+            document.getElementById("tickettxt").innerHTML = tickettxt;
+
+            var eventtxt = $('#evdropdown').find(":selected").text();
+            var price = 20; // update to match ticket type info on database
+            var type = parseInt($('#ttdropdown').val());
+            var typetxt = $('#ttdropdown').find(":selected").text();
+            var invoice = invoiceid;
+            var amount = $('#tiamount').val();
+
+            var tickettoshow = {
+                event: eventtxt,
+                ticketType: typetxt,
+                amount: amount
+            }
+
+            //Add ticket(s) to page basket
+            baskettoshow.push(tickettoshow);
+
+            //Add ticket(s) to database basket
+            for (i=1;i<=amount;i++) {
+                var tickettopost = {
+                    price: price,
+                    used: false,
+                    ticketType: type,
+                    invoice: invoice
+                };
+                
+                baskettopost.push(tickettopost);
+            };
+
+            //Show basket content on page
+            var ticketrows = "";
+            
+            for (i=0;i<baskettoshow.length;i++) {
+                ticketrows = ticketrows + "Tapahtuma: " + baskettoshow[i].event + ", Lipputyyppi: " + baskettoshow[i].ticketType +
+                    ", Määrä: " + baskettoshow[i].amount + "</br>";
+            }
+            
+            document.getElementById("custbasket").innerHTML = ticketrows;
+            // document.getElementById("custbasket").innerHTML = JSON.stringify(baskettoshow);
+
+            $('#buytickets').removeAttr('disabled');
+
+        });
+
+        //Add basket to database (buy tickets)
+        $('#buytickets').click(function(e){
+            
+            e.preventDefault();
+
+            const buyurl = url + 'tickets/';
+            
+            const baskettojson = JSON.stringify(baskettopost);
+
+            $.ajax({
+                url: buyurl,
+                method: 'POST',
+                dataType: 'json',
+                data: baskettojson,
+                headers: {'Authorization': 'Basic ' + pass},
+                contentType: 'application/json; charset=utf-8',
+                success: function (response) {
+                	var tickets = response.tickets;
+                    var ticketsforprint = "";
+
+                    successmsg = "Lippujen osto onnistui!";
+                    
+                    for (var i=0;i<tickets.length;i++) {
+                        
+                        ticketsforprint = ticketsforprint + "<div style='background: ghostwhite; padding: 10px; border: 1px solid lightgray; margin: 10px'><p>Tapahtuma: " +
+                            tickets[i].ticketType.event.name + "</br>Paikka: " + tickets[i].ticketType.event.address + "</br>Ajankohta: " + 
+                            tickets[i].ticketType.event.startTime[2] + "." + tickets[i].ticketType.event.startTime[1] + "." + tickets[i].ticketType.event.startTime[0] +
+                            " klo " + tickets[i].ticketType.event.startTime[3] + "." + tickets[i].ticketType.event.startTime[4] +
+                            "</br>Lipputyyppi: " + tickets[i].ticketType.type + "</br>Hinta: " + tickets[i].ticketType.price.toFixed(2) +
+                            "€</br>Koodi: " + tickets[i].code + "<p><div id='qrcode-container" + i + "'><canvas id='qrcode" + i + "' class='qrcode'></canvas></div></div>";
+                    }
+
+                    document.getElementById("success").innerHTML = successmsg + ticketsforprint;
+
+                    for(let i=0;i<tickets.length;i++){
+                        // Generate QR code
+                        let code = tickets[i].code;
+                        new QRious({
+                            element: document.getElementById('qrcode' + i),
+                            value: code
+                        });
+                    }
+                   
+                    
+                  //Show reload button
+                    $("#reload").show();
+                },
+                error: function (error) {
+                    console.log(error);
+                    successmsg = "<p>" + error.responseJSON.message + "</p>";
+
+                    document.getElementById("success").innerHTML = successmsg;
+
+                    //Show reload button
+                    $("#reload").show();
+                }
+            });
+
+        });
+        
+      	//Reload page with reload button
+        $("#reload").click(function(e) {
+            e.preventDefault();
+
+            window.location.reload();
+        });
+
+        
+    });
+
+</script>
+</html>
