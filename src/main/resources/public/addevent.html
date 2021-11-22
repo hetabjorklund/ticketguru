@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lisää tapahtuma</title>
+</head>
+<style>
+    label{
+        display: inline-block;
+        margin-bottom: 5px;
+        width: 215px;
+    }
+</style>
+<body>
+    <div class="container">
+        <h1>Lisää tapahtuma</h1>
+        <div class="form-wrapper">
+            <form class="form-control" id="event-form" onsubmit="processForm(event)">
+                <label for="name">Nimi: </label>
+                <input type="text" name="name" id="name" required><br>
+                <label for="address">Osoite: </label>
+                <input type="text" name="address" id="address"><br>
+                <label for="maxCapacity">Paikkamäärä: </label>
+                <input type="number" name="maxCapacity" id="maxCapacity"><br>
+                <label for="startTime">Alkuaika: </label>
+                <input type="datetime-local" name="startTime" id="startTime" value=""><br>
+                <label for="endTime">Päättymisaika: </label>
+                <input type="datetime-local" name="endTime" id="endTime" value=""><br>
+                <label for="endOfPresale">Ennakkomyynnin päättyminen: </label>
+                <input type="datetime-local" name="endOfPresale" id="endOfPresale" value=""><br>
+                <label for="description">Kuvaus: </label>
+                <input type="text" name="description" id="description"><br>
+                <label for="status">Tila: </label>
+                <select name="status" id="status"></select><br>
+                <input type="submit" value="Lisää">
+            </form>
+            <div>
+                <p id="msg"></p>
+            </div>
+        </div>
+    </div>
+    <script>
+        //var url = 'http://localhost:8080/';
+        //var pass = btoa('admin:admin');
+
+        var url = 'https://ticketguru-2021.herokuapp.com/';
+        var pass = btoa('TestAdmin:password');
+
+        async function processForm(e){
+            e.preventDefault();
+            const form = document.getElementById("event-form");
+            const formData = new FormData(form); // Luodaan lomakkeen tiedoista FormData-olio
+            const requestBody = processFormData(formData); // Metodi, joka luo FormDatasta halutun requestbodyn
+            const response = await submitForm(JSON.stringify(requestBody)); // Lähettää pyynnön
+            
+            if(response.message == null){ // Responsessa on message-attribuutti kun jotain on mennyt pieleen, muutoin palautetaan Event-olio
+                document.getElementById("msg").innerHTML = "Event added succesfully!"
+            }else{
+                document.getElementById("msg").innerHTML = response.message;
+            }
+        }
+
+        function processFormData(formData){ // Muokataan FormData-olio javascript-objektisi
+            let requestBody = {};
+
+            for(let [key, value] of formData){ // Käydään FormData avain-arvo-pari kerrallaan läpi, ja mikäli arvo on tyhjä merkkijono, vaihdetaan sen tilalle null
+                if(value === ''){
+                    value = null;
+                }
+            
+                requestBody[key] = value;
+            }
+
+            reformatDates(requestBody); // Muokataan ISO-muotoinen päivämäärä pyynnön vaatimaksi arrayksi
+            reformatStatus(requestBody); // Muokataan status-merkkijonosta status-olio
+            return requestBody;
+        }
+
+        function reformatDates(requestBody){
+            requestBody.startTime = reformatDate(requestBody.startTime);
+            requestBody.endTime = reformatDate(requestBody.endTime);
+            requestBody.endOfPresale = reformatDate(requestBody.endOfPresale);
+        }
+
+        function reformatDate(date){ // Päivämäärien muokkaaminen merkkijonosta taulukkomuotoon
+            if(date !== null){ // Tämä tehdään vain, mikäli lomakkeeseeon on syötetty päivämäärän tiedot
+                let dateTime = date.split('T'); // Splitataan ajankohta päivämääräksi ja kellonajaksi
+                let dateArr = dateTime[0].split('-'); // Splitataan päivämäärä vuodeksi, kuukaudeksi ja päiväksi
+                let timeArr = dateTime[1].split(":"); // Splitataan kellonaika tunneiksi ja minuuteiksi
+                let dateTimeArr = dateArr.concat(timeArr); // Yhdistetään päivämäärä ja kellonaika yhtenäiseksi merkkijonotaulukoksi
+
+                for(let i=0; i<dateTimeArr.length; i++){
+                    dateTimeArr[i] = Number(dateTimeArr[i]); // Muunnetaan merkkijonot palvelimen haluamaan muotoon
+                }
+
+                return dateTimeArr;
+            }
+        }
+
+        function reformatStatus(requestBody){ // Muutetaan eventstatus olioksi merkkijonon sijaan
+            if(requestBody !== null){
+                const statusArr = requestBody.status.split("+"); // Splitataan status-merkkijono id:ksi ja nimeksi
+
+                const status = { // Luodaan statuksesta olio käyttäen splitatun merkkijonon arvoja
+                    id: Number(statusArr[0]),
+                    statusName: statusArr[1]
+                }
+
+                requestBody.status = status;
+            }
+          
+        }
+
+        async function submitForm(postBody){ // Lähetetään POST-pyyntö palvelimelle
+            try{
+                const data = await fetch(`${url}events`, {
+                    method: 'POST',
+                    body: postBody,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Basic ' + pass
+                    }
+                });
+
+                return await data.json();
+            }catch(error){
+                return error;
+            }
+        }
+
+        async function getStatuses(){ // Haetaan statukset vetovalikkoon
+            const statuses = await fetchStatuses(); // Haetaan statukset
+            populateStatusSelection(statuses); // Lisätään statukset vetovalikkoon
+        }
+
+        async function fetchStatuses(){ // Lähetetään GET-pyyntö palvelimelle
+            try{
+                const response = await fetch(`${url}status`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Basic ' + pass
+                    }
+                });
+                return await response.json();
+            }catch(error){
+              return error;
+            }
+        }
+
+        function populateStatusSelection(statuses){ // Lisätään haetut statukset vetovalikkoon
+            let statusInnerHtml = '<option value="">Valitse tapahtuman tila</option>';
+
+            for(let status of statuses){
+                statusInnerHtml += `<option value="${status.id}+${status.statusName}">${status.statusName}</option>`
+            }
+
+            document.getElementById('status').innerHTML = statusInnerHtml;
+        }
+
+        getStatuses(); // Kutsutaan tätä metodia aina kun sivu ladataan
+
+    </script>
+</body>
+</html>
