@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Lisää lipputyyppi</title>
+</head>
+<style>
+    label{
+        display: inline-block;
+        margin-bottom: 5px;
+        width: 150px;
+    }
+</style>
+<body>
+    <div class="container">
+        <h1>Lisää tapahtuma</h1>
+        <div class="form-wrapper">
+            <form class="form-control" id="tickettype-form" onsubmit="processForm(event)">
+                <label for="event">Tapahtuma:</label>
+                <select name="event" id="event"></select><br>
+                <label for="type">Lipputyyppi:</label>
+                <input type="text" name="type" id="type"><br>
+                <label for="price">Hinta:</label>
+                <input type="text" name="price" id="price"><span> €</span><br>
+                <input type="submit" value="Lisää">
+            </form>
+            <div>
+                <p id="msg"></p>
+            </div>
+        </div>
+    </div>
+    <script>
+        let url = 'http://localhost:8080/';
+        let pass = btoa('admin:admin');
+
+        async function processForm(e){
+            e.preventDefault();
+            const form = document.getElementById("tickettype-form");
+            const formData = new FormData(form); // Luodaan lomakkeen tiedoista FormData-olio
+            const requestBody = processFormData(formData); // Metodi, joka luo FormDatasta halutun requestbodyn
+            const errorMsg = validateData(requestBody);
+
+            if(errorMsg.length > 0){
+                let innerHtmlStr = "";
+
+                for(const msg of errorMsg){
+                    innerHtmlStr += msg + "\n";
+                    innerHtmlStr += "\n";
+                }
+
+                document.getElementById("msg").innerHTML = innerHtmlStr;
+            }else{
+                const response = await submitForm(JSON.stringify(requestBody)); // Lähettää pyynnön
+                console.log(response);
+            }
+        }
+
+        function processFormData(formData){
+            let requestBody = {};
+
+            for(let [key, value] of formData){ // Käydään FormData avain-arvo-pari kerrallaan läpi, ja mikäli arvo on tyhjä merkkijono, vaihdetaan sen tilalle null
+                if(value === ''){
+                    value = null;
+                }
+
+                requestBody[key] = value;
+            }
+
+            return requestBody;
+        }
+
+        function validateData(data){
+            let errorMsg = [];
+            
+            if(data.type === null){
+                errorMsg.push("Lipputyyppi ei voi olla tyhjä");
+            }
+
+            if(isNaN(Number(data.price)) || data.price === null){
+                errorMsg.push("Hinnan on oltava luku");
+            }
+
+            if(errorMsg.length < 1){
+                data.price = Number(data.price);
+                data.event = Number(data.event);
+            }
+
+            return errorMsg;
+        }
+
+        async function getEvents(){
+            const events = await fetchEvents();
+            populateEventSelection(events);
+        }
+
+        async function submitForm(request){
+            try{
+                const data = await fetch(`${url}types`, {
+                    method: 'POST',
+                    body: request,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Basic ' + pass
+                    }
+                });
+
+                if(data.status === 201){
+                    return await data.json();
+                }else{
+                    return {message: "Something went wrong, please try again"};
+                }
+                
+            }catch(error){
+                return error;
+            }
+        }
+
+        async function fetchEvents(){
+            try{
+                const response = await fetch(`${url}events`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Basic ' + pass
+                    }
+                });
+                return await response.json();
+            }catch(error){
+                return error;
+            }
+        }
+
+        function populateEventSelection(events){
+            let innerHtmlStr = "";
+
+            for(event of events){
+                innerHtmlStr += `<option value="${event.id}">${event.name}</option>`
+            }
+
+            document.getElementById("event").innerHTML = innerHtmlStr;
+        }
+
+        getEvents();
+    </script>
+</body>
+</html>
