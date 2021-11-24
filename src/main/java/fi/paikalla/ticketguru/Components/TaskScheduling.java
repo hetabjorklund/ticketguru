@@ -20,8 +20,7 @@ public class TaskScheduling {
 	@Autowired
 	private EventStatusRepository statusrepo; 
 	
-	
-	@Scheduled(cron= "0 3 * * *") //eli aina kello 03.00, esim kello 3.00 joka keskiviikko olisi "0 3 * * 3"
+	@Scheduled(cron= "0 0 3 * * *") //eli aina kello 03.00, esim kello 3.00 joka keskiviikko olisi "0 0 3 * * WED "
 	public void updateEventStatus() {
 		EventStatus upcoming = statusrepo.findByStatusName("upcoming"); //hae status tulevat
 		List<Event> allEvents = eventrepo.findByStatus(upcoming.getId());//hae kaikki statuksella tulevat
@@ -33,35 +32,5 @@ public class TaskScheduling {
 			}
 		}
 	}
-	
-	/*//Aikataulutuksen testaus
-	 * @Scheduled(fixedRate = 20000)
-	public void toggleStat() {
-		EventStatus upcoming = statusrepo.findByStatusName("upcoming");
-		EventStatus passed = statusrepo.findByStatusName("passed");
-		
-		List<Event> allEvents = (List<Event>) eventrepo.findAll();
-		for (Event ev: allEvents) {
-			if(ev.getStatus().getId().equals(upcoming.getId())) {
-				ev.setStatus(passed);
-				eventrepo.save(ev);
-				System.out.println("Changed to passed");
-			} else {
-				ev.setStatus(upcoming);
-				eventrepo.save(ev);
-				System.out.println("Changed to upcoming");
-			}
-		}
-	 * 
-	 * }
-	 * 
-	 */
-	
-		
-		
-	
-	
-	
-	
 
 }
