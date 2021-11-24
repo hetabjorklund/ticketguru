@@ -44,8 +44,7 @@
                 let innerHtmlStr = "";
 
                 for(const msg of errorMsg){
-                    innerHtmlStr += msg + "\n";
-                    innerHtmlStr += "\n";
+                    innerHtmlStr += `<div>${msg}</div>`;
                 }
 
                 document.getElementById("msg").innerHTML = innerHtmlStr;

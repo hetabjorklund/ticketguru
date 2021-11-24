@@ -32,29 +32,49 @@
                 <input type="text" name="description" id="description"><br>
                 <label for="status">Tila: </label>
                 <select name="status" id="status"></select><br>
-                <input type="submit" value="Lisää">
+                <input type="submit" value="Lähetä">
             </form>
             <div>
                 <p id="msg"></p>
             </div>
+            <h2>Lisää tapahtumaan lipputyyppi (Tyypit lisättävä ennen tapahtuman lähettämistä)</h2>
+            <form id="tickettype-form" onsubmit="processTicketType(event)">
+                <label for="type">Lipputyyppi:</label>
+                <input type="text" name="type" id="type"><br>
+                <label for="price">Hinta:</label>
+                <input type="text" name="price" id="price"><span> €</span><br>
+                <input type="submit" value="Lisää">
+                <div>
+                    <p>Lisätyt lipputyypit:</p>
+                    <p id="tickettypes"></p>
+                </div>
+            </form>
+            <div>
+                <p id="ttmsg"></p>
+            </div>
         </div>
     </div>
     <script>
-        //var url = 'http://localhost:8080/';
-        //var pass = btoa('admin:admin');
+        const url = 'http://localhost:8080/';
+        const pass = btoa('admin:admin');
 
-        var url = 'https://ticketguru-2021.herokuapp.com/';
-        var pass = btoa('TestAdmin:password');
+        //const url = 'https://ticketguru-2021.herokuapp.com/';
+        //const pass = btoa('TestAdmin:password');
+
+        let ticketTypes = [];
 
         async function processForm(e){
             e.preventDefault();
             const form = document.getElementById("event-form");
             const formData = new FormData(form); // Luodaan lomakkeen tiedoista FormData-olio
             const requestBody = processFormData(formData); // Metodi, joka luo FormDatasta halutun requestbodyn
+            reformatRequest(requestBody);
             const response = await submitForm(JSON.stringify(requestBody)); // Lähettää pyynnön
             
             if(response.message == null){ // Responsessa on message-attribuutti kun jotain on mennyt pieleen, muutoin palautetaan Event-olio
-                document.getElementById("msg").innerHTML = "Event added succesfully!"
+                console.log(response);
+                document.getElementById("msg").innerHTML = "Event added succesfully!";
+                submitTicketTypes(response.id); // Lähetetään lisätyn tapahtuman id, jotta voidaan lisätä lipputyypit oikealle tapahtumalle
             }else{
                 document.getElementById("msg").innerHTML = response.message;
             }
@@ -71,9 +91,12 @@
                 requestBody[key] = value;
             }
 
+            return requestBody;
+        }
+
+        function reformatRequest(requestBody){
             reformatDates(requestBody); // Muokataan ISO-muotoinen päivämäärä pyynnön vaatimaksi arrayksi
             reformatStatus(requestBody); // Muokataan status-merkkijonosta status-olio
-            return requestBody;
         }
 
         function reformatDates(requestBody){
@@ -155,6 +178,79 @@
             }
 
             document.getElementById('status').innerHTML = statusInnerHtml;
+        }
+
+        function processTicketType(e){
+            e.preventDefault();
+            const form = document.getElementById("tickettype-form");
+            const formData = new FormData(form); // Luodaan lomakkeen tiedoista FormData-olio
+            const tickettype = processFormData(formData); // Metodi, joka luo FormDatasta halutun requestbodyn
+            const errorMsg = validateTickettype(tickettype);
+
+            if(errorMsg.length === 0){
+                ticketTypes.push(tickettype);
+                document.getElementById("tickettypes").innerHTML += `<div>Lipputyyppi: ${tickettype.type}, Hinta: ${tickettype.price.toFixed(2)}€</div>`
+            }else{
+                let innerHtmlStr = "";
+
+                for(const msg of errorMsg){
+                    innerHtmlStr += `<div>${msg}</div>`;
+                }
+
+                document.getElementById("ttmsg").innerHTML = innerHtmlStr;
+            }
+            
+            
+        }
+
+        function validateTickettype(data){
+            let errorMsg = [];
+            
+            if(data.type === null){
+                errorMsg.push("Lipputyyppi ei voi olla tyhjä");
+            }
+
+            if(isNaN(Number(data.price)) || data.price === null){
+                errorMsg.push("Hinnan on oltava luku");
+            }
+
+            if(errorMsg.length < 1){
+                data.price = Number(data.price);
+                data.event = Number(data.event);
+            }
+
+            return errorMsg;
+        }
+
+        async function submitTicketTypes(eventId){
+            let innerHtmlStr = "";
+
+            for(let type of ticketTypes){
+                type.event = eventId;
+                
+                try{
+                    const response = await fetch(`${url}types`, {
+                        method: 'POST',
+                        body: JSON.stringify(type),
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Basic ' + pass
+                        }
+                    });
+
+                    if(response.status === 201){
+                        innerHtmlStr += `<div>Lipputyyppi ${type.type} lisätty onnistuneesti</div>`;
+                    }else{
+                        console.log(await response.json());
+                        innerHtmlStr+= `<div>Lipputyypin ${type.type} lisääminen ei onnistunut</div>`;
+                    }
+                }catch(error){
+                    console.log(error);
+                }
+              
+            }
+
+            document.getElementById("ttmsg").innerHTML = innerHtmlStr;
         }
 
         getStatuses(); // Kutsutaan tätä metodia aina kun sivu ladataan
