@@ -27,7 +27,7 @@ public class TaskScheduling {
 		LocalDateTime current = LocalDateTime.now(); //aika nyt
 		for (Event ev: allEvents) { //looppaa läpi
 			if (ev.getEndTime().isBefore(current)) { //jos eventin loppuaika on ennen nykyaikaa, eli menneessä
-				ev.setStatus(statusrepo.findByStatusName("passed")); //vaihda status menneeksi
+				ev.setStatus(statusrepo.findByStatusName("past")); //vaihda status menneeksi
 				eventrepo.save(ev); //tallenna
 			}
 		}
