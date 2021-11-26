@@ -8,6 +8,16 @@ Metodi : PATCH
 
 Vaatiiko autorisoinnin : Kyllä, ADMIN tai USER
 
+**Esimerkkipyyntö** 
+
+Content-Type: application/json-patch+json
+
+```json
+[
+    {"op": "replace", "path": "/used", "value": true}
+]
+```
+
 ## Onnistuneen pyynnön vastaus
 
 Ehto: Tietojen päivittäminen onnistuu
