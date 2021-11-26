@@ -14,6 +14,8 @@ Toimita operaation tyyppi ja kenttä jota haluat muokata.
 
 **Esimerkkipyyntö** 
 
+Content-Type: application/json-patch+json
+
 ```json
 [
     {"op": "replace", "path": "/statusName", "value": "EDITcanceled"}
