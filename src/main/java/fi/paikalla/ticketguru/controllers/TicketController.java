@@ -204,7 +204,7 @@ public class TicketController {
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PostMapping("/tickets")
 	public @ResponseBody ResponseEntity<?> createTicket(@RequestBody @NotEmpty(message = "List of tickets cannot be empty.") List<@Valid TicketDto> ticketDtos, BindingResult bindingResult){
-		Map<String, String> response = new HashMap<>();
+		Map<String, Object> response = new HashMap<>();
 		
 		if(bindingResult.hasErrors()) { // Mikäli validoinnissa on virheitä
 			response = errResGenerator.generateErrorResponseFromBindingResult(bindingResult); // components-kansiosta luokan ErrorResponseGenerator metodi, joka ottaa syötteenä BindingResult-olion ja luo siitä responsen
@@ -279,6 +279,8 @@ public class TicketController {
 				for(Ticket ticket: tickets) { // Mikäli kaikki ok, liput luodaan
 					ticketrepo.save(ticket);
 				}
+				
+				response.put("tickets", tickets);
 			}
 		}
 		
@@ -293,7 +295,7 @@ public class TicketController {
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PutMapping("/tickets/{id}")
 	public @ResponseBody ResponseEntity<?> modifyTicket(@Valid @RequestBody TicketDto ticketDto, BindingResult bindingResult, @PathVariable("id") Long ticketId){
-		Map<String, String> response = new HashMap<>();
+		Map<String, Object> response = new HashMap<>();
 		String message;
 		
 		if(bindingResult.hasErrors()) { // Mikäli validoinnissa on virheitä

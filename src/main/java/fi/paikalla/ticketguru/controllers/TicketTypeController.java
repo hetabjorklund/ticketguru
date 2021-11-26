@@ -74,7 +74,7 @@ public class TicketTypeController {
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/types") //luo uusi tyyppi
 	public ResponseEntity<?> makeNewType(@Valid @RequestBody TicketTypeDto type, BindingResult bindres) {
-		Map<String, String> response = new HashMap<>(); // alustetaan virhevastaus
+		Map<String, Object> response = new HashMap<>(); // alustetaan virhevastaus
 		Map<String, String> response2 = new HashMap<>();
 		if(bindres.hasErrors()) {
 			response = responsegenerator.generateErrorResponseFromBindingResult(bindres); //käytetään samaa generaattoria suosiolla.
