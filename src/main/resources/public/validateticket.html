@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>Ticketguru</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+    <h1>Lipun tarkistus</h1>
+    <form>
+        <label>Syötä lipun tunniste</label></br>
+        <input type="text" id="code">
+        <input type="button" value="Tarkista lippu" onclick="checkCode()">
+        <input type="button" value="Käytä lippu" onclick="useCode()">
+    </form>
+    <div >
+        <p id="result"></p>
+    </div>
+
+</body>
+<script>
+    var url = "http://localhost:8080/tickets/"
+    var pass = btoa('admin:password')
+    var msg = "";
+    
+    const checkCode = async() => {
+        try {
+            var code = document.getElementById("code").value; // otetaan talteen käyttäjän syöttämä koodi 
+            const response = await fetch(url+code, //lähetetään kannalle pyyntö lipun tiedoista koodin perusteella
+            {method: 'GET', 
+            headers: {'Authorization': 'Basic ' + pass}}) 
+            const json = await response.json(); // muutetaan vastaus jsoniksi
+            console.log(response.status);
+            console.log(json);
+            if(json.used == false) { // jos lippu on käyttämätön
+                msg = "Lippu koodilla <b>" + code + "</b> on olemassa ja käytettävissä.";
+                document.getElementById("result").innerHTML = msg;
+            } else { // jos lippu on käytetty jo
+                msg = "Lippu koodilla <b>" + code + "</b> on jo käytetty.";
+                document.getElementById("result").innerHTML = msg;
+            } 
+        } catch (error) { // jos pyyntö palauttaa 404 tai haku ei muuten onnistu
+            console.log(error);
+            msg = "Lipputietoja ei saatu haettua.";
+	        document.getElementById("result").innerHTML = msg;
+        }
+    }
+
+    const useCode = async() => {
+        try {
+            var code = document.getElementById("code").value; // otetaan talteen käyttäjän syöttämä koodi 
+            const response = await fetch(url+code+"/used", //lähetetään kannalle pyyntö käyttää lippu koodin perusteella
+            {method: 'PATCH',
+            headers: {
+                'Authorization': 'Basic ' + pass,
+                'Content-Type': 'application/json-patch+json'
+            },
+            body: JSON.stringify([{op: 'replace', path: '/used', value: true}]) //lähetetään bodyna JSONiksi muutettu array
+            });
+            const json = await response.json(); // muutetaan vastaus jsoniksi
+            console.log(response.status);
+            console.log(json);
+            if (response.status == 400){ // jos lippu on jo käytetty
+                console.log(json.message);
+                // msg = json.message;
+                msg = "Lippu koodilla <b>" + code + "</b> on käytetty aiemmin eikä kelpaa.";
+                document.getElementById("result").innerHTML = msg;
+            } else if (response.status == 200) { // jos lippu on käytettävissä
+                // msg = json.message;
+                msg = "Lippu koodilla <b>" + code + "</b> on käyttämätön. Merkitään käytetyksi."
+                document.getElementById("result").innerHTML = msg;
+            } else { // jos lippua ei löydy
+                // msg = json.message;
+                msg = "Lippua ei löydy koodilla <b>" + code + "</b>."
+                document.getElementById("result").innerHTML = msg;
+            }
+        } catch (error) { // jos pyyntö ei onnistu
+            console.log(error);
+            msg = "Lipputietoja ei saatu haettua.";
+            document.getElementById("result").innerHTML = msg;
+        }
+    }
+    
+    /* vaihtoehtoinen tapa muistinvirkistykseksi
+    function checkCode() {
+        var msg = ""; // näytettävä viesti
+        var url = "http://localhost:8080/tickets/";
+        var code = document.getElementById('code').value; // tarkistettavan lipun koodi
+        fetch(url+code,
+        {method: 'GET', 
+        headers: {'Authorization': 'Basic ' + pass}})
+        .then( function (response) { return response.json() })
+		.then( function (ticket) {
+            if (ticket.used == false){ // jos lippu on käyttämätön
+                msg = "Lippu on olemassa ja käytettävissä."
+                document.getElementById("result").innerHTML = msg;
+            } else { // jos lippu on käytetty
+                msg = "Lippu on jo käytetty."
+                document.getElementById("result").innerHTML = msg;
+            }
+        })
+        .catch( function (error) {
+            msg = "<p>Lipputietoja ei saatu haettua. Lippua ei ole.</p>"
+	        document.getElementById("result").innerHTML = msg;
+	    })
+    }
+    */
+    
+</script>
+</html>
