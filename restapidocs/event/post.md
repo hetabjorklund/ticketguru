@@ -117,7 +117,7 @@ Tarkistaa, onko tapahtuman ennakkomyynti päättynyt ja jos on, luo ennakkomyynn
 
 **URL** : `/events/{id}/tickets`
 
-**Pyynnön tyyppi** : `POST` (tyhjä pyyntö ilman bodya)
+**Pyynnön tyyppi** : `POST` (tyhjä pyyntö ilman bodya, lipun hinta pyyntöparametrina)
 
 **Autentikaatio vaadittu** : Kyllä, ADMIN tai USER
 
@@ -131,11 +131,570 @@ Tarkistaa, onko tapahtuman ennakkomyynti päättynyt ja jos on, luo ennakkomyynn
 
 **HTTP-vastauskoodi** : `201 CREATED`
 
-**Esimerkkivastaus** : 
+**Esimerkkivastaus** : Luodut oviliput palautetaan listana.
 ```json
-{
-    "message": "10 door tickets created"
-}
+[
+    {
+        "id": 36,
+        "price": 25,
+        "used": false,
+        "ticketType": {
+            "id": 16,
+            "event": {
+                "id": 59,
+                "name": "Testitapahtuma6Vm1P",
+                "address": "Testimaailma",
+                "maxCapacity": 10,
+                "startTime": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "endTime": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "endOfPresale": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "status": null,
+                "description": "Testin luoma tapahtuma"
+            },
+            "type": "ovilippu",
+            "price": 25
+        },
+        "invoice": {
+            "tguser": {
+                "id": 2,
+                "userName": "admin"
+            },
+            "timestamp": [
+                2021,
+                11,
+                26,
+                16,
+                48,
+                55,
+                944263100
+            ],
+            "invoiceId": 54
+        },
+        "code": "14Bqx7tMLoKR"
+    },
+    {
+        "id": 37,
+        "price": 25,
+        "used": false,
+        "ticketType": {
+            "id": 16,
+            "event": {
+                "id": 59,
+                "name": "Testitapahtuma6Vm1P",
+                "address": "Testimaailma",
+                "maxCapacity": 10,
+                "startTime": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "endTime": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "endOfPresale": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "status": null,
+                "description": "Testin luoma tapahtuma"
+            },
+            "type": "ovilippu",
+            "price": 25
+        },
+        "invoice": {
+            "tguser": {
+                "id": 2,
+                "userName": "admin"
+            },
+            "timestamp": [
+                2021,
+                11,
+                26,
+                16,
+                48,
+                55,
+                944263100
+            ],
+            "invoiceId": 54
+        },
+        "code": "iM1Ut5VBRwIB"
+    },
+    {
+        "id": 38,
+        "price": 25,
+        "used": false,
+        "ticketType": {
+            "id": 16,
+            "event": {
+                "id": 59,
+                "name": "Testitapahtuma6Vm1P",
+                "address": "Testimaailma",
+                "maxCapacity": 10,
+                "startTime": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "endTime": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "endOfPresale": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "status": null,
+                "description": "Testin luoma tapahtuma"
+            },
+            "type": "ovilippu",
+            "price": 25
+        },
+        "invoice": {
+            "tguser": {
+                "id": 2,
+                "userName": "admin"
+            },
+            "timestamp": [
+                2021,
+                11,
+                26,
+                16,
+                48,
+                55,
+                944263100
+            ],
+            "invoiceId": 54
+        },
+        "code": "wJTlTERZWM9N"
+    },
+    {
+        "id": 39,
+        "price": 25,
+        "used": false,
+        "ticketType": {
+            "id": 16,
+            "event": {
+                "id": 59,
+                "name": "Testitapahtuma6Vm1P",
+                "address": "Testimaailma",
+                "maxCapacity": 10,
+                "startTime": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "endTime": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "endOfPresale": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "status": null,
+                "description": "Testin luoma tapahtuma"
+            },
+            "type": "ovilippu",
+            "price": 25
+        },
+        "invoice": {
+            "tguser": {
+                "id": 2,
+                "userName": "admin"
+            },
+            "timestamp": [
+                2021,
+                11,
+                26,
+                16,
+                48,
+                55,
+                944263100
+            ],
+            "invoiceId": 54
+        },
+        "code": "0L45O7p0DiAF"
+    },
+    {
+        "id": 40,
+        "price": 25,
+        "used": false,
+        "ticketType": {
+            "id": 16,
+            "event": {
+                "id": 59,
+                "name": "Testitapahtuma6Vm1P",
+                "address": "Testimaailma",
+                "maxCapacity": 10,
+                "startTime": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "endTime": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "endOfPresale": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "status": null,
+                "description": "Testin luoma tapahtuma"
+            },
+            "type": "ovilippu",
+            "price": 25
+        },
+        "invoice": {
+            "tguser": {
+                "id": 2,
+                "userName": "admin"
+            },
+            "timestamp": [
+                2021,
+                11,
+                26,
+                16,
+                48,
+                55,
+                944263100
+            ],
+            "invoiceId": 54
+        },
+        "code": "pBkdw6hswnur"
+    },
+    {
+        "id": 41,
+        "price": 25,
+        "used": false,
+        "ticketType": {
+            "id": 16,
+            "event": {
+                "id": 59,
+                "name": "Testitapahtuma6Vm1P",
+                "address": "Testimaailma",
+                "maxCapacity": 10,
+                "startTime": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "endTime": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "endOfPresale": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "status": null,
+                "description": "Testin luoma tapahtuma"
+            },
+            "type": "ovilippu",
+            "price": 25
+        },
+        "invoice": {
+            "tguser": {
+                "id": 2,
+                "userName": "admin"
+            },
+            "timestamp": [
+                2021,
+                11,
+                26,
+                16,
+                48,
+                55,
+                944263100
+            ],
+            "invoiceId": 54
+        },
+        "code": "2YaZSqStKmoO"
+    },
+    {
+        "id": 42,
+        "price": 25,
+        "used": false,
+        "ticketType": {
+            "id": 16,
+            "event": {
+                "id": 59,
+                "name": "Testitapahtuma6Vm1P",
+                "address": "Testimaailma",
+                "maxCapacity": 10,
+                "startTime": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "endTime": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "endOfPresale": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "status": null,
+                "description": "Testin luoma tapahtuma"
+            },
+            "type": "ovilippu",
+            "price": 25
+        },
+        "invoice": {
+            "tguser": {
+                "id": 2,
+                "userName": "admin"
+            },
+            "timestamp": [
+                2021,
+                11,
+                26,
+                16,
+                48,
+                55,
+                944263100
+            ],
+            "invoiceId": 54
+        },
+        "code": "PtsRSxSWw6LO"
+    },
+    {
+        "id": 43,
+        "price": 25,
+        "used": false,
+        "ticketType": {
+            "id": 16,
+            "event": {
+                "id": 59,
+                "name": "Testitapahtuma6Vm1P",
+                "address": "Testimaailma",
+                "maxCapacity": 10,
+                "startTime": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "endTime": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "endOfPresale": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "status": null,
+                "description": "Testin luoma tapahtuma"
+            },
+            "type": "ovilippu",
+            "price": 25
+        },
+        "invoice": {
+            "tguser": {
+                "id": 2,
+                "userName": "admin"
+            },
+            "timestamp": [
+                2021,
+                11,
+                26,
+                16,
+                48,
+                55,
+                944263100
+            ],
+            "invoiceId": 54
+        },
+        "code": "1fraQ8RCLiLW"
+    },
+    {
+        "id": 44,
+        "price": 25,
+        "used": false,
+        "ticketType": {
+            "id": 16,
+            "event": {
+                "id": 59,
+                "name": "Testitapahtuma6Vm1P",
+                "address": "Testimaailma",
+                "maxCapacity": 10,
+                "startTime": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "endTime": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "endOfPresale": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "status": null,
+                "description": "Testin luoma tapahtuma"
+            },
+            "type": "ovilippu",
+            "price": 25
+        },
+        "invoice": {
+            "tguser": {
+                "id": 2,
+                "userName": "admin"
+            },
+            "timestamp": [
+                2021,
+                11,
+                26,
+                16,
+                48,
+                55,
+                944263100
+            ],
+            "invoiceId": 54
+        },
+        "code": "cidtOd4DR0y6"
+    },
+    {
+        "id": 45,
+        "price": 25,
+        "used": false,
+        "ticketType": {
+            "id": 16,
+            "event": {
+                "id": 59,
+                "name": "Testitapahtuma6Vm1P",
+                "address": "Testimaailma",
+                "maxCapacity": 10,
+                "startTime": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "endTime": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "endOfPresale": [
+                    2022,
+                    12,
+                    1,
+                    0,
+                    0
+                ],
+                "status": null,
+                "description": "Testin luoma tapahtuma"
+            },
+            "type": "ovilippu",
+            "price": 25
+        },
+        "invoice": {
+            "tguser": {
+                "id": 2,
+                "userName": "admin"
+            },
+            "timestamp": [
+                2021,
+                11,
+                26,
+                16,
+                48,
+                55,
+                944263100
+            ],
+            "invoiceId": 54
+        },
+        "code": "JfnuGcy5l1bH"
+    }
+]
 ```
 
 ## Virhevastaus

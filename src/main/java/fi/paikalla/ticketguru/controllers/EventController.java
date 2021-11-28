@@ -3,6 +3,7 @@ package fi.paikalla.ticketguru.controllers;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -173,14 +174,18 @@ public class EventController {
 				// testaamista varten today, joka on tulevaisuudessa
 				//LocalDateTime today = LocalDateTime.parse("2030-12-01T00:00:00");
 				
-				if (event.getEndOfPresale().isBefore(today)) { // tarkista onko ennakkomyynti jo loppunut
-					
-					TicketType doorticket = new TicketType(event, "ovilippu", price); // luo uusi tickettype "ovilippu"
-					tickettyperepo.save(doorticket);					
+				if (event.getEndOfPresale().isBefore(today)) { // tarkista onko ennakkomyynti jo loppunut								
 					
 					int ticketsLeft = eventservice.getAvailableCapacityOfEvent(id); // laske vapaiden lippujen määrä
 					
-					if (ticketsLeft > 0) { // jos lippuja on jäljellä				
+					if (ticketsLeft > 0) { // jos lippuja on jäljellä
+						
+						// luo uusi tickettype "ovilippu"
+						TicketType doorticket = new TicketType(event, "ovilippu", price); 
+						tickettyperepo.save(doorticket);
+						
+						// luo lista palautettaville ovilipuille
+						List<Ticket> doorticketlist = new ArrayList<Ticket>();						
 						
 						// luodaan dummy-lasku johon oviliput voi liittää
 						Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -197,13 +202,14 @@ public class EventController {
 								Ticket ticket = new Ticket(doorticket, dummyInvoice); 
 								ticketrepo.save(ticket);
 								dummyInvoice.getTickets().add(ticket); // liitetään oviliput dummy-invoicen lippulistaan
+								doorticketlist.add(ticket); // lisätään oviliput palautettavaan lippulistaan
 							}							
 							invoicerepo.save(dummyInvoice);							
 						}							
 						
-						String content = ticketsLeft + " door tickets created";
-						response.put("message", content);
-						return new ResponseEntity<>(response, HttpStatus.CREATED); // palautetaan vastaus ja 201						
+						//String content = ticketsLeft + " door tickets created";
+						//response.put("message", content);
+						return new ResponseEntity<>(doorticketlist, HttpStatus.CREATED); // palautetaan vastaus ja 201						
 					}
 					else { // jos lippuja ei ole jäljellä
 						response.put("message", "The event is already sold out. There are no tickets left");
