@@ -19,6 +19,7 @@
         <p id="result"></p>
     </div>
     <div><p></p></div>
+    <!--koodi lainattu https://github.com/cozmo/jsQR-->
     <div id="loadingMessage">🎥 Unable to access video stream (please make sure you have a webcam enabled)</div>
         <canvas id="canvas" hidden></canvas>
         <div id="output" hidden>
@@ -90,7 +91,7 @@
         }
     }
     
-    // QR-koodin lukija
+    // QR-koodin lukija – koodi lainattu https://github.com/cozmo/jsQR
     var video = document.createElement("video");
     var canvasElement = document.getElementById("canvas");
     var canvas = canvasElement.getContext("2d");
