@@ -81,11 +81,13 @@ public class TicketController {
 	// hae lippu koodin perusteella
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@GetMapping("/tickets/{code}")
-	public @ResponseBody ResponseEntity<Optional<Ticket>> getTicketByCode(@PathVariable("code") String ticketCode){
+	public @ResponseBody ResponseEntity<?> getTicketByCode(@PathVariable("code") String ticketCode){
 		Optional<Ticket> ticket = ticketrepo.findByCode(ticketCode);
+		Map<String, String> response = new HashMap<>(); // alustetaan uusi vastaus
 		
 		if(ticket.isEmpty()) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			response.put("message", "Ticket not found");
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		} else {
 			return new ResponseEntity<>(ticket, HttpStatus.OK);
 		}

@@ -37,18 +37,23 @@
             var code = document.getElementById("code").value; // otetaan talteen käyttäjän syöttämä koodi 
             const response = await fetch(url+code, //lähetetään kannalle pyyntö lipun tiedoista koodin perusteella
             {method: 'GET', 
-            headers: {'Authorization': 'Basic ' + pass}}) 
+            headers: {'Authorization': 'Basic ' + pass}})
             const json = await response.json(); // muutetaan vastaus jsoniksi
             console.log(response.status);
             console.log(json);
-            if(json.used == false) { // jos lippu on käyttämätön
-                msg = "Lippu koodilla <b>" + code + "</b> on olemassa ja käytettävissä.";
+            if (response.status == 404) { // jos lippua ei löydy kannasta
+                msg = "Lippua ei löydy koodilla <b>" + code + "</b>.";
                 document.getElementById("result").innerHTML = msg;
-            } else { // jos lippu on käytetty jo
-                msg = "Lippu koodilla <b>" + code + "</b> on jo käytetty.";
-                document.getElementById("result").innerHTML = msg;
-            } 
-        } catch (error) { // jos pyyntö palauttaa 404 tai haku ei muuten onnistu
+            } else {
+                if(json.used == false) { // jos lippu on käyttämätön
+                    msg = "Lippu koodilla <b>" + code + "</b> on olemassa ja käytettävissä.";
+                    document.getElementById("result").innerHTML = msg;
+                } else { // jos lippu on käytetty jo
+                    msg = "Lippu koodilla <b>" + code + "</b> on jo käytetty.";
+                    document.getElementById("result").innerHTML = msg;
+                } 
+            }
+        } catch (error) { // jos haku ei onnistu
             console.log(error);
             msg = "Lipputietoja ei saatu haettua.";
 	        document.getElementById("result").innerHTML = msg;
