@@ -16,6 +16,10 @@ Koodi : 404 NOT FOUND
 
 Sisältö :
 
+```json
+{"message": "Ticket not found"}
+```
+
 TAI
 
 Ehto: Syötetyllä koodilla löytyy lippu tietokannasta.
