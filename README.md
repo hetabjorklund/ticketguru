@@ -168,7 +168,7 @@ Projektissa on kolme haaraa: master, postgreSQL_local ja postgreSQL_heroku.
 
 ### Master
 - master-haara on kehityshaara.
-- Tietokanta on H2. Tietokanta ei ole persistentti, vaan tiedot häviävät kun sovellus sammutetaan.
+- Tietokanta on H2. Tietokanta ei ole persistentti, vaan tiedot häviävät kun sovellus sammutetaan. Sovelluksen ollessa käynnissä tietokantaan pääsee selaimella osoitteessa http://localhost:[portti]/h2-console/login.do
 - Endpointit ovat muotoa localhost:[portti]/events
 
 ### PostgreSQL_local
